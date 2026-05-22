@@ -4,6 +4,20 @@ Travlr Getaways is a full-stack travel booking application used as the CS 499 ca
 
 The polished capstone narratives and professional self-assessment live in [`/docs`](./docs) and are published as a GitHub Pages site.
 
+## Screenshots
+
+### Homepage
+![Travlr Getaways homepage hero](Screenshots/Screenshot%202026-05-22%20150842.png)
+
+### Meals
+![Snapshots from partner kitchens](Screenshots/Screenshot%202026-05-22%20150910.png)
+
+### My Reservations
+![Customer reservations dashboard](Screenshots/Screenshot%202026-05-22%20150926.png)
+
+### Travel News & Tips
+![Travel news and articles page](Screenshots/Screenshot%202026-05-22%20150955.png)
+
 ## What's in here
 
 | Path | Tier |
