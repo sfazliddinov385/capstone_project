@@ -1,0 +1,291 @@
+{{> header}}
+
+<div class="tg-page-header">
+    <h1>&#128203; My Reservations</h1>
+    <p>View and manage your upcoming trips</p>
+</div>
+
+<section class="tg-section tg-section-gray">
+    <div class="tg-section-wrap">
+
+        <!-- Guest message -->
+        <div id="guest-message" style="display:none;">
+            <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.07); padding:60px 40px; text-align:center; max-width:500px; margin:0 auto;">
+                <div style="font-size:3rem; margin-bottom:16px;">&#128274;</div>
+                <h2 style="font-family:'Poppins',sans-serif; color:#083050; margin-bottom:12px;">Sign In Required</h2>
+                <p style="color:#6b7280; margin-bottom:28px; line-height:1.7;">This page is available to logged-in customers only. Sign in to view your reservations.</p>
+                <a href="/login" class="btn-primary" style="margin-right:12px;">Sign In</a>
+                <a href="/register" class="btn-outline" style="background:transparent; color:#083050; border-color:#083050;">Create Account</a>
+            </div>
+        </div>
+
+        <!-- Review modal -->
+        <div id="review-modal" role="dialog" aria-modal="true" aria-labelledby="review-modal-title" style="display:none; position:fixed; inset:0; background:rgba(8,32,56,0.55); z-index:1000; align-items:center; justify-content:center; padding:20px;">
+            <div style="background:#fff; border-radius:16px; padding:32px; max-width:520px; width:100%; box-shadow:0 30px 60px rgba(0,0,0,0.35);">
+                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:6px;">
+                    <h3 id="review-modal-title" style="font-family:'Poppins',sans-serif; color:#083050; font-size:1.3rem; margin:0;">Leave a Review</h3>
+                    <button id="review-close" style="background:transparent; border:none; cursor:pointer; font-size:1.4rem; color:#9ca3af; line-height:1;">&times;</button>
+                </div>
+                <p style="color:#6b7280; font-size:0.92rem; margin-bottom:18px;">Reviewing <strong id="review-trip-name" style="color:#083050;"></strong></p>
+
+                <div id="review-error" class="tg-alert tg-alert-danger" style="display:none; margin-bottom:14px;"></div>
+
+                <label style="display:block; font-size:0.85rem; font-weight:600; color:#374151; margin-bottom:8px;">Your rating</label>
+                <div id="review-stars" style="display:flex; gap:4px; margin-bottom:18px;">
+                    <button type="button" class="rev-star" data-v="1" aria-label="1 star" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
+                    <button type="button" class="rev-star" data-v="2" aria-label="2 stars" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
+                    <button type="button" class="rev-star" data-v="3" aria-label="3 stars" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
+                    <button type="button" class="rev-star" data-v="4" aria-label="4 stars" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
+                    <button type="button" class="rev-star" data-v="5" aria-label="5 stars" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
+                </div>
+
+                <label style="display:block; font-size:0.85rem; font-weight:600; color:#374151; margin-bottom:8px;">Your review</label>
+                <textarea id="review-comment" rows="4" maxlength="1200" placeholder="Share what you loved and what could be better..." style="width:100%; padding:12px 14px; border:1.5px solid #e5e7eb; border-radius:9px; font-size:0.95rem; font-family:inherit; resize:vertical;"></textarea>
+                <div style="text-align:right; font-size:0.78rem; color:#9ca3af; margin-top:4px;"><span id="review-count">0</span> / 1200</div>
+
+                <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+                    <button id="review-cancel" type="button" class="btn-outline" style="background:transparent; color:#374151; border-color:#d1d5db;">Cancel</button>
+                    <button id="review-submit" type="button" class="btn-primary">Submit Review</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logged-in content -->
+        <div id="reservations-content" style="display:none;">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:8px;">
+                <div>
+                    <h2 style="font-family:'Poppins',sans-serif; font-size:1.5rem; font-weight:700; color:#083050; margin-bottom:4px;">
+                        Welcome back, <span id="customer-name"></span>!
+                    </h2>
+                    <p style="color:#6b7280; font-size:0.92rem;">Your upcoming trip reservations are listed below.</p>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <a href="/travel" class="btn-primary">+ Book New Trip</a>
+                    <button id="logout-btn" style="background:#fef2f2; color:#c0392b; border:1px solid #fca5a5; border-radius:9px; padding:10px 18px; font-size:0.88rem; font-weight:700; cursor:pointer;">Sign Out</button>
+                </div>
+            </div>
+
+            <div id="cancel-message" class="tg-alert tg-alert-success" style="display:none;"></div>
+
+            <div class="tg-table-wrap">
+                <table class="tg-table">
+                    <thead>
+                        <tr>
+                            <th>Trip</th>
+                            <th>Resort</th>
+                            <th>Start Date</th>
+                            <th>Length</th>
+                            <th>Per Person</th>
+                            <th style="text-align:center;">Travelers</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservations-table-body">
+                        <tr>
+                            <td colspan="9" style="padding:40px; text-align:center; color:#9ca3af; font-style:italic;">
+                                No reservations yet. <a href="/travel" style="color:#083050; font-weight:700;">Browse available trips &rarr;</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script>
+(async function() {
+    var token     = localStorage.getItem('travlr-token');
+    var isLoggedIn = false;
+    var payload   = null;
+
+    if (token) {
+        try {
+            payload    = JSON.parse(atob(token.split('.')[1]));
+            isLoggedIn = payload.exp > Math.floor(Date.now() / 1000);
+            if (isLoggedIn) {
+                document.getElementById('customer-name').textContent = payload.name || payload.email;
+            }
+        } catch(e) { isLoggedIn = false; }
+    }
+
+    if (!isLoggedIn) {
+        document.getElementById('guest-message').style.display = 'block';
+        return;
+    }
+
+    document.getElementById('reservations-content').style.display = 'block';
+
+    try {
+        var res  = await fetch('/api/reservations', { headers: { 'Authorization': 'Bearer ' + token } });
+        var data = await res.json();
+
+        if (res.ok && data.length > 0) {
+            var tbody = document.getElementById('reservations-table-body');
+            tbody.innerHTML = '';
+            data.forEach(function(r) {
+                var startDate  = r.start ? new Date(r.start).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : 'TBD';
+                var perPerson  = r.perPerson  ? '$' + parseFloat(r.perPerson).toLocaleString('en-US',  { minimumFractionDigits: 2 }) : '-';
+                var totalPrice = r.totalPrice ? '$' + parseFloat(r.totalPrice).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '-';
+                var tr = document.createElement('tr');
+                tr.setAttribute('data-id', r._id);
+                tr.innerHTML =
+                    '<td style="font-weight:600; color:#083050;">' + r.tripName + '</td>' +
+                    '<td>' + (r.resort || '-') + '</td>' +
+                    '<td>' + startDate + '</td>' +
+                    '<td>' + (r.length || '-') + '</td>' +
+                    '<td>' + perPerson + '</td>' +
+                    '<td style="text-align:center;">' + (r.people || 1) + '</td>' +
+                    '<td style="font-weight:700; color:#083050;">' + totalPrice + '</td>' +
+                    '<td><span class="tg-badge-status">&#10003; Confirmed</span></td>' +
+                    '<td style="white-space:nowrap;">' +
+                        '<button class="btn-review" data-code="' + r.tripCode + '" data-trip="' + (r.tripName || '').replace(/"/g,'&quot;') + '">Review</button> ' +
+                        '<button class="btn-cancel" data-id="' + r._id + '">Cancel</button>' +
+                    '</td>';
+                tbody.appendChild(tr);
+            });
+
+            tbody.querySelectorAll('.btn-cancel').forEach(function(btn) {
+                btn.addEventListener('click', async function() {
+                    var id = btn.getAttribute('data-id');
+                    if (!confirm('Cancel this reservation? This cannot be undone.')) return;
+                    btn.disabled = true; btn.textContent = 'Cancelling\u2026';
+                    try {
+                        var delRes = await fetch('/api/reservations/' + id, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': 'Bearer ' + token }
+                        });
+                        if (delRes.ok) {
+                            tbody.querySelector('tr[data-id="' + id + '"]').remove();
+                            var msg = document.getElementById('cancel-message');
+                            msg.textContent = '\u2713 Reservation cancelled successfully.';
+                            msg.style.display = 'block';
+                            setTimeout(function() { msg.style.display = 'none'; }, 4000);
+                            if (tbody.querySelectorAll('tr').length === 0) {
+                                tbody.innerHTML = '<tr><td colspan="9" style="padding:40px;text-align:center;color:#9ca3af;font-style:italic;">No reservations yet. <a href="/travel" style="color:#083050;font-weight:700;">Browse available trips &rarr;</a></td></tr>';
+                            }
+                        } else {
+                            var d = await delRes.json();
+                            alert(d.message || 'Could not cancel reservation.');
+                            btn.disabled = false; btn.textContent = 'Cancel';
+                        }
+                    } catch(err) {
+                        alert('Unable to connect. Please try again.');
+                        btn.disabled = false; btn.textContent = 'Cancel';
+                    }
+                });
+            });
+        }
+    } catch(err) { /* leave default empty row */ }
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+        localStorage.removeItem('travlr-token');
+        window.location.href = '/login';
+    });
+
+    // ── Review modal logic ─────────────────────────────────────────────
+    var modal      = document.getElementById('review-modal');
+    var stars      = document.querySelectorAll('.rev-star');
+    var ratingVal  = 0;
+    var activeCode = null;
+    var commentEl  = document.getElementById('review-comment');
+    var countEl    = document.getElementById('review-count');
+    var errEl      = document.getElementById('review-error');
+
+    function paintStars(v) {
+        stars.forEach(function(s) {
+            s.style.color = (parseInt(s.getAttribute('data-v'),10) <= v) ? '#e8b84b' : '#d1d5db';
+        });
+    }
+    stars.forEach(function(s) {
+        s.addEventListener('mouseenter', function() { paintStars(parseInt(s.getAttribute('data-v'),10)); });
+        s.addEventListener('click', function() {
+            ratingVal = parseInt(s.getAttribute('data-v'),10);
+            paintStars(ratingVal);
+        });
+    });
+    document.getElementById('review-stars').addEventListener('mouseleave', function() { paintStars(ratingVal); });
+    commentEl.addEventListener('input', function() { countEl.textContent = commentEl.value.length; });
+
+    var lastFocused = null;
+    function trapFocus(e) {
+        if (modal.style.display === 'none') return;
+        if (e.key === 'Escape') { closeModal(); return; }
+        if (e.key !== 'Tab') return;
+        var focusable = modal.querySelectorAll('button, textarea, [href], [tabindex]:not([tabindex="-1"])');
+        if (!focusable.length) return;
+        var first = focusable[0]; var last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+
+    function openModal(code, name) {
+        activeCode = code;
+        document.getElementById('review-trip-name').textContent = name;
+        ratingVal = 0; paintStars(0);
+        commentEl.value = ''; countEl.textContent = '0';
+        errEl.style.display = 'none';
+        lastFocused = document.activeElement;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        document.addEventListener('keydown', trapFocus);
+        // Move focus into the modal so screen readers/keyboard users land there.
+        setTimeout(function() {
+            var firstStar = modal.querySelector('.rev-star');
+            if (firstStar) firstStar.focus();
+        }, 30);
+    }
+    function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', trapFocus);
+        if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+    }
+
+    document.body.addEventListener('click', function(e) {
+        var btn = e.target.closest('.btn-review');
+        if (btn) openModal(btn.getAttribute('data-code'), btn.getAttribute('data-trip'));
+    });
+    document.getElementById('review-close').addEventListener('click', closeModal);
+    document.getElementById('review-cancel').addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e) { if (e.target === modal) closeModal(); });
+
+    document.getElementById('review-submit').addEventListener('click', async function() {
+        errEl.style.display = 'none';
+        if (ratingVal < 1) { errEl.textContent = 'Please pick a star rating.'; errEl.style.display = 'block'; return; }
+        if (commentEl.value.trim().length < 4) { errEl.textContent = 'Please write a few words about your trip.'; errEl.style.display = 'block'; return; }
+
+        var btn = this; btn.disabled = true; var orig = btn.textContent; btn.textContent = 'Submitting…';
+        try {
+            var r = await fetch('/api/trips/' + activeCode + '/reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                body: JSON.stringify({ rating: ratingVal, comment: commentEl.value.trim() })
+            });
+            var raw = await r.text();
+            var d = {}; try { d = raw ? JSON.parse(raw) : {}; } catch(e) {}
+
+            if (r.ok) {
+                closeModal();
+                var msg = document.getElementById('cancel-message');
+                msg.textContent = '✓ Thanks! Your review has been posted.';
+                msg.style.display = 'block';
+                setTimeout(function() { msg.style.display = 'none'; }, 4500);
+            } else {
+                errEl.textContent = d.message || ('Could not save your review (HTTP ' + r.status + ').');
+                errEl.style.display = 'block';
+            }
+        } catch(err) {
+            errEl.textContent = 'Network error: ' + err.message;
+            errEl.style.display = 'block';
+        } finally {
+            btn.disabled = false; btn.textContent = orig;
+        }
+    });
+})();
+</script>
+
+{{> footer}}

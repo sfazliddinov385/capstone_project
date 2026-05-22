@@ -1,0 +1,174 @@
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">Dashboard</h1>
+    <p class="admin-page-subtitle">A real-time snapshot of bookings, revenue, and customer activity.</p>
+  </div>
+  <div class="admin-page-actions">
+    <a routerLink="/trips" class="btn-admin btn-admin-secondary">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      Trip Catalog
+    </a>
+  </div>
+</div>
+
+<div *ngIf="error" class="admin-alert admin-alert-danger">
+  <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>
+  <div>{{ error }}</div>
+</div>
+
+<div *ngIf="loading" class="admin-card" style="padding: 60px; text-align: center; color: var(--text-muted);">
+  Loading dashboard data&hellip;
+</div>
+
+<ng-container *ngIf="stats && !loading">
+
+  <!-- KPI Strip -->
+  <div class="admin-stats">
+    <div class="admin-stat-card">
+      <div class="admin-stat-head">
+        <div class="admin-stat-label">Total Revenue</div>
+        <div class="admin-stat-icon icon-green">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+      </div>
+      <div class="admin-stat-value">{{ formatCurrency(stats.kpi.totalRevenue) }}</div>
+      <div class="admin-stat-foot">
+        <span class="admin-stat-trend up">Live</span>
+        <span>across {{ stats.kpi.totalBookings }} bookings</span>
+      </div>
+    </div>
+
+    <div class="admin-stat-card">
+      <div class="admin-stat-head">
+        <div class="admin-stat-label">Bookings</div>
+        <div class="admin-stat-icon icon-brand">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
+        </div>
+      </div>
+      <div class="admin-stat-value">{{ stats.kpi.totalBookings }}</div>
+      <div class="admin-stat-foot">
+        <span class="admin-stat-trend flat">Avg</span>
+        <span>{{ formatCurrency(stats.kpi.avgBookingValue) }} / booking</span>
+      </div>
+    </div>
+
+    <div class="admin-stat-card">
+      <div class="admin-stat-head">
+        <div class="admin-stat-label">Customers</div>
+        <div class="admin-stat-icon icon-purple">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M21.5 18c0-2.2-2-4-4.5-4"/></svg>
+        </div>
+      </div>
+      <div class="admin-stat-value">{{ stats.kpi.totalCustomers }}</div>
+      <div class="admin-stat-foot">
+        <span class="admin-stat-trend up">Active</span>
+        <span>registered accounts</span>
+      </div>
+    </div>
+
+    <div class="admin-stat-card">
+      <div class="admin-stat-head">
+        <div class="admin-stat-label">Reviews</div>
+        <div class="admin-stat-icon icon-amber">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+      </div>
+      <div class="admin-stat-value">{{ stats.kpi.totalReviews }}</div>
+      <div class="admin-stat-foot">
+        <span class="admin-stat-trend flat">Verified</span>
+        <span>customer reviews</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart row -->
+  <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px;">
+    <div class="admin-card">
+      <div class="admin-card-head">
+        <div>
+          <h2 class="admin-card-title">
+            <svg class="icon" viewBox="0 0 24 24" style="color: var(--text-muted);"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+            Bookings &amp; Revenue
+          </h2>
+          <div class="admin-card-subtitle">Last 6 months</div>
+        </div>
+      </div>
+      <div class="admin-card-body" style="height: 320px;">
+        <canvas #bookingsChart></canvas>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <div class="admin-card-head">
+        <div>
+          <h2 class="admin-card-title">
+            <svg class="icon" viewBox="0 0 24 24" style="color: var(--text-muted);"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Revenue by Category
+          </h2>
+          <div class="admin-card-subtitle">Trip-category mix</div>
+        </div>
+      </div>
+      <div class="admin-card-body" style="height: 320px;">
+        <canvas #categoryChart></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+    <div class="admin-card">
+      <div class="admin-card-head">
+        <div>
+          <h2 class="admin-card-title">
+            <svg class="icon" viewBox="0 0 24 24" style="color: var(--text-muted);"><path d="M3 3v18h18"/><rect x="7" y="11" width="3" height="7" rx="0.5"/><rect x="12" y="7" width="3" height="11" rx="0.5"/><rect x="17" y="14" width="3" height="4" rx="0.5"/></svg>
+            Top 5 Trips by Bookings
+          </h2>
+          <div class="admin-card-subtitle">Bestsellers across the catalog</div>
+        </div>
+      </div>
+      <div class="admin-card-body" style="height: 280px;">
+        <canvas #topTripsChart></canvas>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <div class="admin-card-head">
+        <div>
+          <h2 class="admin-card-title">
+            <svg class="icon" viewBox="0 0 24 24" style="color: var(--text-muted);"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            Recent Reservations
+          </h2>
+          <div class="admin-card-subtitle">Latest 8 bookings</div>
+        </div>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Trip</th>
+              <th style="text-align:right;">Travelers</th>
+              <th style="text-align:right;">Total</th>
+              <th style="text-align:right;">Booked</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of stats.recentReservations">
+              <td>
+                <div class="trip-cell-name">
+                  <span class="trip-name">{{ r.tripName }}</span>
+                  <span class="trip-resort">{{ r.tripCode }}</span>
+                </div>
+              </td>
+              <td style="text-align:right; font-variant-numeric: tabular-nums;">{{ r.people }}</td>
+              <td style="text-align:right; font-variant-numeric: tabular-nums; font-weight: 600;">{{ formatCurrency(r.totalPrice) }}</td>
+              <td style="text-align:right; color: var(--text-soft); font-variant-numeric: tabular-nums;">{{ formatDate(r.bookedAt) }}</td>
+            </tr>
+            <tr *ngIf="stats.recentReservations.length === 0" class="empty-row">
+              <td colspan="4">No reservations yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</ng-container>

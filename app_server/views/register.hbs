@@ -1,0 +1,104 @@
+{{> header}}
+
+<div class="tg-form-page">
+    <div class="tg-form-card">
+        <div class="tg-form-logo">Travlr <span>Getaways</span></div>
+        <h2>Create Your Account</h2>
+        <p class="subtitle">Join thousands of travelers booking unforgettable getaways.</p>
+
+        <div id="register-error" class="tg-form-error"></div>
+
+        <form id="register-form">
+            <div class="tg-form-group">
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Jane Smith" required autocomplete="name">
+            </div>
+
+            <div class="tg-form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email">
+            </div>
+
+            <div class="tg-form-group">
+                <label for="password">Password <span style="font-size:0.78rem; color:#9ca3af; font-weight:400;">(min. 8 characters)</span></label>
+                <input type="password" id="password" name="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required minlength="8" autocomplete="new-password">
+            </div>
+
+            <div class="tg-form-group">
+                <label for="password2">Confirm Password</label>
+                <input type="password" id="password2" name="password2" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required autocomplete="new-password">
+            </div>
+
+            <div style="margin: -8px 0 20px;">
+                <label style="display:flex; align-items:flex-start; gap:10px; font-size:0.84rem; color:#6b7280; cursor:pointer;">
+                    <input type="checkbox" id="terms" required style="margin-top:2px; flex-shrink:0;">
+                    <span>I agree to the <a href="/terms" target="_blank" style="color:#083050; font-weight:700;">Terms of Service</a> and <a href="/privacy" target="_blank" style="color:#083050; font-weight:700;">Privacy Policy</a>.</span>
+                </label>
+            </div>
+
+            <button type="submit" class="tg-form-submit">Create Account &rarr;</button>
+        </form>
+
+        <div class="tg-form-divider">or</div>
+
+        <div class="tg-form-footer">
+            Already have an account? <a href="/login">Sign in &rarr;</a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('register-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var errorDiv = document.getElementById('register-error');
+    errorDiv.style.display = 'none';
+    var btn = this.querySelector('button[type=submit]');
+    btn.textContent = 'Creating account\u2026'; btn.disabled = true;
+
+    var name      = document.getElementById('name').value;
+    var email     = document.getElementById('email').value;
+    var password  = document.getElementById('password').value;
+    var password2 = document.getElementById('password2').value;
+
+    if (password !== password2) {
+        errorDiv.textContent = 'Passwords do not match.';
+        errorDiv.style.display = 'block';
+        btn.textContent = 'Create Account \u2192'; btn.disabled = false;
+        return;
+    }
+
+    try {
+        var res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({ name: name, email: email, password: password })
+        });
+
+        var raw = await res.text();
+        var data = {};
+        try { data = raw ? JSON.parse(raw) : {}; } catch (parseErr) {
+            errorDiv.textContent = 'Server returned an unexpected response (HTTP ' + res.status + '). Check the Express logs.';
+            errorDiv.style.display = 'block';
+            btn.textContent = 'Create Account \u2192'; btn.disabled = false;
+            console.error('Non-JSON response from /api/register:', raw);
+            return;
+        }
+
+        if (res.ok && data.token) {
+            localStorage.setItem('travlr-token', data.token);
+            window.location.href = '/reservations';
+        } else {
+            errorDiv.textContent = data.message || ('Registration failed (HTTP ' + res.status + ').');
+            errorDiv.style.display = 'block';
+            btn.textContent = 'Create Account \u2192'; btn.disabled = false;
+        }
+    } catch (err) {
+        console.error('Register fetch failed:', err);
+        errorDiv.textContent = 'Network error: ' + (err && err.message ? err.message : 'request failed') + '. Is the server running on port 3000?';
+        errorDiv.style.display = 'block';
+        btn.textContent = 'Create Account \u2192'; btn.disabled = false;
+    }
+});
+</script>
+
+{{> footer}}

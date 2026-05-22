@@ -1,0 +1,131 @@
+{{> header}}
+
+<!-- Breadcrumb -->
+<nav aria-label="Breadcrumb" class="tg-crumb">
+    <div class="tg-crumb-wrap">
+        <a href="/">Home</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <a href="/news">News</a>
+        <span aria-hidden="true">&rsaquo;</span>
+        <span aria-current="page">{{article.title}}</span>
+    </div>
+</nav>
+
+<!-- Article hero -->
+<section class="tg-article-hero" style="background-image: linear-gradient(180deg, rgba(8,32,56,0.0), rgba(8,32,56,0.78)), url('{{article.image}}');">
+    <div class="tg-article-hero-inner">
+        <span class="tg-news-tag {{article.tagClass}}" style="margin-bottom:16px;">{{article.category}}</span>
+        <h1>{{article.title}}</h1>
+        <div class="tg-article-meta">
+            <span>&#128197; {{article.date}}</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>&#9997;&#65039; {{article.author}}</span>
+            <span aria-hidden="true">&middot;</span>
+            <span>&#9201; {{article.readMin}} min read</span>
+        </div>
+    </div>
+</section>
+
+<!-- Article body -->
+<section class="tg-article-body">
+    <div class="tg-article-wrap">
+
+        <article class="tg-article-content">
+            {{#each article.body}}
+                <p>{{this}}</p>
+            {{/each}}
+
+            <!-- Share row -->
+            <div class="tg-article-share">
+                <span class="tg-article-share-label">Share this story</span>
+                <div class="tg-article-share-btns">
+                    <button type="button" class="tg-share-btn" data-share="twitter" aria-label="Share on X">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </button>
+                    <button type="button" class="tg-share-btn" data-share="facebook" aria-label="Share on Facebook">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                    </button>
+                    <button type="button" class="tg-share-btn" data-share="link" aria-label="Copy link">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Author block -->
+            <div class="tg-article-author">
+                <div class="tg-article-author-avatar">{{article.author}}</div>
+                <div>
+                    <div class="tg-article-author-name">{{article.author}}</div>
+                    <div class="tg-article-author-role">Travlr Contributor</div>
+                    <p class="tg-article-author-bio">A member of the Travlr editorial team covering destinations, adventure, and travel culture.</p>
+                </div>
+            </div>
+
+            <!-- Back to news -->
+            <div style="margin-top:36px;">
+                <a href="/news" class="btn-outline" style="background:transparent; color:#083050; border-color:#083050;">
+                    &larr; Back to All News
+                </a>
+            </div>
+        </article>
+
+        <!-- Sidebar with related stories -->
+        <aside class="tg-article-aside">
+            <div class="tg-article-aside-card">
+                <h3>Keep Reading</h3>
+                {{#each related}}
+                    <a href="/news/{{slug}}" class="tg-related-item">
+                        <img src="{{image}}" alt="{{title}}" loading="lazy" onerror="this.src='/images/sea-sound.jpg'">
+                        <div>
+                            <div class="tg-related-cat">{{category}}</div>
+                            <div class="tg-related-title">{{title}}</div>
+                            <div class="tg-related-meta">{{date}} &middot; {{readMin}} min</div>
+                        </div>
+                    </a>
+                {{/each}}
+            </div>
+
+            <div class="tg-article-aside-card tg-article-cta">
+                <div style="font-size:2rem; line-height:1;">&#127758;</div>
+                <h4>Plan Your Trip</h4>
+                <p>Browse 15 all-inclusive packages, hand-picked by our team.</p>
+                <a href="/travel" class="btn-primary" style="display:block; text-align:center;">View Trips &rarr;</a>
+            </div>
+        </aside>
+
+    </div>
+</section>
+
+<script>
+(function() {
+    document.querySelectorAll('.tg-share-btn').forEach(function(btn) {
+        btn.addEventListener('click', async function() {
+            var kind = btn.getAttribute('data-share');
+            var url   = window.location.href;
+            var title = document.title;
+            if (kind === 'twitter') {
+                window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(title) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
+            } else if (kind === 'facebook') {
+                window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url), '_blank', 'noopener');
+            } else if (kind === 'link') {
+                try {
+                    await navigator.clipboard.writeText(url);
+                    var orig = btn.innerHTML;
+                    btn.innerHTML = '&#10003;';
+                    setTimeout(function() { btn.innerHTML = orig; }, 1400);
+                } catch(e) {}
+            }
+        });
+    });
+
+    // Render an avatar initial from the author name
+    var avatarEl = document.querySelector('.tg-article-author-avatar');
+    if (avatarEl) {
+        var name = avatarEl.textContent.trim();
+        var parts = name.split(/\s+/);
+        avatarEl.textContent = ((parts[0]||'')[0] + (parts[1]||'')[0]).toUpperCase();
+    }
+})();
+</script>
+
+{{> footer}}

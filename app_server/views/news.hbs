@@ -1,0 +1,120 @@
+{{> header}}
+
+<!-- Page header -->
+<div class="tg-page-header">
+    <h1>&#128240; Travel News &amp; Tips</h1>
+    <p>Inspiration, guides, and updates from the Travlr team</p>
+</div>
+
+<section class="tg-section tg-section-gray">
+    <div class="tg-section-wrap">
+
+        <div class="tg-news-layout">
+
+            <!-- ── MAIN CONTENT ── -->
+            <main class="tg-news-main">
+
+                <!-- Featured article -->
+                {{#if featured}}
+                <article class="tg-news-featured">
+                    <a href="/news/{{featured.slug}}" class="tg-news-featured-img">
+                        <img src="{{featured.image}}" alt="{{featured.title}}" loading="lazy" onerror="this.src='/images/sea-sound.jpg'">
+                        <span class="tg-news-tag">{{featured.category}}</span>
+                    </a>
+                    <div class="tg-news-featured-body">
+                        <div class="tg-news-meta">
+                            <span class="tg-news-date">&#128197; {{featured.date}}</span>
+                            <span class="tg-news-author">&#9997;&#65039; {{featured.author}}</span>
+                            <span class="tg-news-read">&#9201; {{featured.readMin}} min read</span>
+                        </div>
+                        <h2 class="tg-news-featured-title"><a href="/news/{{featured.slug}}" class="tg-news-link">{{featured.title}}</a></h2>
+                        <p class="tg-news-excerpt">{{featured.excerpt}}</p>
+                        <a href="/news/{{featured.slug}}" class="btn-primary" style="display:inline-block; margin-top:12px;">Read the Full Story &rarr;</a>
+                    </div>
+                </article>
+                {{/if}}
+
+                <!-- Article grid -->
+                <h3 class="tg-news-section-title">Latest Stories</h3>
+                <div class="tg-news-grid">
+                    {{#each articles}}
+                    <article class="tg-news-card">
+                        <a href="/news/{{slug}}" class="tg-news-card-img">
+                            <img src="{{image}}" alt="{{title}}" loading="lazy" onerror="this.src='/images/sea-sound.jpg'">
+                            <span class="tg-news-tag {{tagClass}}">{{category}}</span>
+                        </a>
+                        <div class="tg-news-card-body">
+                            <div class="tg-news-meta">
+                                <span class="tg-news-date">&#128197; {{date}}</span>
+                                <span class="tg-news-read">&#9201; {{readMin}} min read</span>
+                            </div>
+                            <h4 class="tg-news-card-title"><a href="/news/{{slug}}" class="tg-news-link">{{title}}</a></h4>
+                            <p class="tg-news-card-excerpt">{{excerpt}}</p>
+                            <a href="/news/{{slug}}" class="tg-news-read-more">Read More &rarr;</a>
+                        </div>
+                    </article>
+                    {{/each}}
+                </div>
+            </main>
+
+            <!-- ── SIDEBAR ── -->
+            <aside class="tg-news-sidebar">
+
+                <!-- Search -->
+                <div class="tg-news-widget">
+                    <h4 class="tg-news-widget-title">&#128269; Search Articles</h4>
+                    <div class="tg-news-search">
+                        <input type="text" id="news-search" placeholder="Search news&hellip;">
+                        <button>Go</button>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="tg-news-widget">
+                    <h4 class="tg-news-widget-title">&#128196; Categories</h4>
+                    <ul class="tg-news-cat-list">
+                        <li><a href="/news">&#129343; Diving <span>3</span></a></li>
+                        <li><a href="/news">&#9992;&#65039; Travel Tips <span>5</span></a></li>
+                        <li><a href="/news">&#127757; Environment <span>2</span></a></li>
+                        <li><a href="/news">&#129517; Adventure <span>4</span></a></li>
+                        <li><a href="/news">&#127869;&#65039; Food &amp; Culture <span>3</span></a></li>
+                        <li><a href="/news">&#128737;&#65039; Safety <span>2</span></a></li>
+                    </ul>
+                </div>
+
+                <!-- Vacation Tips -->
+                <div class="tg-news-widget">
+                    <h4 class="tg-news-widget-title">&#128161; Vacation Tips</h4>
+                    <ul class="tg-news-tip-list">
+                        <li><a href="/news">What to bring on the beach?</a></li>
+                        <li><a href="/news">Planning Fun Activities</a></li>
+                        <li><a href="/news">Diving Checklist</a></li>
+                        <li><a href="/news">First Aid Basics for Travelers</a></li>
+                        <li><a href="/news">How to Build a Sand Castle</a></li>
+                        <li><a href="/news">Safe Tanning Tips</a></li>
+                    </ul>
+                </div>
+
+                <!-- Newsletter signup -->
+                <div class="tg-news-widget tg-news-newsletter">
+                    <h4 class="tg-news-widget-title">&#128139; Stay in the Loop</h4>
+                    <p>Get the latest travel news, deals, and tips delivered to your inbox every week.</p>
+                    <input type="email" placeholder="Your email address">
+                    <button class="btn-primary" style="width:100%; margin-top:10px;">Subscribe &rarr;</button>
+                </div>
+
+                <!-- Popular trips CTA -->
+                <div class="tg-news-widget tg-news-cta">
+                    <div class="tg-news-cta-icon">&#127758;</div>
+                    <h4>Ready to Travel?</h4>
+                    <p>Browse our 15 all-inclusive trip packages and find your perfect getaway.</p>
+                    <a href="/travel" class="btn-primary" style="display:block; text-align:center; margin-top:14px;">View All Trips &rarr;</a>
+                </div>
+
+            </aside>
+        </div>
+
+    </div>
+</section>
+
+{{> footer}}

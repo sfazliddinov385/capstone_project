@@ -1,0 +1,103 @@
+{{> header}}
+
+<div class="tg-page-header">
+    <h1>&#10084; My Favorites</h1>
+    <p>Trips you've saved for later</p>
+</div>
+
+<section class="tg-section tg-section-gray">
+    <div class="tg-section-wrap">
+
+        <div id="guest-message" style="display:none;">
+            <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.07); padding:60px 40px; text-align:center; max-width:500px; margin:0 auto;">
+                <div style="font-size:3rem; margin-bottom:16px;">&#128274;</div>
+                <h2 style="font-family:'Poppins',sans-serif; color:#083050; margin-bottom:12px;">Sign In Required</h2>
+                <p style="color:#6b7280; margin-bottom:28px; line-height:1.7;">Save trips to your favorites so you can find them later. Sign in or create an account to start a wishlist.</p>
+                <a href="/login" class="btn-primary" style="margin-right:12px;">Sign In</a>
+                <a href="/register" class="btn-outline" style="background:transparent; color:#083050; border-color:#083050;">Create Account</a>
+            </div>
+        </div>
+
+        <div id="empty-state" style="display:none; background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.07); padding:60px 40px; text-align:center; max-width:520px; margin:0 auto;">
+            <div style="font-size:3rem; margin-bottom:16px;">&#128150;</div>
+            <h2 style="font-family:'Poppins',sans-serif; color:#083050; margin-bottom:12px;">No favorites yet</h2>
+            <p style="color:#6b7280; margin-bottom:24px;">Tap the heart on any trip to save it here for later.</p>
+            <a href="/travel" class="btn-primary">Browse Trips &rarr;</a>
+        </div>
+
+        <div id="favorites-grid" class="tg-grid" style="display:none;"></div>
+    </div>
+</section>
+
+<script>
+(async function() {
+    var token = localStorage.getItem('travlr-token');
+    if (!token) {
+        document.getElementById('guest-message').style.display = 'block';
+        return;
+    }
+
+    var grid  = document.getElementById('favorites-grid');
+    var empty = document.getElementById('empty-state');
+
+    try {
+        var res = await fetch('/api/favorites', { headers: { 'Authorization': 'Bearer ' + token } });
+        if (!res.ok) {
+            if (res.status === 401) { document.getElementById('guest-message').style.display = 'block'; return; }
+            empty.style.display = 'block';
+            return;
+        }
+        var trips = await res.json();
+        if (!trips.length) { empty.style.display = 'block'; return; }
+
+        grid.style.display = '';
+        grid.innerHTML = trips.map(function(t) {
+            return ''
+                + '<article class="tg-card">'
+                +   '<div class="tg-card-img">'
+                +     '<img src="' + t.image + '" alt="' + esc(t.name) + '" loading="lazy" onerror="this.src=\'/images/sea-sound.jpg\'">'
+                +     '<button class="tg-fav-heart is-active" data-code="' + t.code + '" aria-label="Remove from favorites">'
+                +       '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>'
+                +     '</button>'
+                +   '</div>'
+                +   '<div class="tg-card-body">'
+                +     '<div class="tg-card-resort">&#128205; ' + esc(t.resort || '') + '</div>'
+                +     '<div class="tg-card-title">' + esc(t.name) + '</div>'
+                +     '<p class="tg-card-desc">' + esc((t.description || '').slice(0, 140)) + '&hellip;</p>'
+                +     '<div class="tg-card-price">'
+                +       '<span class="tg-price-from">from</span>'
+                +       '<span class="tg-price-amount">$' + t.perPerson + '</span>'
+                +       '<span class="tg-price-per">/ person</span>'
+                +     '</div>'
+                +     '<a href="/trip/' + t.code + '" class="btn-add-cart" style="display:inline-block; text-align:center;">View Trip &rarr;</a>'
+                +   '</div>'
+                + '</article>';
+        }).join('');
+
+        grid.addEventListener('click', async function(e) {
+            var heart = e.target.closest('.tg-fav-heart');
+            if (!heart) return;
+            heart.disabled = true;
+            var code = heart.getAttribute('data-code');
+            try {
+                await fetch('/api/favorites/' + code, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + token } });
+                heart.closest('.tg-card').remove();
+                if (!grid.querySelectorAll('.tg-card').length) {
+                    grid.style.display = 'none';
+                    empty.style.display = 'block';
+                }
+            } catch (_) { heart.disabled = false; }
+        });
+    } catch (_) {
+        empty.style.display = 'block';
+    }
+
+    function esc(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, function(c) {
+            return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c];
+        });
+    }
+})();
+</script>
+
+{{> footer}}

@@ -1,0 +1,235 @@
+{{> header}}
+
+<!-- Hero -->
+<div class="tg-contact-hero">
+    <div class="tg-contact-hero-inner">
+        <span class="tg-hero-eyebrow">Get in Touch</span>
+        <h1>We&rsquo;re here when <em>you need us</em>.</h1>
+        <p>Have a question about a trip, a custom itinerary in mind, or already booked and need a hand? Drop us a line. A real human will reply within four hours, every day of the week.</p>
+    </div>
+</div>
+
+<!-- Main grid: form + info cards -->
+<section class="tg-section tg-section-gray">
+    <div class="tg-section-wrap">
+        <div class="tg-contact-grid">
+
+            <!-- Form -->
+            <div class="tg-contact-form-wrap">
+
+                <!-- Pre-submit state -->
+                <div id="tg-contact-pre">
+                    <span class="tg-about-eyebrow">Send a Message</span>
+                    <h2>Tell us what you&rsquo;re planning</h2>
+                    <p class="tg-contact-sub">The more detail you share, the better we can help. Expect a reply within four hours during business hours, twelve hours otherwise.</p>
+
+                    <form id="tg-contact-form" class="tg-contact-form" novalidate>
+                        <div class="tg-form-row">
+                            <div class="tg-form-field">
+                                <label for="cf-name">Your name</label>
+                                <input id="cf-name" name="name" type="text" autocomplete="name" required>
+                            </div>
+                            <div class="tg-form-field">
+                                <label for="cf-email">Email address</label>
+                                <input id="cf-email" name="email" type="email" autocomplete="email" required>
+                            </div>
+                        </div>
+                        <div class="tg-form-field">
+                            <label for="cf-subject">Subject</label>
+                            <select id="cf-subject" name="subject" required>
+                                <option value="">Choose a topic&hellip;</option>
+                                <option>General question</option>
+                                <option>Booking a trip</option>
+                                <option>Changing an existing reservation</option>
+                                <option>Custom itinerary request</option>
+                                <option>Partner / press inquiry</option>
+                                <option>Something else</option>
+                            </select>
+                        </div>
+                        <div class="tg-form-field">
+                            <label for="cf-message">Your message</label>
+                            <textarea id="cf-message" name="message" rows="6" placeholder="Tell us about your travel plans, dates, party size, or anything else we should know&hellip;" required></textarea>
+                        </div>
+                        <div class="tg-form-field tg-form-checkbox">
+                            <label>
+                                <input type="checkbox" id="cf-news" name="news">
+                                <span>Send me occasional emails about new trips (no more than twice a month).</span>
+                            </label>
+                        </div>
+                        <div class="tg-form-submit-row">
+                            <button type="submit" class="btn-about-primary">Send message &rarr;</button>
+                            <span class="tg-form-trust">&#128274; Your details are never shared.</span>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Post-submit state -->
+                <div id="tg-contact-success" class="tg-contact-success" hidden>
+                    <div class="tg-contact-success-badge">&#10003;</div>
+                    <h2>Message sent <span>&middot; thank you!</span></h2>
+                    <p class="tg-contact-success-lead">
+                        We&rsquo;ve received your note and a confirmation will land in
+                        <strong id="tg-success-email">your inbox</strong> shortly.
+                        Expect a personal reply within <strong>four hours</strong> during business
+                        hours, twelve hours otherwise.
+                    </p>
+
+                    <div class="tg-contact-success-meta">
+                        <div>
+                            <div class="tg-contact-success-meta-label">Reference number</div>
+                            <div class="tg-contact-success-meta-val" id="tg-success-ref">&#8226;</div>
+                        </div>
+                        <div>
+                            <div class="tg-contact-success-meta-label">Replying to</div>
+                            <div class="tg-contact-success-meta-val" id="tg-success-subject">&#8226;</div>
+                        </div>
+                    </div>
+
+                    <p class="tg-contact-success-aside">
+                        Already traveling and need help right now? Call our
+                        <a href="tel:+18889872858">24/7 emergency concierge line</a>.
+                    </p>
+
+                    <div class="tg-contact-success-actions">
+                        <a href="/travel" class="btn-about-primary">Browse trips &rarr;</a>
+                        <button type="button" id="tg-send-another" class="btn-about-secondary">Send another message</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Info cards -->
+            <aside class="tg-contact-aside">
+                <div class="tg-contact-card">
+                    <div class="tg-contact-card-icon">&#9993;&#65039;</div>
+                    <div class="tg-contact-card-body">
+                        <div class="tg-contact-card-label">Email</div>
+                        <a href="mailto:hello@travlr-getaways.com">hello@travlr-getaways.com</a>
+                        <span class="tg-contact-card-meta">Replies within 4 hours</span>
+                    </div>
+                </div>
+
+                <div class="tg-contact-card">
+                    <div class="tg-contact-card-icon">&#128222;</div>
+                    <div class="tg-contact-card-body">
+                        <div class="tg-contact-card-label">Phone</div>
+                        <a href="tel:+18889872857">+1 (888) 987-2857</a>
+                        <span class="tg-contact-card-meta">Mon to Fri &middot; 8am to 8pm ET</span>
+                    </div>
+                </div>
+
+                <div class="tg-contact-card">
+                    <div class="tg-contact-card-icon">&#128205;</div>
+                    <div class="tg-contact-card-body">
+                        <div class="tg-contact-card-label">Headquarters</div>
+                        <a href="https://maps.google.com" target="_blank" rel="noopener">
+                            225 Harbor Way, Suite 4B<br>
+                            Boston, MA 02110
+                        </a>
+                        <span class="tg-contact-card-meta">By appointment only</span>
+                    </div>
+                </div>
+
+                <div class="tg-contact-card tg-contact-card-emergency">
+                    <div class="tg-contact-card-icon">&#9888;&#65039;</div>
+                    <div class="tg-contact-card-body">
+                        <div class="tg-contact-card-label">Already traveling? Need help now?</div>
+                        <a href="tel:+18889872858">+1 (888) 987-2858</a>
+                        <span class="tg-contact-card-meta">24/7 emergency concierge line</span>
+                    </div>
+                </div>
+
+                <div class="tg-contact-hours">
+                    <h4>Office Hours</h4>
+                    <ul>
+                        <li><span>Monday to Friday</span><span>8am to 8pm ET</span></li>
+                        <li><span>Saturday</span><span>10am to 6pm ET</span></li>
+                        <li><span>Sunday</span><span>Email only</span></li>
+                        <li class="tg-hours-emergency"><span>Emergency line</span><span>24 / 7 / 365</span></li>
+                    </ul>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section class="tg-section">
+    <div class="tg-section-wrap">
+        <div class="tg-section-head">
+            <span class="tg-about-eyebrow">Quick Answers</span>
+            <h2>Before you reach out</h2>
+            <p class="tg-section-sub">The four questions we get most often. If yours isn&rsquo;t here, send us a note above, we&rsquo;re happy to help.</p>
+        </div>
+
+        <div class="tg-faq-list">
+            <details class="tg-faq-item" open>
+                <summary>How quickly will I hear back?</summary>
+                <p>Within four hours during our business hours (Mon to Fri, 8am to 8pm ET; Sat 10am to 6pm). Outside of that, within twelve hours. If you&rsquo;re already on a trip with us and need help right now, call the emergency concierge line on the right. We answer twenty-four hours a day, every day of the year.</p>
+            </details>
+            <details class="tg-faq-item">
+                <summary>Can I change or cancel a trip I&rsquo;ve already booked?</summary>
+                <p>Yes. Party-size changes and date changes can be made directly from your reservations page if there&rsquo;s still inventory. For anything more complicated, send us a message with your booking code and we&rsquo;ll handle it. Cancellations are free up to 30 days before departure, 50% refundable up to 14 days, non-refundable thereafter (unless we&rsquo;re cancelling the trip, in which case you&rsquo;re refunded in full).</p>
+            </details>
+            <details class="tg-faq-item">
+                <summary>Do you arrange custom or private itineraries?</summary>
+                <p>We do. Pick &ldquo;Custom itinerary request&rdquo; in the subject dropdown on the form, tell us your dates, party size, and what you&rsquo;re hoping the trip will feel like, and one of our itinerary designers will come back with a draft within two business days.</p>
+            </details>
+            <details class="tg-faq-item">
+                <summary>Is my payment information safe?</summary>
+                <p>We don&rsquo;t store full payment details on our servers. Card data is tokenized through our PCI-DSS-compliant processor, and authentication is protected with bcrypt-hashed passwords, role-scoped access controls, and signed session tokens. Read more on our security posture in the <a href="/about">about page</a>.</p>
+            </details>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    var form    = document.getElementById('tg-contact-form');
+    var pre     = document.getElementById('tg-contact-pre');
+    var success = document.getElementById('tg-contact-success');
+    var again   = document.getElementById('tg-send-another');
+    var emailEl = document.getElementById('tg-success-email');
+    var refEl   = document.getElementById('tg-success-ref');
+    var subjEl  = document.getElementById('tg-success-subject');
+    if (!form || !pre || !success) return;
+
+    function makeRef() {
+        // Short, friendly reference: TG-<yymmdd>-<random4>
+        var d   = new Date();
+        var ymd = String(d.getFullYear() % 100).padStart(2, '0')
+                + String(d.getMonth() + 1).padStart(2, '0')
+                + String(d.getDate()).padStart(2, '0');
+        var rnd = Math.floor(1000 + Math.random() * 9000);
+        return 'TG-' + ymd + '-' + rnd;
+    }
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (!form.checkValidity()) { form.reportValidity(); return; }
+
+        // Capture for the success state
+        var email   = (document.getElementById('cf-email').value   || '').trim();
+        var subject = (document.getElementById('cf-subject').value || '').trim();
+        emailEl.textContent = email   || 'your inbox';
+        refEl.textContent   = makeRef();
+        subjEl.textContent  = subject || 'Your message';
+
+        pre.hidden = true;
+        success.hidden = false;
+        success.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    if (again) {
+        again.addEventListener('click', function() {
+            success.hidden = true;
+            pre.hidden = false;
+            form.reset();
+            pre.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
+})();
+</script>
+
+{{> footer}}

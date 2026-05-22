@@ -1,0 +1,83 @@
+<div class="admin-login-page">
+
+  <!-- Brand panel -->
+  <div class="admin-login-art">
+    <div class="admin-login-art-brand">
+      <div class="mark">T</div>
+      <div>
+        <div>Travlr</div>
+        <div style="font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--slate-500); font-weight: 500;">Admin Console</div>
+      </div>
+    </div>
+
+    <div>
+      <h1>Run the resort,<br>from anywhere<em>.</em></h1>
+      <p>Manage the trip catalog, monitor seat inventory in realtime, and review every customer account. Sign in with your administrator credentials to continue.</p>
+
+      <div class="admin-login-art-stats">
+        <div>
+          <div class="admin-login-art-stat-num">19</div>
+          <div class="admin-login-art-stat-label">Active trips</div>
+        </div>
+        <div>
+          <div class="admin-login-art-stat-num">6</div>
+          <div class="admin-login-art-stat-label">Categories</div>
+        </div>
+        <div>
+          <div class="admin-login-art-stat-num">24/7</div>
+          <div class="admin-login-art-stat-label">Operations</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-login-art-foot">&copy; Travlr Getaways &middot; Internal use only</div>
+  </div>
+
+  <!-- Login form -->
+  <div class="admin-login-form-wrap">
+    <div class="admin-login-card">
+      <h2>Sign in</h2>
+      <p class="lead">Enter your administrator credentials.</p>
+
+      <div *ngIf="errorMessage" class="admin-alert admin-alert-danger">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>
+        <div>{{ errorMessage }}</div>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <div class="admin-field" style="margin-bottom:14px;">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email"
+                 placeholder="admin@travlr.com"
+                 [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          <span class="err" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+            A valid email is required.
+          </span>
+        </div>
+
+        <div class="admin-field" style="margin-bottom:20px;">
+          <label for="password">Password</label>
+          <input id="password" type="password" formControlName="password"
+                 placeholder="Your password"
+                 [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          <span class="err" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+            Password is required.
+          </span>
+        </div>
+
+        <button type="submit" class="btn-admin btn-admin-primary"
+                style="width:100%; justify-content:center; padding: 10px 14px;"
+                [disabled]="loginForm.invalid">
+          Sign in
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </form>
+
+      <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-muted); text-align: center;">
+        Protected area &middot; <a href="http://localhost:3000/" target="_blank" rel="noopener" style="color: var(--brand); text-decoration: none; font-weight: 500;">Go to public site &rarr;</a>
+      </div>
+    </div>
+  </div>
+
+</div>

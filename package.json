@@ -1,0 +1,25 @@
+{
+  "name": "travlr-getaways",
+  "version": "1.0.0",
+  "description": "Module 2: Express + HBS MVC site for Travlr Getaways",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "seed": "node app_server/data/load-db.js",
+    "test": "node --test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.5.1",
+    "hbs": "^4.2.0",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.3.3",
+    "nodemailer": "^8.0.5"
+  }
+}

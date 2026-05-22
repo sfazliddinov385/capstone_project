@@ -1,0 +1,206 @@
+<!-- Page header -->
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">Trip Catalog</h1>
+    <p class="admin-page-subtitle">Manage every package shown on the customer site.</p>
+  </div>
+  <div class="admin-page-actions">
+    <button class="btn-admin btn-admin-secondary" (click)="exportNoop()">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+      Export
+    </button>
+    <a *ngIf="isAdmin()" routerLink="/add-trip" class="btn-admin btn-admin-primary">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Add Trip
+    </a>
+  </div>
+</div>
+
+<!-- Alert -->
+<div *ngIf="message" class="admin-alert admin-alert-warning">
+  <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>
+  <div>{{ message }}</div>
+</div>
+
+<!-- KPI stats -->
+<div class="admin-stats">
+  <div class="admin-stat-card">
+    <div class="admin-stat-head">
+      <div class="admin-stat-label">Total Trips</div>
+      <div class="admin-stat-icon icon-brand">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+    </div>
+    <div class="admin-stat-value">{{ trips.length }}</div>
+    <div class="admin-stat-foot">
+      <span class="admin-stat-trend up">
+        <svg class="icon" viewBox="0 0 24 24" style="width:10px; height:10px;"><path d="M6 14l6-6 6 6"/></svg>
+        Active
+      </span>
+      <span>{{ view.length }} match filters</span>
+    </div>
+  </div>
+
+  <div class="admin-stat-card">
+    <div class="admin-stat-head">
+      <div class="admin-stat-label">Open Seats</div>
+      <div class="admin-stat-icon icon-green">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M21.5 18c0-2.2-2-4-4.5-4"/></svg>
+      </div>
+    </div>
+    <div class="admin-stat-value">{{ totalSeats() }}</div>
+    <div class="admin-stat-foot">
+      <span class="admin-stat-trend flat">Realtime</span>
+      <span>across all listed trips</span>
+    </div>
+  </div>
+
+  <div class="admin-stat-card">
+    <div class="admin-stat-head">
+      <div class="admin-stat-label">Avg Price / Person</div>
+      <div class="admin-stat-icon icon-amber">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      </div>
+    </div>
+    <div class="admin-stat-value">${{ averagePrice() }}</div>
+    <div class="admin-stat-foot">
+      <span class="admin-stat-trend up">USD</span>
+      <span>{{ trips.length }} packages</span>
+    </div>
+  </div>
+
+  <div class="admin-stat-card">
+    <div class="admin-stat-head">
+      <div class="admin-stat-label">Categories</div>
+      <div class="admin-stat-icon icon-purple">
+        <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+    </div>
+    <div class="admin-stat-value">{{ uniqueCategories() }}</div>
+    <div class="admin-stat-foot">
+      <span class="admin-stat-trend flat">Active</span>
+      <span>experience types</span>
+    </div>
+  </div>
+</div>
+
+<!-- Data card with toolbar + table -->
+<div class="admin-card">
+  <div class="admin-card-head">
+    <div>
+      <h2 class="admin-card-title">
+        <svg class="icon" viewBox="0 0 24 24" style="color: var(--text-muted);"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        All Trips
+      </h2>
+      <div class="admin-card-subtitle">Click any column header to sort the table.</div>
+    </div>
+    <div class="admin-toolbar" style="flex: initial;">
+      <div class="admin-search">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+        <input
+          type="text"
+          placeholder="Search by trip, code, or resort..."
+          [(ngModel)]="search"
+          (input)="onFilterChange()" />
+      </div>
+      <select class="admin-select" [(ngModel)]="category" (change)="onFilterChange()">
+        <option value="">All categories</option>
+        <option *ngFor="let c of categoryOptions.slice(1)" [value]="c">{{ c }}</option>
+      </select>
+      <span class="admin-result-count">
+        <strong>{{ view.length }}</strong> of {{ trips.length }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Active filter chips -->
+  <div *ngIf="search || category" style="padding: 10px 18px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; background: var(--slate-25);">
+    <span style="font-size: 11.5px; color: var(--text-muted); letter-spacing: 0.3px; text-transform: uppercase; font-weight: 600;">Filters:</span>
+    <span *ngIf="search" class="filter-chip">
+      Search: "{{ search }}"
+      <button (click)="clearSearch()" aria-label="Clear search">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" style="width:11px; height:11px;"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </span>
+    <span *ngIf="category" class="filter-chip">
+      Category: {{ category }}
+      <button (click)="clearCategory()" aria-label="Clear category">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" style="width:11px; height:11px;"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </span>
+    <button class="btn-admin btn-admin-ghost btn-admin-sm" (click)="clearFilters()" style="margin-left: auto;">
+      Clear all
+    </button>
+  </div>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th class="sortable" (click)="setSort('code')">
+            Code <span class="sort-arrow" [class.asc]="sortKey==='code' && sortDir==='asc'" [class.desc]="sortKey==='code' && sortDir==='desc'"></span>
+          </th>
+          <th class="sortable" (click)="setSort('name')">
+            Trip <span class="sort-arrow" [class.asc]="sortKey==='name' && sortDir==='asc'" [class.desc]="sortKey==='name' && sortDir==='desc'"></span>
+          </th>
+          <th class="sortable" (click)="setSort('category')">
+            Category <span class="sort-arrow" [class.asc]="sortKey==='category' && sortDir==='asc'" [class.desc]="sortKey==='category' && sortDir==='desc'"></span>
+          </th>
+          <th>Difficulty</th>
+          <th class="sortable" (click)="setSort('start')">
+            Start <span class="sort-arrow" [class.asc]="sortKey==='start' && sortDir==='asc'" [class.desc]="sortKey==='start' && sortDir==='desc'"></span>
+          </th>
+          <th class="sortable" (click)="setSort('perPerson')" style="text-align:right;">
+            Price <span class="sort-arrow" [class.asc]="sortKey==='perPerson' && sortDir==='asc'" [class.desc]="sortKey==='perPerson' && sortDir==='desc'"></span>
+          </th>
+          <th class="sortable" (click)="setSort('spotsLeft')" style="text-align:right;">
+            Seats <span class="sort-arrow" [class.asc]="sortKey==='spotsLeft' && sortDir==='asc'" [class.desc]="sortKey==='spotsLeft' && sortDir==='desc'"></span>
+          </th>
+          <th>Status</th>
+          <th *ngIf="isAdmin()" style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngIf="loading" class="empty-row">
+          <td [attr.colspan]="isAdmin() ? 9 : 8">Loading trips&hellip;</td>
+        </tr>
+
+        <tr *ngFor="let trip of view">
+          <td><span class="code-pill">{{ trip.code }}</span></td>
+          <td>
+            <div class="trip-cell-name">
+              <span class="trip-name">{{ trip.name }}</span>
+              <span class="trip-resort">{{ trip.resort }}</span>
+            </div>
+          </td>
+          <td><span [class]="categoryClass(trip.category)">{{ trip.category || '—' }}</span></td>
+          <td><span [class]="difficultyClass(trip.difficulty)">{{ trip.difficulty || '—' }}</span></td>
+          <td style="color: var(--text-soft); font-variant-numeric: tabular-nums;">{{ trip.start | date:'mediumDate' }}</td>
+          <td class="price-cell" style="text-align:right; font-variant-numeric: tabular-nums;">${{ trip.perPerson }} <span class="price-unit">/ pp</span></td>
+          <td style="text-align:right; font-variant-numeric: tabular-nums;">{{ trip.spotsLeft ?? 0 }}</td>
+          <td><span [class]="statusFor(trip).cls">{{ statusFor(trip).label }}</span></td>
+          <td *ngIf="isAdmin()">
+            <div class="row-actions">
+              <button class="icon-btn" title="Edit trip" (click)="editTrip(trip)">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M14 4l6 6L8 22H2v-6L14 4z"/></svg>
+              </button>
+              <button class="icon-btn icon-danger" title="Delete trip" (click)="deleteTrip(trip)">
+                <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="!loading && view.length === 0" class="empty-row">
+          <td [attr.colspan]="isAdmin() ? 9 : 8">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+              <svg viewBox="0 0 24 24" style="width:32px; height:32px; stroke: var(--text-faint); fill:none; stroke-width:1.4;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+              <strong style="color: var(--text); font-weight: 600;">No trips found</strong>
+              <span>Try clearing your search or filters.</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

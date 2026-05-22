@@ -1,0 +1,108 @@
+<ng-container *ngIf="isLoggedIn(); else loggedOutShell">
+
+  <div class="admin-shell">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="admin-sidebar">
+      <div class="admin-brand">
+        <div class="admin-brand-mark">T</div>
+        <div>
+          <div class="admin-brand-name">Travlr</div>
+          <div class="admin-brand-sub">Admin Console</div>
+        </div>
+      </div>
+
+      <div class="admin-nav-section">Operations</div>
+      <nav class="admin-nav">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+          Dashboard
+        </a>
+        <a routerLink="/trips" routerLinkActive="active">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+          Trip Catalog
+        </a>
+        <a *ngIf="isAdmin()" routerLink="/add-trip" routerLinkActive="active">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+          New Trip
+        </a>
+        <a *ngIf="isAdmin()" routerLink="/customers" routerLinkActive="active">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M21.5 18c0-2.2-2-4-4.5-4"/></svg>
+          Customers
+        </a>
+      </nav>
+
+      <div class="admin-nav-section">External</div>
+      <nav class="admin-nav">
+        <a href="http://localhost:3000/" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
+          Public Site
+        </a>
+        <a href="http://localhost:3000/travel" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M21 16l-9 5-9-5V8l9-5 9 5v8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
+          Live Catalog
+        </a>
+        <a href="http://localhost:3000/news" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h12v16H4z"/><path d="M16 8h4v10a2 2 0 01-2 2h-2"/><path d="M7 8h6M7 12h6M7 16h4"/></svg>
+          News &amp; Tips
+        </a>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <span class="status-dot"></span>
+        <span>API connected &middot; v1.0</span>
+      </div>
+    </aside>
+
+    <!-- ============ TOPBAR ============ -->
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <nav class="admin-breadcrumb">
+          <span class="crumb">Admin</span>
+          <span class="sep">/</span>
+          <span class="current">{{ currentPageTitle() }}</span>
+        </nav>
+        <div class="admin-topbar-search">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+          <input type="text" placeholder="Search trips, customers, codes..." disabled>
+          <kbd>⌘K</kbd>
+        </div>
+      </div>
+
+      <div class="admin-topbar-right">
+        <a class="tb-iconbtn" href="http://localhost:3000/" target="_blank" rel="noopener" title="View site">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
+        </a>
+        <button class="tb-iconbtn" title="Help">
+          <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 015 0c0 1.5-2.5 2-2.5 4"/><circle cx="12" cy="17" r="0.6" fill="currentColor"/></svg>
+        </button>
+        <button class="tb-iconbtn" title="Notifications">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 21a2 2 0 004 0"/></svg>
+          <span class="badge-dot"></span>
+        </button>
+        <div class="tb-divider"></div>
+        <div class="admin-user-pill">
+          <div class="admin-user-avatar">{{ userInitial() }}</div>
+          <div class="admin-user-info">
+            <span class="admin-user-name">{{ userName() || 'Admin' }}</span>
+            <span class="admin-user-role">{{ isAdmin() ? 'Administrator' : 'Staff' }}</span>
+          </div>
+        </div>
+        <button class="tb-iconbtn" (click)="logout()" title="Sign out">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3"/><path d="M10 17l-5-5 5-5M5 12h12"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="admin-main">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+</ng-container>
+
+<ng-template #loggedOutShell>
+  <router-outlet></router-outlet>
+</ng-template>

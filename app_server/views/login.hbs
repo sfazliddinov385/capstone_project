@@ -1,0 +1,76 @@
+{{> header}}
+
+<div class="tg-form-page">
+    <div class="tg-form-card">
+        <div class="tg-form-logo">Travlr <span>Getaways</span></div>
+        <h2>Welcome back</h2>
+        <p class="subtitle">Sign in to manage your reservations and bookings.</p>
+
+        <div id="login-error" class="tg-form-error"></div>
+
+        <form id="login-form">
+            <div class="tg-form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+            </div>
+            <div class="tg-form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+            </div>
+            <button type="submit" class="tg-form-submit">Sign In &rarr;</button>
+        </form>
+
+        <div class="tg-form-divider">or</div>
+
+        <div class="tg-form-footer">
+            Don&rsquo;t have an account? <a href="/register">Create one free &rarr;</a>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('login-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var errorDiv = document.getElementById('login-error');
+    errorDiv.style.display = 'none';
+    var btn = this.querySelector('button[type=submit]');
+    btn.textContent = 'Signing in\u2026'; btn.disabled = true;
+
+    try {
+        var res  = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+            body: JSON.stringify({
+                email:    document.getElementById('email').value,
+                password: document.getElementById('password').value
+            })
+        });
+
+        var raw = await res.text();
+        var data = {};
+        try { data = raw ? JSON.parse(raw) : {}; } catch (parseErr) {
+            errorDiv.textContent = 'Server returned an unexpected response (HTTP ' + res.status + '). Check the Express logs.';
+            errorDiv.style.display = 'block';
+            btn.textContent = 'Sign In \u2192'; btn.disabled = false;
+            console.error('Non-JSON response from /api/login:', raw);
+            return;
+        }
+
+        if (res.ok && data.token) {
+            localStorage.setItem('travlr-token', data.token);
+            window.location.href = '/reservations';
+        } else {
+            errorDiv.textContent = data.message || ('Login failed (HTTP ' + res.status + ').');
+            errorDiv.style.display = 'block';
+            btn.textContent = 'Sign In \u2192'; btn.disabled = false;
+        }
+    } catch (err) {
+        console.error('Login fetch failed:', err);
+        errorDiv.textContent = 'Network error: ' + (err && err.message ? err.message : 'request failed') + '. Is the server running on port 3000?';
+        errorDiv.style.display = 'block';
+        btn.textContent = 'Sign In \u2192'; btn.disabled = false;
+    }
+});
+</script>
+
+{{> footer}}

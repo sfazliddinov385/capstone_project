@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}} | Travlr Getaways</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<a href="#main-content" class="tg-skip-link">Skip to main content</a>
+
+<nav id="tg-nav" aria-label="Primary">
+    <div class="nav-inner">
+        <a href="/" class="nav-logo">Travlr <span>Getaways</span></a>
+        <ul class="nav-links">
+            <li><a href="/travel">Trips</a></li>
+            <li><a href="/news">News</a></li>
+            <li><a href="/favorites" aria-label="My Favorites">&#10084; Favorites</a></li>
+            <li><a href="/reservations">Reservations</a></li>
+            <li><a href="http://localhost:4200" target="_blank" rel="noopener">Admin</a></li>
+            <li>
+                <a href="/checkout" class="nav-cart-link">
+                    &#128722; Cart
+                    <span id="cart-badge">0</span>
+                </a>
+            </li>
+            <li><a href="/login" class="nav-btn">&#128100; Login</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main id="main-content" role="main">
+
+<script>
+(function() {
+    function refreshCartBadge() {
+        var cart = [];
+        try { cart = JSON.parse(localStorage.getItem('travlr-cart') || '[]'); } catch(e) {}
+        var badge = document.getElementById('cart-badge');
+        if (!badge) return;
+        if (cart.length > 0) { badge.textContent = cart.length; badge.style.display = 'inline-block'; }
+        else { badge.style.display = 'none'; }
+    }
+    refreshCartBadge();
+    window.addEventListener('storage', refreshCartBadge);
+    window.refreshCartBadge = refreshCartBadge;
+})();
+</script>

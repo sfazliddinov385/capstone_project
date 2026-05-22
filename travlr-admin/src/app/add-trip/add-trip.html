@@ -1,0 +1,137 @@
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">New Trip</h1>
+    <p class="admin-page-subtitle">Add a destination to the public catalog. All fields marked are required.</p>
+  </div>
+  <div class="admin-page-actions">
+    <a routerLink="/" class="btn-admin btn-admin-secondary">Cancel</a>
+  </div>
+</div>
+
+<div *ngIf="message" class="admin-alert admin-alert-danger">
+  <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>
+  <div>{{ message }}</div>
+</div>
+
+<div class="admin-card">
+  <div class="admin-card-head">
+    <div>
+      <h2 class="admin-card-title">
+        <svg class="icon" viewBox="0 0 24 24" style="color: var(--text-muted);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Trip Details
+      </h2>
+      <div class="admin-card-subtitle">All fields marked required. The trip code must be unique.</div>
+    </div>
+  </div>
+  <div class="admin-card-body">
+    <form [formGroup]="addForm" (ngSubmit)="onSubmit()">
+
+      <div class="admin-form-grid">
+        <div class="admin-field">
+          <label>Trip Code</label>
+          <input type="text" formControlName="code" placeholder="e.g. REEF210214"
+                 [class.is-invalid]="submitted && f['code'].errors">
+          <span class="err" *ngIf="submitted && f['code'].errors">Trip code is required.</span>
+        </div>
+
+        <div class="admin-field">
+          <label>Trip Name</label>
+          <input type="text" formControlName="name"
+                 [class.is-invalid]="submitted && f['name'].errors">
+          <span class="err" *ngIf="submitted && f['name'].errors">Trip name is required.</span>
+        </div>
+
+        <div class="admin-field">
+          <label>Length</label>
+          <input type="text" formControlName="length" placeholder="e.g. 5 nights / 6 days"
+                 [class.is-invalid]="submitted && f['length'].errors">
+          <span class="err" *ngIf="submitted && f['length'].errors">Length is required.</span>
+        </div>
+
+        <div class="admin-field">
+          <label>Start Date</label>
+          <input type="date" formControlName="start"
+                 [class.is-invalid]="submitted && f['start'].errors">
+          <span class="err" *ngIf="submitted && f['start'].errors">Start date is required.</span>
+        </div>
+
+        <div class="admin-field">
+          <label>Resort</label>
+          <input type="text" formControlName="resort"
+                 [class.is-invalid]="submitted && f['resort'].errors">
+          <span class="err" *ngIf="submitted && f['resort'].errors">Resort is required.</span>
+        </div>
+
+        <div class="admin-field">
+          <label>Departure City</label>
+          <input type="text" formControlName="departureCity" placeholder="e.g. New York (JFK)">
+        </div>
+
+        <div class="admin-field">
+          <label>Category</label>
+          <select formControlName="category">
+            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+
+        <div class="admin-field">
+          <label>Difficulty</label>
+          <select formControlName="difficulty">
+            <option *ngFor="let d of difficulties" [value]="d">{{ d }}</option>
+          </select>
+        </div>
+
+        <div class="admin-field">
+          <label>Spots Available</label>
+          <input type="number" formControlName="spotsLeft" min="0">
+        </div>
+
+        <div class="admin-field">
+          <label>Per Person ($)</label>
+          <input type="text" formControlName="perPerson" placeholder="e.g. 1299"
+                 [class.is-invalid]="submitted && f['perPerson'].errors">
+          <span class="err" *ngIf="submitted && f['perPerson'].errors">Price is required.</span>
+        </div>
+
+        <div class="admin-field">
+          <label>Rating (0-5)</label>
+          <input type="number" formControlName="rating" min="0" max="5" step="0.1">
+        </div>
+
+        <div class="admin-field">
+          <label>Review Count</label>
+          <input type="number" formControlName="reviewCount" min="0">
+        </div>
+
+        <div class="admin-field full">
+          <label>Image URL or Path</label>
+          <input type="text" formControlName="image" placeholder="e.g. /images/reef1.jpg"
+                 [class.is-invalid]="submitted && f['image'].errors">
+          <span class="err" *ngIf="submitted && f['image'].errors">Image path is required.</span>
+        </div>
+
+        <div class="admin-field full">
+          <label>What's Included <span class="hint">(comma-separated)</span></label>
+          <input type="text" formControlName="includes"
+                 placeholder="e.g. Round-trip flights, 5 nights hotel, All meals">
+        </div>
+
+        <div class="admin-field full">
+          <label>Description</label>
+          <textarea formControlName="description" rows="4"
+                    [class.is-invalid]="submitted && f['description'].errors"></textarea>
+          <span class="err" *ngIf="submitted && f['description'].errors">Description is required.</span>
+        </div>
+      </div>
+
+      <div class="admin-form-actions">
+        <a routerLink="/" class="btn-admin btn-admin-secondary">Cancel</a>
+        <button type="submit" class="btn-admin btn-admin-success">
+          <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+          Save Trip
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

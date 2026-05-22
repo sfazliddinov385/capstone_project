@@ -1,0 +1,260 @@
+{{> header}}
+
+<!-- ── HERO ── -->
+<section class="tg-hero">
+    <div class="tg-hero-bg">
+        <div class="tg-hero-blob tg-hero-blob-1"></div>
+        <div class="tg-hero-blob tg-hero-blob-2"></div>
+        <div class="tg-hero-blob tg-hero-blob-3"></div>
+    </div>
+
+    <div class="tg-hero-inner">
+
+        <!-- ── LEFT: copy + search ── -->
+        <div class="tg-hero-left">
+            <div class="tg-hero-eyebrow">
+                <span class="tg-eyebrow-dot"></span>
+                World-class travel experiences
+            </div>
+
+            <h1>Where will your<br><em>next adventure</em><br>begin?</h1>
+
+            <p>Handpicked destinations, all-inclusive packages, and 24/7 concierge support. Everything you need for an unforgettable journey.</p>
+
+            <form class="tg-hero-search" onsubmit="event.preventDefault(); window.location.href='/travel?q='+encodeURIComponent(document.getElementById('hero-search').value);">
+                <div class="tg-hero-search-field">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <input type="text" id="hero-search" placeholder="Where to? Bali, Maldives, Seychelles…" autocomplete="off">
+                </div>
+                <button type="submit" class="tg-hero-search-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+                    Search
+                </button>
+            </form>
+
+            <div class="tg-hero-cta-row">
+                <a href="/travel" class="btn-primary">Explore Trips &rarr;</a>
+                <a href="/register" class="btn-outline">Create Free Account</a>
+            </div>
+
+            <div class="tg-hero-trust">
+                <div class="tg-trust-item">
+                    <div class="tg-trust-num">4.9 <span style="color:#e8b84b;">&#9733;</span></div>
+                    <div class="tg-trust-label">From 2,300 reviews</div>
+                </div>
+                <div class="tg-trust-divider"></div>
+                <div class="tg-trust-item">
+                    <div class="tg-trust-num">12k+</div>
+                    <div class="tg-trust-label">Happy travelers</div>
+                </div>
+                <div class="tg-trust-divider"></div>
+                <div class="tg-trust-item">
+                    <div class="tg-trust-num">50+</div>
+                    <div class="tg-trust-label">Destinations</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── RIGHT: photo collage ── -->
+        <div class="tg-hero-right">
+            <div class="tg-hero-photos">
+                <div class="tg-photo tg-photo-main">
+                    <img src="/images/tropical-lagoon.jpg" alt="Tropical lagoon">
+                    <div class="tg-photo-meta">
+                        <div class="tg-photo-pin">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            Maldives
+                        </div>
+                        <div class="tg-photo-title">Crystal Lagoon Retreat</div>
+                    </div>
+                </div>
+
+                <div class="tg-photo tg-photo-side tg-photo-side-1">
+                    <img src="/images/swiss-alps.jpg" alt="Swiss Alps">
+                    <div class="tg-photo-tag">Swiss Alps</div>
+                </div>
+
+                <div class="tg-photo tg-photo-side tg-photo-side-2">
+                    <img src="/images/seychelles.jpg" alt="Seychelles">
+                    <div class="tg-photo-tag">Seychelles</div>
+                </div>
+
+                <!-- Floating rating card -->
+                <div class="tg-hero-float">
+                    <div class="tg-hero-float-icon">
+                        <svg viewBox="0 0 24 24" fill="#e8b84b" stroke="#e8b84b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    </div>
+                    <div>
+                        <div class="tg-hero-float-num">4.9 / 5</div>
+                        <div class="tg-hero-float-label">Traveler rating</div>
+                    </div>
+                </div>
+
+                <!-- Floating destination count -->
+                <div class="tg-hero-float-2">
+                    <div class="tg-hero-float-bars">
+                        <span></span><span></span><span></span><span></span>
+                    </div>
+                    <div>
+                        <div class="tg-hero-float-num">98%</div>
+                        <div class="tg-hero-float-label">Would book again</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="tg-stats">
+    <div class="tg-stats-inner">
+        <div class="tg-stat">
+            <span class="tg-stat-number">50+</span>
+            <span class="tg-stat-label">Destinations</span>
+        </div>
+        <div class="tg-stat">
+            <span class="tg-stat-number">12K+</span>
+            <span class="tg-stat-label">Happy Travelers</span>
+        </div>
+        <div class="tg-stat">
+            <span class="tg-stat-number">98%</span>
+            <span class="tg-stat-label">Satisfaction Rate</span>
+        </div>
+        <div class="tg-stat">
+            <span class="tg-stat-number">15+</span>
+            <span class="tg-stat-label">Years of Experience</span>
+        </div>
+    </div>
+</div>
+
+<!-- ── WHY CHOOSE US ── -->
+<section class="tg-section tg-section-white">
+    <div class="tg-section-wrap">
+        <div class="tg-section-head">
+            <div class="tg-section-label">Why Travlr</div>
+            <h2 class="tg-section-title">Travel Smarter, Live Better</h2>
+            <p class="tg-section-sub">We take the stress out of travel planning so every trip feels effortless.</p>
+        </div>
+        <div class="tg-features">
+            <div class="tg-feature">
+                <div class="tg-feature-icon">&#9992;</div>
+                <h3>Curated Packages</h3>
+                <p>Every trip is hand-selected by our travel experts for exceptional quality, value, and unforgettable experiences.</p>
+            </div>
+            <div class="tg-feature">
+                <div class="tg-feature-icon">&#128274;</div>
+                <h3>Secure Booking</h3>
+                <p>Your payment and personal information are always protected with bank-level encryption and fraud protection.</p>
+            </div>
+            <div class="tg-feature">
+                <div class="tg-feature-icon">&#127915;</div>
+                <h3>Best Price Guarantee</h3>
+                <p>Find a lower price elsewhere? We&rsquo;ll match it. No hidden fees, no surprises, just transparent pricing.</p>
+            </div>
+            <div class="tg-feature">
+                <div class="tg-feature-icon">&#128222;</div>
+                <h3>24/7 Support</h3>
+                <p>Our dedicated travel concierge team is available around the clock before, during, and after your trip.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── FEATURED DESTINATIONS ── -->
+<section class="tg-section tg-section-gray">
+    <div class="tg-section-wrap">
+        <div class="tg-section-head">
+            <div class="tg-section-label">Popular Right Now</div>
+            <h2 class="tg-section-title">Trending Destinations</h2>
+            <p class="tg-section-sub">Our most-booked escapes, loved by travelers just like you.</p>
+        </div>
+        <div class="tg-grid">
+            {{#each featuredTrips}}
+            <div class="tg-card">
+                <div class="tg-card-img">
+                    <img src="{{image}}" alt="{{name}}" onerror="this.src='/images/sea-sound.jpg'">
+                    <span class="tg-card-badge">&#128293; Featured</span>
+                </div>
+                <div class="tg-card-body">
+                    <div class="tg-card-resort">&#128205; {{resort}}</div>
+                    <div class="tg-card-title">{{name}}</div>
+                    <p class="tg-card-desc">{{description}}</p>
+                    <div class="tg-card-meta">
+                        <span class="tg-card-meta-item">&#128197; {{length}}</span>
+                        <span class="tg-card-meta-item">&#127968; {{resort}}</span>
+                    </div>
+                    <div class="tg-card-price">
+                        <span class="tg-price-from">from</span>
+                        <span class="tg-price-amount">${{perPerson}}</span>
+                        <span class="tg-price-per">/ person</span>
+                    </div>
+                    <a href="/travel?q={{code}}" class="btn-add-cart" style="display:inline-block; text-align:center;">View Trip &rarr;</a>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+        <div style="text-align:center; margin-top:40px;">
+            <a href="/travel" class="btn-primary">View All Trips &rarr;</a>
+        </div>
+    </div>
+</section>
+
+<!-- ── TESTIMONIALS ── -->
+<section class="tg-section tg-section-white">
+    <div class="tg-section-wrap">
+        <div class="tg-section-head">
+            <div class="tg-section-label">Real Experiences</div>
+            <h2 class="tg-section-title">What Our Travelers Say</h2>
+            <p class="tg-section-sub">Don&rsquo;t take our word for it. Hear from people who&rsquo;ve experienced the Travlr difference.</p>
+        </div>
+        <div class="tg-testimonials">
+            <div class="tg-testimonial">
+                <div class="tg-testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="tg-testimonial-text">&ldquo;Travlr Getaways made our honeymoon absolutely unforgettable. Every detail was taken care of, and all we had to do was show up and enjoy the adventure.&rdquo;</p>
+                <div class="tg-testimonial-author">
+                    <div class="tg-testimonial-avatar">MJ</div>
+                    <div>
+                        <div class="tg-testimonial-name">Maria &amp; James T.</div>
+                        <div class="tg-testimonial-trip">Bali Bliss Retreat</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tg-testimonial">
+                <div class="tg-testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="tg-testimonial-text">&ldquo;Best vacation I&rsquo;ve ever taken. The Great Barrier Reef experience was beyond anything I could have imagined. Booking through Travlr was seamless.&rdquo;</p>
+                <div class="tg-testimonial-author">
+                    <div class="tg-testimonial-avatar">DK</div>
+                    <div>
+                        <div class="tg-testimonial-name">David K.</div>
+                        <div class="tg-testimonial-trip">Reef Explorer Package</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tg-testimonial">
+                <div class="tg-testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                <p class="tg-testimonial-text">&ldquo;I travel solo frequently and Travlr always makes me feel safe and well-supported. Their 24/7 support team once helped me rebook a missed flight in minutes.&rdquo;</p>
+                <div class="tg-testimonial-author">
+                    <div class="tg-testimonial-avatar">SC</div>
+                    <div>
+                        <div class="tg-testimonial-name">Sofia C.</div>
+                        <div class="tg-testimonial-trip">Seychelles Paradise Cruise</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── CTA BANNER ── -->
+<section style="background: linear-gradient(135deg,#083050,#0a4a78); padding:72px 32px; text-align:center; color:#fff;">
+    <div style="max-width:620px; margin:0 auto;">
+        <div class="tg-section-label" style="color:#e8b84b;">Ready to Explore?</div>
+        <h2 style="font-family:'Poppins',sans-serif; font-size:2rem; font-weight:700; margin:12px 0 16px;">Your Next Adventure is One Click Away</h2>
+        <p style="color:rgba(255,255,255,0.78); margin-bottom:32px; font-size:1rem; line-height:1.7;">Join thousands of travelers who trust Travlr Getaways to deliver extraordinary experiences at unbeatable value.</p>
+        <a href="/register" class="btn-primary" style="margin-right:14px;">Get Started Free</a>
+        <a href="/travel" class="btn-outline">Browse Trips</a>
+    </div>
+</section>
+
+{{> footer}}

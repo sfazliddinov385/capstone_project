@@ -1,0 +1,327 @@
+{{> header}}
+
+<!-- Page header -->
+<div class="tg-page-header">
+    <h1>&#127758; Explore Our Trips</h1>
+    <p>{{trips.length}} handpicked destinations waiting for you</p>
+</div>
+
+<!-- Toast notification -->
+<div id="cart-toast" class="tg-toast">
+    &#10003; Trip added to cart!
+    <a href="/checkout">View Cart &rarr;</a>
+</div>
+
+<section class="tg-section tg-section-gray">
+    <div class="tg-section-wrap">
+
+        <!-- Category filter pills -->
+        <div class="tg-category-bar">
+            <button class="tg-cat-btn active" data-cat="All">&#127758; All</button>
+            <button class="tg-cat-btn" data-cat="Diving">&#129361; Diving</button>
+            <button class="tg-cat-btn" data-cat="Adventure">&#127956; Adventure</button>
+            <button class="tg-cat-btn" data-cat="Luxury">&#10024; Luxury</button>
+            <button class="tg-cat-btn" data-cat="Beach">&#127944; Beach</button>
+            <button class="tg-cat-btn" data-cat="Cultural">&#127981; Cultural</button>
+            <button class="tg-cat-btn" data-cat="Cruise">&#128674; Cruise</button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="tg-filter-bar">
+            <div class="tg-filter-group">
+                <label for="filter-text">Search by name or resort</label>
+                <input id="filter-text" type="text" placeholder="e.g. Bali, Reef, Maldives&hellip;">
+            </div>
+            <div class="tg-filter-group" style="max-width:200px;">
+                <label for="filter-price">Max price per person ($)</label>
+                <input id="filter-price" type="number" min="0" placeholder="Any">
+            </div>
+            <div class="tg-filter-group" style="max-width:220px;">
+                <label for="filter-sort">Sort by</label>
+                <select id="filter-sort">
+                    <option value="default">Featured</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="rating">Top Rated</option>
+                    <option value="reviews">Most Reviewed</option>
+                    <option value="spots">Spots Remaining</option>
+                </select>
+            </div>
+            <div style="display:flex; align-items:flex-end; gap:10px;">
+                <button id="filter-clear" class="btn-filter-clear">&#215; Clear</button>
+            </div>
+        </div>
+
+        <p id="filter-none" style="display:none; color:#9ca3af; font-style:italic; margin-bottom:20px;">
+            No trips match your search. Try different keywords.
+        </p>
+
+        <!-- Trip cards grid -->
+        <div class="tg-grid" id="trips-grid">
+            {{#each trips}}
+            <div class="tg-card"
+                 data-name="{{name}}"
+                 data-code="{{code}}"
+                 data-resort="{{resort}}"
+                 data-desc="{{description}}"
+                 data-price="{{perPerson}}"
+                 data-category="{{category}}"
+                 data-rating="{{rating}}"
+                 data-reviews="{{reviewCount}}"
+                 data-spots="{{spotsLeft}}">
+
+                <div class="tg-card-img">
+                    <a href="/trip/{{code}}" class="tg-card-img-link" aria-label="View {{name}} details">
+                        <img src="{{image}}" alt="{{name}}" loading="lazy"
+                             onerror="this.src='/images/sea-sound.jpg'">
+                    </a>
+                    <span class="tg-card-badge tg-cat-badge-{{category}}">{{category}}</span>
+                    <button class="tg-fav-heart" data-code="{{code}}" aria-label="Save {{name}} to favorites" aria-pressed="false">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+                    </button>
+                    {{#if spotsLeft}}
+                    <span class="tg-spots-badge {{#if (lte spotsLeft 5)}}tg-spots-low{{/if}}">
+                        {{#if (lte spotsLeft 5)}}&#9888; Only {{spotsLeft}} spots left!{{else}}{{spotsLeft}} spots available{{/if}}
+                    </span>
+                    {{/if}}
+                </div>
+
+                <div class="tg-card-body">
+                    <!-- Rating row -->
+                    <div class="tg-rating-row">
+                        <span class="tg-stars" data-rating="{{rating}}"></span>
+                        <span class="tg-rating-num">{{rating}}</span>
+                        <span class="tg-review-count">({{reviewCount}} reviews)</span>
+                        <span class="tg-difficulty tg-diff-{{difficulty}}">{{difficulty}}</span>
+                    </div>
+
+                    <div class="tg-card-resort">&#128205; {{resort}}</div>
+                    <a href="/trip/{{code}}" class="tg-card-title-link"><div class="tg-card-title">{{name}}</div></a>
+                    <p class="tg-card-desc">{{description}}</p>
+                    <a href="/trip/{{code}}" class="tg-card-detail-link">View full details &rarr;</a>
+
+                    <div class="tg-card-meta">
+                        <span class="tg-card-meta-item">&#128197; {{length}}</span>
+                        <span class="tg-card-meta-item">&#9992;&#65039; {{departureCity}}</span>
+                    </div>
+
+                    <!-- What's included -->
+                    <div class="tg-includes">
+                        <div class="tg-includes-title">&#10003; What's included</div>
+                        <ul class="tg-includes-list">
+                            {{#each includes}}
+                            <li>&#10003; {{this}}</li>
+                            {{/each}}
+                        </ul>
+                    </div>
+
+                    <div class="tg-card-price">
+                        <span class="tg-price-from">from</span>
+                        <span class="tg-price-amount">${{perPerson}}</span>
+                        <span class="tg-price-per">/ person &bull; all-inclusive</span>
+                    </div>
+
+                    <div class="tg-card-footer">
+                        <div class="tg-travelers">
+                            <span class="tg-travelers-label">Travelers:</span>
+                            <button class="tg-btn-counter people-dec" title="Decrease">&#8722;</button>
+                            <span class="tg-count people-count">1</span>
+                            <button class="tg-btn-counter people-inc" title="Increase">&#43;</button>
+                            <span style="font-size:0.78rem; color:#9ca3af; margin-left:4px;">
+                                = <strong class="people-total">${{perPerson}}</strong>
+                            </span>
+                        </div>
+                        <button class="btn-add-cart book-btn"
+                                data-code="{{code}}"
+                                data-price="{{perPerson}}">
+                            &#128722; Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        </div>
+
+    </div>
+</section>
+
+<script>
+// ── Render star ratings ──
+document.querySelectorAll('.tg-stars').forEach(function(el) {
+    var r = parseFloat(el.getAttribute('data-rating')) || 0;
+    var full = Math.floor(r);
+    var half = r - full >= 0.5 ? 1 : 0;
+    var empty = 5 - full - half;
+    el.innerHTML =
+        '&#9733;'.repeat(full) +
+        (half ? '<span style="opacity:0.5">&#9733;</span>' : '') +
+        '<span style="opacity:0.25">&#9733;</span>'.repeat(empty);
+});
+
+// ── Category filter ──
+var activeCat = 'All';
+document.querySelectorAll('.tg-cat-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.tg-cat-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        activeCat = btn.getAttribute('data-cat');
+        applyFilter();
+    });
+});
+
+// ── Filter & Sort ──
+var cards      = Array.from(document.querySelectorAll('#trips-grid .tg-card'));
+var textInput  = document.getElementById('filter-text');
+var priceInput = document.getElementById('filter-price');
+var sortSelect = document.getElementById('filter-sort');
+var noneMsg    = document.getElementById('filter-none');
+var grid       = document.getElementById('trips-grid');
+
+function applyFilter() {
+    var text  = textInput.value.trim().toLowerCase();
+    var maxPx = parseFloat(priceInput.value);
+    var visible = [];
+
+    cards.forEach(function(card) {
+        var name     = (card.getAttribute('data-name')     || '').toLowerCase();
+        var code     = (card.getAttribute('data-code')     || '').toLowerCase();
+        var resort   = (card.getAttribute('data-resort')   || '').toLowerCase();
+        var desc     = (card.getAttribute('data-desc')     || '').toLowerCase();
+        var price    = parseFloat(card.getAttribute('data-price'))   || 0;
+        var category = card.getAttribute('data-category') || '';
+
+        var matchText  = !text  || name.includes(text) || code.includes(text) || resort.includes(text) || desc.includes(text);
+        var matchPrice = isNaN(maxPx) || price <= maxPx;
+        var matchCat   = activeCat === 'All' || category === activeCat;
+
+        if (matchText && matchPrice && matchCat) {
+            card.style.display = '';
+            visible.push(card);
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    noneMsg.style.display = visible.length === 0 ? 'block' : 'none';
+    sortCards(visible);
+}
+
+function sortCards(visible) {
+    var val = sortSelect.value;
+    visible.sort(function(a, b) {
+        if (val === 'price-asc')  return parseFloat(a.getAttribute('data-price'))   - parseFloat(b.getAttribute('data-price'));
+        if (val === 'price-desc') return parseFloat(b.getAttribute('data-price'))   - parseFloat(a.getAttribute('data-price'));
+        if (val === 'rating')     return parseFloat(b.getAttribute('data-rating'))  - parseFloat(a.getAttribute('data-rating'));
+        if (val === 'reviews')    return parseInt(b.getAttribute('data-reviews'),10) - parseInt(a.getAttribute('data-reviews'),10);
+        if (val === 'spots')      return parseInt(a.getAttribute('data-spots'),10)   - parseInt(b.getAttribute('data-spots'),10);
+        return 0;
+    });
+    visible.forEach(function(card) { grid.appendChild(card); });
+}
+
+textInput.addEventListener('input',   applyFilter);
+priceInput.addEventListener('input',  applyFilter);
+sortSelect.addEventListener('change', applyFilter);
+
+document.getElementById('filter-clear').addEventListener('click', function() {
+    textInput.value = '';
+    priceInput.value = '';
+    sortSelect.value = 'default';
+    activeCat = 'All';
+    document.querySelectorAll('.tg-cat-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelector('.tg-cat-btn[data-cat="All"]').classList.add('active');
+    applyFilter();
+});
+
+// Pre-apply filter from URL ?q= parameter
+var urlParams = new URLSearchParams(window.location.search);
+var qParam = urlParams.get('q');
+if (qParam) { textInput.value = qParam; applyFilter(); }
+
+// ── People counters ──
+document.querySelectorAll('#trips-grid .tg-card').forEach(function(card) {
+    var countEl  = card.querySelector('.people-count');
+    var totalEl  = card.querySelector('.people-total');
+    var priceRaw = parseFloat(card.getAttribute('data-price')) || 0;
+
+    function updateTotal() {
+        var n = parseInt(countEl.textContent, 10);
+        totalEl.textContent = '$' + (priceRaw * n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    card.querySelector('.people-dec').addEventListener('click', function() {
+        var n = parseInt(countEl.textContent, 10);
+        if (n > 1) { countEl.textContent = n - 1; updateTotal(); }
+    });
+    card.querySelector('.people-inc').addEventListener('click', function() {
+        var n = parseInt(countEl.textContent, 10);
+        if (n < 20) { countEl.textContent = n + 1; updateTotal(); }
+    });
+});
+
+// ── Add to Cart ──
+document.querySelectorAll('.book-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var tripCode = btn.getAttribute('data-code');
+        var people   = parseInt(btn.closest('.tg-card').querySelector('.people-count').textContent, 10);
+        var cart = [];
+        try { cart = JSON.parse(localStorage.getItem('travlr-cart') || '[]'); } catch(e) {}
+        var existing = cart.find(function(i) { return i.tripCode === tripCode; });
+        if (existing) { existing.people = people; }
+        else { cart.push({ tripCode: tripCode, people: people }); }
+        localStorage.setItem('travlr-cart', JSON.stringify(cart));
+        if (window.refreshCartBadge) window.refreshCartBadge();
+        var toast = document.getElementById('cart-toast');
+        toast.style.display = 'block';
+        clearTimeout(window._toastTimer);
+        window._toastTimer = setTimeout(function() { toast.style.display = 'none'; }, 3000);
+    });
+});
+
+// ── Favorites (heart icons on every card) ─────────────────────
+(function() {
+    var token = localStorage.getItem('travlr-token');
+    var hearts = document.querySelectorAll('.tg-fav-heart');
+    if (!hearts.length) return;
+
+    function paint(btn, on) {
+        btn.classList.toggle('is-active', on);
+        btn.setAttribute('aria-pressed', String(on));
+    }
+
+    // Paint pre-saved favorites on load
+    if (token) {
+        fetch('/api/favorites/codes', { headers: { 'Authorization': 'Bearer ' + token } })
+            .then(function(r) { return r.ok ? r.json() : []; })
+            .then(function(codes) {
+                hearts.forEach(function(h) { if (codes.indexOf(h.getAttribute('data-code')) !== -1) paint(h, true); });
+            })
+            .catch(function() {});
+    }
+
+    document.body.addEventListener('click', async function(e) {
+        var btn = e.target.closest('.tg-fav-heart');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (!localStorage.getItem('travlr-token')) {
+            window.location.href = '/login';
+            return;
+        }
+
+        btn.disabled = true;
+        var code = btn.getAttribute('data-code');
+        var on   = btn.classList.contains('is-active');
+        try {
+            var r = await fetch('/api/favorites/' + code, {
+                method: on ? 'DELETE' : 'POST',
+                headers: { 'Authorization': 'Bearer ' + localStorage.getItem('travlr-token') }
+            });
+            if (r.ok) paint(btn, !on);
+        } catch (_) {} finally { btn.disabled = false; }
+    });
+})();
+</script>
+
+{{> footer}}

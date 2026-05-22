@@ -1,0 +1,184 @@
+{{> header}}
+
+<!-- Hero -->
+<div class="tg-legal-hero">
+    <div class="tg-legal-hero-inner">
+        <span class="tg-hero-eyebrow">Legal</span>
+        <h1>Privacy Policy</h1>
+        <p>How Travlr Getaways collects, uses, and protects the information you share with us.</p>
+        <div class="tg-legal-meta">
+            <span><strong>Effective:</strong> May 19, 2026</span>
+            <span class="tg-legal-meta-dot">&#8226;</span>
+            <span><strong>Last updated:</strong> May 19, 2026</span>
+        </div>
+    </div>
+</div>
+
+<section class="tg-section tg-section-gray">
+    <div class="tg-section-wrap">
+        <div class="tg-legal-layout">
+
+            <!-- Table of contents -->
+            <aside class="tg-legal-toc">
+                <div class="tg-legal-toc-inner">
+                    <h4>On this page</h4>
+                    <ol>
+                        <li><a href="#intro">1. Introduction</a></li>
+                        <li><a href="#collect">2. Information we collect</a></li>
+                        <li><a href="#use">3. How we use information</a></li>
+                        <li><a href="#share">4. When we share information</a></li>
+                        <li><a href="#protect">5. How we protect your data</a></li>
+                        <li><a href="#rights">6. Your privacy rights</a></li>
+                        <li><a href="#cookies">7. Cookies and tracking</a></li>
+                        <li><a href="#children">8. Children's privacy</a></li>
+                        <li><a href="#international">9. International transfers</a></li>
+                        <li><a href="#changes">10. Changes to this policy</a></li>
+                        <li><a href="#contact">11. Contact us</a></li>
+                    </ol>
+                </div>
+            </aside>
+
+            <!-- Body -->
+            <article class="tg-legal-body">
+
+                <section id="intro">
+                    <h2>1. Introduction</h2>
+                    <p>Travlr Getaways ("Travlr Getaways", "we", "our", or "us") is a travel booking service operated by Travlr Getaways, Inc. This policy explains what personal information we collect when you visit our website or book a trip with us, why we collect it, and what choices you have about it.</p>
+                    <p>If you only browse the site without creating an account, the information we collect is limited to the technical data described in Section 7. If you create an account or book a trip, additional information applies.</p>
+                </section>
+
+                <section id="collect">
+                    <h2>2. Information we collect</h2>
+                    <h3>Account information</h3>
+                    <p>When you register, we collect your name, email address, and a hashed copy of your password. We never store passwords in clear text. We use a one-way bcrypt hash so that even our own staff cannot read your password.</p>
+
+                    <h3>Booking information</h3>
+                    <p>When you reserve a trip, we collect the trip code, the number of travelers in your party, and the date you booked. We also store a snapshot of the trip details (name, resort, price per person) so that your receipt does not change if the trip is later edited in our catalog.</p>
+
+                    <h3>Payment information</h3>
+                    <p>We do not store full credit card numbers on our servers. Payment data is processed by a PCI DSS compliant payment provider, which returns a token that we associate with your reservation. The token cannot be used to charge cards outside of our service.</p>
+
+                    <h3>Communications</h3>
+                    <p>If you contact us through the form on our Contact page, we collect the message contents, the email address you provide, and the subject category you select. We store these so that we can reply, follow up, and improve our service.</p>
+
+                    <h3>Technical information</h3>
+                    <p>Like most websites, we automatically collect some technical data when you visit: your IP address, browser type, operating system, the pages you view, and the dates and times of your visits. This data is used to detect abuse, debug errors, and produce aggregated analytics.</p>
+                </section>
+
+                <section id="use">
+                    <h2>3. How we use information</h2>
+                    <p>We use the information described above for the following purposes:</p>
+                    <ul>
+                        <li>To create and manage your account and authenticate you when you log in.</li>
+                        <li>To confirm, modify, and cancel reservations you book.</li>
+                        <li>To send you transactional messages (booking confirmations, cancellation notices, password resets).</li>
+                        <li>To respond to inquiries you send through our contact form.</li>
+                        <li>To detect and prevent fraudulent activity, abuse, or violations of our Terms of Service.</li>
+                        <li>To improve our service through aggregated, non-identifiable analytics.</li>
+                        <li>If you opt in, to send you occasional newsletters about new trips (no more than twice a month).</li>
+                    </ul>
+                    <p>We do not use your information for any other purpose without first asking your permission.</p>
+                </section>
+
+                <section id="share">
+                    <h2>4. When we share information</h2>
+                    <p>We do not sell your personal information to advertisers or data brokers. We share information only in the following limited cases:</p>
+                    <ul>
+                        <li><strong>Trip partners.</strong> When you book a trip, we share the minimum information needed for the resort, dive operator, or local guide to host you (name, party size, dietary notes if you provided them).</li>
+                        <li><strong>Service providers.</strong> We use vetted third parties for payment processing, email delivery, and cloud hosting. These providers are contractually bound to use your data only to perform their service for us.</li>
+                        <li><strong>Legal requirements.</strong> We may disclose information if compelled to do so by a valid court order, subpoena, or government request, but only to the extent required.</li>
+                        <li><strong>Business transfers.</strong> If Travlr Getaways is involved in a merger, acquisition, or sale of assets, your information may transfer as part of that transaction. The receiving entity must honor the commitments made in this policy.</li>
+                    </ul>
+                </section>
+
+                <section id="protect">
+                    <h2>5. How we protect your data</h2>
+                    <p>Security is a design decision, not an afterthought. The protections we apply include:</p>
+                    <ul>
+                        <li>Passwords are hashed with bcrypt (work factor 12). Plain-text passwords are never stored, logged, or transmitted.</li>
+                        <li>Session tokens are signed using HMAC and expire after a fixed period.</li>
+                        <li>Administrative access is role scoped. The systems that can read customer data require both authentication and an explicit admin authorization claim.</li>
+                        <li>All traffic between your browser and our servers is encrypted with TLS.</li>
+                        <li>Authentication endpoints are rate limited to slow automated credential attacks.</li>
+                        <li>We log access to sensitive systems and review the logs for unusual activity.</li>
+                    </ul>
+                    <p>No system is perfectly secure, and we cannot guarantee absolute protection. If we ever discover a breach that affects you, we will notify you within 72 hours as required by applicable law.</p>
+                </section>
+
+                <section id="rights">
+                    <h2>6. Your privacy rights</h2>
+                    <p>Depending on where you live, you may have the following rights with respect to the personal information we hold about you:</p>
+                    <ul>
+                        <li><strong>Access.</strong> Request a copy of the information we have about you.</li>
+                        <li><strong>Correction.</strong> Ask us to fix information that is inaccurate or incomplete.</li>
+                        <li><strong>Deletion.</strong> Ask us to delete your account and the data associated with it. We may retain a minimum set of records (such as past invoices) where required by law.</li>
+                        <li><strong>Portability.</strong> Request a machine readable export of the personal data you provided to us.</li>
+                        <li><strong>Objection.</strong> Object to certain types of processing, including direct marketing.</li>
+                        <li><strong>Withdrawal of consent.</strong> Withdraw your consent at any time for processing that relies on your consent.</li>
+                    </ul>
+                    <p>To exercise any of these rights, contact us using the details in Section 11. We will respond within 30 days. We will not charge you a fee for reasonable requests.</p>
+                </section>
+
+                <section id="cookies">
+                    <h2>7. Cookies and tracking</h2>
+                    <p>We use a small number of cookies and similar technologies. They fall into three categories:</p>
+                    <ul>
+                        <li><strong>Essential cookies.</strong> Required for the site to function (for example, to keep you logged in or to remember items in your cart). These cannot be disabled.</li>
+                        <li><strong>Preference cookies.</strong> Remember choices you have made, such as currency or language. You can disable these in your browser without breaking the site.</li>
+                        <li><strong>Analytics cookies.</strong> Used to collect aggregated, non-identifiable data about how the site is used. We do not use third party advertising trackers.</li>
+                    </ul>
+                    <p>Most browsers allow you to refuse new cookies or delete existing ones. If you do, some features of the site may not work as expected.</p>
+                </section>
+
+                <section id="children">
+                    <h2>8. Children's privacy</h2>
+                    <p>Travlr Getaways is not directed at children under 13, and we do not knowingly collect personal information from anyone under 13. Bookings that include children must be made by a parent or legal guardian using an adult account. If we learn that we have collected information from a child under 13 without verifiable parental consent, we will delete it.</p>
+                </section>
+
+                <section id="international">
+                    <h2>9. International data transfers</h2>
+                    <p>Travlr Getaways is based in the United States. If you access our service from outside the United States, your information will be transferred to, stored in, and processed in the United States. We use industry standard safeguards (such as Standard Contractual Clauses for transfers from the EU) when transferring data internationally.</p>
+                </section>
+
+                <section id="changes">
+                    <h2>10. Changes to this policy</h2>
+                    <p>We may update this policy from time to time. When we do, we will revise the "Last updated" date at the top of the page. If the changes are material, we will give you advance notice by email or through a prominent notice on the site before the changes take effect.</p>
+                </section>
+
+                <section id="contact">
+                    <h2>11. Contact us</h2>
+                    <p>If you have questions about this policy, or you want to exercise any of the rights described in Section 6, please reach out:</p>
+                    <ul class="tg-legal-contact-list">
+                        <li><strong>Email.</strong> <a href="mailto:privacy@travlr-getaways.com">privacy@travlr-getaways.com</a></li>
+                        <li><strong>Mail.</strong> Travlr Getaways, Privacy Office, 225 Harbor Way Suite 4B, Boston, MA 02110</li>
+                        <li><strong>Phone.</strong> +1 (888) 987-2857 (Mon to Fri, 8am to 8pm ET)</li>
+                    </ul>
+                    <p>For a general question or to plan a trip, please use the <a href="/contact">contact form</a>.</p>
+                </section>
+
+            </article>
+        </div>
+    </div>
+</section>
+
+<script>
+(function() {
+    // Highlight the active TOC item as the user scrolls
+    var links    = document.querySelectorAll('.tg-legal-toc a');
+    var sections = document.querySelectorAll('.tg-legal-body section[id]');
+    if (!links.length || !sections.length) return;
+
+    function onScroll() {
+        var pos = window.scrollY + 140;
+        var current = null;
+        sections.forEach(function(s) { if (s.offsetTop <= pos) current = s.id; });
+        links.forEach(function(l) {
+            l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+        });
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
+</script>
+
+{{> footer}}
