@@ -34,7 +34,11 @@ desktop.ini
 *.swo
 
 # ePortfolio docs — kept local only, NOT pushed to this public repo
-docs/
+# Exception: the three capstone enhancement narratives are published.
+docs/*
+!docs/enhancement-1-software-design.md
+!docs/enhancement-2-algorithms.md
+!docs/enhancement-3-databases.md
 
 # Angular caches
 .angular/
