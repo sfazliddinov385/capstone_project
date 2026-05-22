@@ -1,10 +1,10 @@
 ---
-title: Enhancement 1 — Software Design and Engineering
+title: "Enhancement 1: Software Design and Engineering"
 ---
 
 [← Back to portfolio home](index.html)
 
-# Enhancement 1 — Software Design and Engineering
+# Enhancement 1: Software Design and Engineering
 
 **Category:** Software design and engineering
 **Primary files changed:** `app_api/models/user.js`, `app_api/middleware/auth.js`, `app_api/routes/index.js`, `app_api/controllers/authentication.js`, `travlr-admin/src/app/authentication.service.ts`, `travlr-admin/src/app/app-routing-module.ts`
@@ -12,64 +12,64 @@ title: Enhancement 1 — Software Design and Engineering
 
 ## 1. Briefly describe the artifact
 
-The artifact is **Travlr Getaways**, a full-stack travel-booking application originally produced in an earlier MEAN-stack course in the SNHU Computer Science program. It contains an Express + Handlebars customer site, a MongoDB-backed REST API, and an Angular 21 administrative single-page application. The original artifact was completed earlier in the program; the enhancements documented here were performed during CS 499 between March and May 2026.
+The artifact is **Travlr Getaways**, a full stack travel booking application I first built in an earlier MEAN stack course in the SNHU Computer Science program. It has an Express plus Handlebars customer site, a MongoDB REST API, and an Angular 21 admin app. The original version was finished earlier in the program. The work shown here was done during CS 499 between March and May 2026.
 
 ## 2. Justify the inclusion of the artifact
 
-I selected Travlr Getaways because it is a real three-tier application rather than a contrived exercise. It has a server-rendered customer site, a JSON API, a separate administrative client, and a NoSQL datastore. Demonstrating that I can identify a security flaw spanning all three tiers and remediate it consistently — without breaking the customer flow or the admin tooling — is closer to the work I expect to do as a professional engineer than three unrelated exercises would be.
+I picked Travlr Getaways because it is a real three tier application, not a small exercise. It has a server rendered customer site, a JSON API, a separate admin client, and a NoSQL database. Showing that I can find a security flaw across all three tiers and fix it the same way in each one, without breaking the customer flow or the admin tools, is much closer to real engineering work than three unrelated small projects would be.
 
-The specific components that showcase my skills in software design and engineering are:
+The pieces of this enhancement that show my software design skills are:
 
-- The introduction of a typed `role` field on the User schema and its inclusion in the JWT payload, demonstrating principled identity modeling.
-- The decomposition of `auth.js` into two single-responsibility middlewares, demonstrating the SOLID single-responsibility principle in a real Express codebase.
-- The selective application of `authorizeAdmin` only to write operations and customer listings, demonstrating least-privilege thinking at the route level.
-- The mirror enforcement of the same authorization boundary in the Angular client, demonstrating that an authorization decision must be consistent across every tier that surfaces it.
+- Adding a typed `role` field on the User schema and putting it in the JWT payload. This shows clean identity modeling.
+- Splitting `auth.js` into two single purpose middlewares. This shows the SOLID single responsibility principle applied to real Express code.
+- Applying `authorizeAdmin` only to write routes and customer listings. This shows least privilege thinking at the route level.
+- Enforcing the same rule in the Angular client. This shows that one authorization decision must be consistent everywhere it is surfaced.
 
 ### How the enhancement improved the artifact
 
-In the original code, any caller who could produce a valid JWT — including a freshly registered customer — could call `POST /api/trips`, `DELETE /api/trips/:code`, or `GET /api/customers`. The token answered the question "are you logged in" but never "are you allowed to do this". That is the textbook OWASP A01:2021 broken-access-control finding, and it was the highest-severity issue I identified during the code review.
+In the original code, anyone with a valid JWT, even a brand new customer, could call `POST /api/trips`, `DELETE /api/trips/:code`, or `GET /api/customers`. The token only answered "are you logged in" and never "are you allowed to do this". That is the OWASP A01:2021 broken access control finding, and it was the worst issue I found during the code review.
 
-The enhancement closes that gap end-to-end:
+The enhancement closes the gap from front to back:
 
-1. **User model.** Added `role: { type: String, enum: ['customer','admin'], default: 'customer' }` to `userSchema` in [`app_api/models/user.js`](https://github.com/). Embedded the role in the JWT payload generated by `generateJwt`, alongside the existing `_id`, `email`, `name`, and `exp` claims.
-2. **Middleware separation.** Rewrote [`app_api/middleware/auth.js`](https://github.com/) so that `authenticate` is responsible solely for verifying the bearer token and attaching the decoded payload to `req.user`, while a new `authorizeAdmin` checks the role claim and returns `403 Forbidden` when it is missing or not equal to `'admin'`. Both middlewares fail closed: `authenticate` returns `500` if `JWT_SECRET` is not configured, rather than silently signing with `undefined`.
-3. **Route composition.** In [`app_api/routes/index.js`](https://github.com/), applied the middleware chain `authenticate, authorizeAdmin` to the four routes that need it: `POST /api/trips`, `PUT /api/trips/:tripCode`, `DELETE /api/trips/:tripCode`, and `GET /api/customers`. Public reads stayed public; customer reservation routes stayed at `authenticate`-only, since a logged-in customer must be able to view and manage their own bookings.
-4. **Client-side mirroring.** Updated [`travlr-admin/src/app/authentication.service.ts`](https://github.com/) to decode the JWT, expose `isLoggedIn()` and `isAdmin()`, and hide trip-management and customer-list controls from non-admin sessions. Updated `AuthGuard` to also redirect non-admin users away from admin-only routes.
+1. **User model.** Added `role: { type: String, enum: ['customer','admin'], default: 'customer' }` to `userSchema` in [`app_api/models/user.js`](https://github.com/). Put the role into the JWT payload made by `generateJwt`, along with the existing `_id`, `email`, `name`, and `exp` claims.
+2. **Middleware separation.** Rewrote [`app_api/middleware/auth.js`](https://github.com/) so that `authenticate` only verifies the bearer token and saves the decoded payload to `req.user`. A new `authorizeAdmin` checks the role claim and returns `403 Forbidden` if it is missing or not `'admin'`. Both fail closed. If `JWT_SECRET` is not set, `authenticate` returns `500` instead of silently signing with `undefined`.
+3. **Route composition.** In [`app_api/routes/index.js`](https://github.com/), applied the chain `authenticate, authorizeAdmin` to the four routes that need it: `POST /api/trips`, `PUT /api/trips/:tripCode`, `DELETE /api/trips/:tripCode`, and `GET /api/customers`. Public reads stayed public. Customer reservation routes stayed at `authenticate` only, because a logged in customer must be able to view and manage their own bookings.
+4. **Client side mirroring.** Updated [`travlr-admin/src/app/authentication.service.ts`](https://github.com/) to decode the JWT, expose `isLoggedIn()` and `isAdmin()`, and hide trip management and customer list controls from non admin sessions. Updated `AuthGuard` to also redirect non admin users away from admin only routes.
 
 ### Specific skills demonstrated
 
-- Mongoose schema evolution without breaking existing documents (the new `role` field defaults to `customer` for previously registered users).
-- JWT claim design — choosing which identity facts belong inside the token versus which should be re-fetched.
+- Changing a Mongoose schema without breaking existing documents. The new `role` field defaults to `customer` for previously registered users.
+- JWT claim design. Choosing which identity facts belong inside the token and which should be re fetched.
 - Express middleware composition with `router.METHOD(path, ...middlewares, controller)`.
-- Angular service design and JWT decoding in TypeScript without pulling in a third-party JWT library (using `atob` on the middle segment).
-- Cross-tier consistency: the same authorization rule is enforced server-side (returns 403) **and** surfaced client-side (hides the button) so the UI matches the API behavior.
+- Angular service design and JWT decoding in TypeScript without pulling in a JWT library, using `atob` on the middle segment.
+- Cross tier consistency. The same rule is enforced server side (returns 403) and shown client side (hides the button), so the UI matches the API.
 
 ## 3. Reflect on the process of enhancing the artifact
 
 ### What I learned
 
-The deepest lesson from this enhancement was the difference between authentication and authorization. They sound like two halves of the same word, but they are two different responsibilities, and conflating them is one of the easier ways to ship an OWASP top-10 vulnerability. Once I split `auth.js` into `authenticate` and `authorizeAdmin`, the route file in `app_api/routes/index.js` became almost self-documenting: I can scan it and see at a glance which endpoints require login alone, which require admin, and which are public.
+The biggest lesson here was the difference between authentication and authorization. They sound like two halves of one word, but they are two different jobs, and mixing them up is one of the easier ways to ship an OWASP top 10 bug. Once I split `auth.js` into `authenticate` and `authorizeAdmin`, the file `app_api/routes/index.js` almost reads itself. I can scan it and see which endpoints need login alone, which need admin, and which are public.
 
-A secondary lesson was the importance of mirroring server-side rules on the client. An attacker can hit `POST /api/trips` directly with `curl` regardless of what the Angular client shows. But a *legitimate* user being shown an "Add Trip" button that then 403s is a confusing and bad experience, and it surfaces internal logic the user did not need to see. Hiding admin controls in the SPA is not a security control — the server check is — but it is a user-experience control that pairs with the security control.
+A second lesson was the value of mirroring server side rules on the client. An attacker can hit `POST /api/trips` directly with `curl` no matter what the Angular client shows. But a real user who sees an "Add Trip" button that then returns 403 is confused. Hiding admin controls in the SPA is not a security control. The server check is. But it is a UX control that pairs with the security control.
 
 ### Challenges I faced
 
-The trickiest piece was the JWT secret. In the original code, `generateJwt` referenced `process.env.JWT_SECRET` directly and `jwt.sign(payload, undefined)` would silently produce tokens that nobody could verify. I considered hardcoding a development fallback, but decided that would obscure misconfiguration in deployment. I settled on failing closed: the User model now throws if `JWT_SECRET` is not set, and the `authenticate` middleware returns `500` rather than `401` to make the misconfiguration visible to the operator.
+The trickiest piece was the JWT secret. In the original code, `generateJwt` read `process.env.JWT_SECRET` directly. `jwt.sign(payload, undefined)` would silently produce tokens that nobody could verify. I thought about hardcoding a dev fallback but decided that would hide misconfiguration in deployment. I went with failing closed. The User model now throws if `JWT_SECRET` is missing, and the `authenticate` middleware returns `500` instead of `401` so the operator sees the misconfiguration.
 
-Another challenge was the Angular client. Angular's standalone-component-style routing and the older module-based routing in this codebase differ in how guards are wired. I had to inspect `app-routing-module.ts` to confirm the guard was being applied; I also had to ensure the JWT-decoding logic in `authentication.service.ts` would survive a missing or malformed token without throwing — hence the `try/catch` around `JSON.parse(atob(...))`.
+Another challenge was the Angular client. Angular's newer standalone routing and the older module routing in this codebase differ in how guards are wired. I had to look at `app-routing-module.ts` to confirm the guard was applied. I also had to make sure the JWT decoding in `authentication.service.ts` would not throw on a missing or malformed token. That is why I wrapped `JSON.parse(atob(...))` in a `try/catch`.
 
 ### Incorporating feedback
 
-During code review, a peer asked why I did not collapse `authenticate` and `authorizeAdmin` into a single `requireAdmin` function for convenience. I kept them separate, and the feedback prompted me to write that justification into the narrative: keeping them separate means I can also build a future `requireOwner` or `requireRole('staff')` without duplicating token-verification logic. The principle of single responsibility was worth the slightly longer middleware chain at the route level.
+During code review, a peer asked why I did not combine `authenticate` and `authorizeAdmin` into one `requireAdmin` function. I kept them separate, and the feedback pushed me to write down why. Keeping them separate means I can later add `requireOwner` or `requireRole('staff')` without copying the token check. The single responsibility principle was worth the slightly longer chain in the route file.
 
 ### Course outcomes met
 
-- **Outcome 1 (collaborative environments / diverse audiences).** The narrative, code review, and the named middleware make the authorization model accessible to both a peer engineer and a non-technical reviewer.
-- **Outcome 2 (professional-quality communications).** Code is organized so that `routes/index.js` reads top-to-bottom as a public-then-protected manifest. Variable and function names (`authenticate`, `authorizeAdmin`, `isAdmin`, `getPayload`) communicate intent without comments.
-- **Outcome 4 (innovative techniques and tools).** Used JWT claims rather than a session table, kept secrets out of code, and used standard Express middleware composition rather than a custom framework.
-- **Outcome 5 (security mindset).** Closed a broken-access-control vulnerability, validated `JWT_SECRET` at the boundary, applied least-privilege at the route level, and used `crypto.timingSafeEqual` for credential comparison.
+- **Outcome 1 (collaborative environments and diverse audiences).** The narrative, code review, and the named middleware make the model clear to both an engineer and a non technical reviewer.
+- **Outcome 2 (professional communications).** Code is organized so `routes/index.js` reads top to bottom as a public then protected manifest. Names like `authenticate`, `authorizeAdmin`, `isAdmin`, `getPayload` show intent without needing comments.
+- **Outcome 4 (innovative techniques and tools).** Used JWT claims instead of a session table, kept secrets out of code, and used standard Express middleware instead of a custom framework.
+- **Outcome 5 (security mindset).** Closed a broken access control bug, checked `JWT_SECRET` at the boundary, applied least privilege at the route level, and used `crypto.timingSafeEqual` for credential comparison.
 
-Outcome 3 (algorithmic principles) is addressed primarily in [Enhancement 2](enhancement-2-algorithms.html).
+Outcome 3 (algorithmic principles) is covered mainly in [Enhancement 2](enhancement-2-algorithms.html).
 
 ---
 
