@@ -8,7 +8,11 @@
     "seed": "node app_server/data/load-db.js",
     "test": "node --test"
   },
-  "author": "",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "author": "Sarvarbek Fazliddinov",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",

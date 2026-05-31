@@ -1,8 +1,13 @@
 const nodemailer = require('nodemailer');
 
+// Public URL used in outbound emails. Set PUBLIC_URL in production to the real
+// origin so the "your reservations" link works for customers; falls back to
+// localhost for development.
+const PUBLIC_URL = (process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, '');
+
 // Create transporter using environment variables
 // For Gmail: set EMAIL_USER and EMAIL_PASS (use an App Password, not your real password)
-// For testing without real credentials, emails are logged to the console instead
+// For testing without real credentials, emails are skipped (no PII logged).
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -66,7 +71,7 @@ const sendReservationConfirmation = async (toEmail, customerName, reservation) =
 
                 <p style="color:#555; font-size:0.9rem;">
                     A confirmation number will be sent separately. If you have any questions, reply to this email
-                    or visit <a href="http://localhost:3000/reservations">your reservations page</a>.
+                    or visit <a href="${PUBLIC_URL}/reservations">your reservations page</a>.
                 </p>
                 <p style="margin-top:24px;">Thank you for booking with Travlr Getaways!</p>
             </div>
@@ -78,12 +83,10 @@ const sendReservationConfirmation = async (toEmail, customerName, reservation) =
     };
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        // No credentials configured — log to console instead of crashing
-        console.log('\n--- CONFIRMATION EMAIL (not sent, no EMAIL_USER/EMAIL_PASS set) ---');
-        console.log(`To: ${toEmail}`);
-        console.log(`Subject: ${mailOptions.subject}`);
-        console.log(`Trip: ${reservation.tripName} | People: ${reservation.people} | Total: ${totalPrice}`);
-        console.log('-------------------------------------------------------------------\n');
+        // No credentials configured. Skip sending. We intentionally do not log
+        // recipient, trip, or price details because those are PII and would end
+        // up in production log aggregation.
+        console.log('Email skipped: EMAIL_USER/EMAIL_PASS not configured.');
         return;
     }
 

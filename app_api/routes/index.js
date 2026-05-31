@@ -19,6 +19,17 @@ const authLimiter = rateLimit({
     message: { message: 'Too many attempts, please try again later.' }
 });
 
+// Rate-limit authenticated write endpoints (bookings, reviews, favorites) to
+// blunt scripted enumeration or spam. The cap is generous enough that a real
+// user clicking around the UI will never hit it.
+const writeLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 60,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: 'Too many requests, please slow down.' }
+});
+
 // Health check — no auth, fast — for uptime monitoring and load balancers.
 router.get('/health', (_req, res) => {
     res.status(200).json({
@@ -44,23 +55,23 @@ router.post('/trips',                      authenticate, authorizeAdmin, tripsCo
 router.put('/trips/:tripCode',             authenticate, authorizeAdmin, tripsController.tripsUpdateTrip);
 router.delete('/trips/:tripCode',          authenticate, authorizeAdmin, tripsController.tripsDeleteTrip);
 
-// Reservations — require JWT
+// Reservations — require JWT; writes are rate-limited
 router.get('/reservations',        authenticate, reservationsController.getReservations);
-router.post('/reservations',       authenticate, reservationsController.createReservation);
-router.put('/reservations/:id',    authenticate, reservationsController.updateReservation);
-router.delete('/reservations/:id', authenticate, reservationsController.deleteReservation);
+router.post('/reservations',       authenticate, writeLimiter, reservationsController.createReservation);
+router.put('/reservations/:id',    authenticate, writeLimiter, reservationsController.updateReservation);
+router.delete('/reservations/:id', authenticate, writeLimiter, reservationsController.deleteReservation);
 
-// Reviews — listing is public; create/delete require JWT
+// Reviews — listing is public; create/delete require JWT and are rate-limited
 router.get('/trips/:tripCode/reviews',  reviewsController.listForTrip);
-router.post('/trips/:tripCode/reviews', authenticate, reviewsController.create);
+router.post('/trips/:tripCode/reviews', authenticate, writeLimiter, reviewsController.create);
 router.get('/reviews/mine',             authenticate, reviewsController.listMine);
-router.delete('/reviews/:id',           authenticate, reviewsController.remove);
+router.delete('/reviews/:id',           authenticate, writeLimiter, reviewsController.remove);
 
-// Favorites — all require JWT
+// Favorites — all require JWT; writes are rate-limited
 router.get('/favorites',                authenticate, favoritesController.listMine);
 router.get('/favorites/codes',          authenticate, favoritesController.listCodes);
-router.post('/favorites/:tripCode',     authenticate, favoritesController.add);
-router.delete('/favorites/:tripCode',   authenticate, favoritesController.remove);
+router.post('/favorites/:tripCode',     authenticate, writeLimiter, favoritesController.add);
+router.delete('/favorites/:tripCode',   authenticate, writeLimiter, favoritesController.remove);
 
 // Admin dashboard stats — admin only
 router.get('/admin/stats', authenticate, authorizeAdmin, statsController.getDashboardStats);

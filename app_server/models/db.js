@@ -6,7 +6,12 @@ const dbURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/travlr';
 const connect = () => {
     mongoose
         .connect(dbURI)
-        .catch(err => console.error('Mongoose connection error:', err));
+        .catch(err => {
+            console.error('FATAL: Mongoose connection error:', err.message);
+            // Exit so a supervisor (pm2, systemd, k8s) restarts us cleanly,
+            // instead of running a half-broken server that 500s on every request.
+            process.exit(1);
+        });
 };
 
 mongoose.connection.on('connected', () => {

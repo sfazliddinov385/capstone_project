@@ -46,3 +46,6 @@ travlr-admin/.angular/
 
 # Node test runner coverage
 coverage/
+
+# Office temp lock files
+~$*

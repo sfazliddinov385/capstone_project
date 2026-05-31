@@ -9,6 +9,7 @@ const tripSchema = new mongoose.Schema({
     perPerson: { type: Number, required: true, min: 0 },
     image: { type: String, required: true, trim: true },
     description: { type: String, required: true, trim: true, maxlength: 2000 },
+   
     category: {
         type: String,
         enum: ['Beach', 'Diving', 'Adventure', 'Luxury', 'Cultural', 'Cruise'],

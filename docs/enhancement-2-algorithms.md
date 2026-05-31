@@ -14,6 +14,8 @@ title: "Enhancement 2: Algorithms and Data Structures"
 
 The same Travlr Getaways application from [Enhancement 1](enhancement-1-software-design.html). This second enhancement focuses on one part of the system: the trip discovery surface that powers the public trip list on the customer site and the admin trip management table in the Angular SPA.
 
+The original Travlr Getaways was built in CS 465 Full Stack Development earlier in the SNHU program. The work shown here was done during CS 499 between March and May 2026.
+
 ## 2. Justify the inclusion of the artifact
 
 I picked this artifact for the algorithms and data structures category because the trip list endpoint is the most used read path in the application, and before the enhancement it was the worst designed one. The original `GET /api/trips` handler called `Trip.find({})`, returned every document, and relied on the browser to filter, sort, and slice. That is fine for a course demo with eight trips and broken for any real catalog. It also opened up an attack surface. An open list endpoint that an attacker can hit again and again is a classic vector for resource exhaustion.
@@ -94,6 +96,8 @@ The second challenge was getting the regex escape right. I first wrote a smaller
 A reviewer asked whether `clampLimit` should take a per route `max` rather than a hardcoded 100. I added the parameter (`clampLimit(value, fallback = 100, max = 100)`) so future endpoints with different limits can override it without copying the parse and validate logic. The default still protects the existing endpoint.
 
 ### Course outcomes met
+
+The plan I made in Module One was to address outcomes 2, 3, 4, and 5 with this enhancement. I met all four. No updates to the plan are needed. Outcome 1 stays mainly with Enhancement 1 and the code review.
 
 - **Outcome 2 (professional communications).** The helper module is small, named clearly, and has a focused test file that doubles as documentation for what the helper accepts.
 - **Outcome 3 (algorithmic principles and trade offs).** The enhancement is built around clear algorithmic choices: regex vs `$text`, strategy table vs branching, bounded limit vs trusting the caller. Each is defensible and each is in the narrative above.

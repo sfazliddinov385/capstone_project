@@ -17,6 +17,19 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
     process.exit(1);
 }
 
+// --- Global error handlers --------------------------------------------------
+// In production, the process is in an unknown state after these, so the
+// safest thing is to log and exit and let the supervisor (pm2, systemd, k8s)
+// restart us clean.
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught exception:', err);
+    process.exit(1);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled rejection:', reason);
+    process.exit(1);
+});
+
 // Database connection
 const db = require('./app_server/models/db');
 db.connect();
@@ -92,8 +105,22 @@ app.use('/', indexRouter);
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Express server running at http://localhost:${PORT}`);
 });
+
+// Graceful shutdown: close the HTTP server before exiting so in-flight
+// requests can finish. The Mongoose connection closes via its own SIGINT
+// handler in app_server/models/db.js.
+const shutdown = (signal) => {
+    console.log(`\n${signal} received, shutting down HTTP server`);
+    server.close(() => {
+        console.log('HTTP server closed');
+        process.exit(0);
+    });
+    // Force exit if shutdown takes longer than 10 seconds.
+    setTimeout(() => process.exit(1), 10000).unref();
+};
+process.on('SIGTERM', () => shutdown('SIGTERM'));
 
 module.exports = app;
