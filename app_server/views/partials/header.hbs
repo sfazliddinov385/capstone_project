@@ -16,7 +16,15 @@
 <nav id="tg-nav" aria-label="Primary">
     <div class="nav-inner">
         <a href="/" class="nav-logo">Travlr <span>Getaways</span></a>
-        <ul class="nav-links">
+        <button id="nav-toggle" class="nav-toggle" type="button"
+                aria-label="Open menu" aria-expanded="false" aria-controls="nav-links">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
+        <ul id="nav-links" class="nav-links">
             <li><a href="/travel">Trips</a></li>
             <li><a href="/news">News</a></li>
             <li><a href="/favorites" aria-label="My Favorites">&#10084; Favorites</a></li>
@@ -33,10 +41,14 @@
     </div>
 </nav>
 
+<button id="tg-back-to-top" class="tg-back-to-top" type="button" aria-label="Back to top">&uarr;</button>
+<div id="tg-toast-stack" aria-live="polite" aria-atomic="true"></div>
+
 <main id="main-content" role="main">
 
 <script>
 (function() {
+    // Cart badge from localStorage
     function refreshCartBadge() {
         var cart = [];
         try { cart = JSON.parse(localStorage.getItem('travlr-cart') || '[]'); } catch(e) {}
@@ -48,5 +60,66 @@
     refreshCartBadge();
     window.addEventListener('storage', refreshCartBadge);
     window.refreshCartBadge = refreshCartBadge;
+
+    // Mobile hamburger toggle
+    var toggle = document.getElementById('nav-toggle');
+    var links  = document.getElementById('nav-links');
+    if (toggle && links) {
+        toggle.addEventListener('click', function() {
+            var open = links.classList.toggle('is-open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+            toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        });
+        // Close mobile menu when any link is clicked
+        links.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && links.classList.contains('is-open')) {
+                links.classList.remove('is-open');
+                toggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+
+    // Back-to-top button
+    var btn = document.getElementById('tg-back-to-top');
+    if (btn) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 480) btn.classList.add('is-visible');
+            else btn.classList.remove('is-visible');
+        }, { passive: true });
+        btn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // Scroll-triggered fade-ins via IntersectionObserver
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    io.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        // Observe any element opting in via .tg-fade-in
+        document.querySelectorAll('.tg-fade-in').forEach(function(el) { io.observe(el); });
+        // Also expose so dynamically added elements can be observed
+        window.tgObserveFade = function(el) { if (el) io.observe(el); };
+    }
+
+    // Lightweight toast helper to replace alert() calls. Usage:
+    //   window.tgToast('Saved', 'success')   // 'success' | 'danger' | 'warn' | ''
+    window.tgToast = function(message, kind, ttl) {
+        var stack = document.getElementById('tg-toast-stack');
+        if (!stack) { console.log(message); return; }
+        var t = document.createElement('div');
+        t.className = 'tg-toast' + (kind ? ' ' + kind : '');
+        t.textContent = message;
+        stack.appendChild(t);
+        setTimeout(function() {
+            t.classList.add('fade-out');
+            setTimeout(function() { t.remove(); }, 260);
+        }, ttl || 3200);
+    };
 })();
 </script>
