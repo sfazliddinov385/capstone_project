@@ -5,6 +5,16 @@ const nodemailer = require('nodemailer');
 // localhost for development.
 const PUBLIC_URL = (process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, '');
 
+// Escape user-controlled fields before they are interpolated into the HTML
+// email template. Without this, a customer name like `</td><script>...` could
+// inject markup into the inbox of whoever opens the confirmation.
+const escapeHtml = (v) => String(v == null ? '' : v)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 // Create transporter using environment variables
 // For Gmail: set EMAIL_USER and EMAIL_PASS (use an App Password, not your real password)
 // For testing without real credentials, emails are skipped (no PII logged).
@@ -24,10 +34,18 @@ const sendReservationConfirmation = async (toEmail, customerName, reservation) =
     const perPerson  = parseFloat(reservation.perPerson  || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     const totalPrice = parseFloat(reservation.totalPrice || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
+    // Pre-escape every user-controlled field exactly once before it is dropped
+    // into the HTML template below.
+    const safeCustomer = escapeHtml(customerName);
+    const safeTripName = escapeHtml(reservation.tripName);
+    const safeResort   = escapeHtml(reservation.resort || '-');
+    const safeLength   = escapeHtml(reservation.length || '-');
+    const safePeople   = escapeHtml(reservation.people);
+
     const mailOptions = {
         from:    `"Travlr Getaways" <${process.env.EMAIL_USER}>`,
         to:      toEmail,
-        subject: `Reservation Confirmed – ${reservation.tripName}`,
+        subject: `Reservation Confirmed – ${safeTripName}`,
         html: `
         <div style="font-family:Arial,sans-serif; max-width:600px; margin:auto; border:1px solid #ddd; border-radius:6px; overflow:hidden;">
             <div style="background:#333; color:#fff; padding:24px 28px;">
@@ -35,17 +53,17 @@ const sendReservationConfirmation = async (toEmail, customerName, reservation) =
                 <p style="margin:4px 0 0; opacity:0.8;">Reservation Confirmation</p>
             </div>
             <div style="padding:28px;">
-                <p style="font-size:1rem;">Hi <strong>${customerName}</strong>,</p>
+                <p style="font-size:1rem;">Hi <strong>${safeCustomer}</strong>,</p>
                 <p>Your reservation has been confirmed! Here are your booking details:</p>
 
                 <table style="width:100%; border-collapse:collapse; margin:20px 0; font-size:0.95rem;">
                     <tr style="background:#f5f5f5;">
                         <td style="padding:10px 14px; font-weight:bold; width:40%;">Trip</td>
-                        <td style="padding:10px 14px;">${reservation.tripName}</td>
+                        <td style="padding:10px 14px;">${safeTripName}</td>
                     </tr>
                     <tr>
                         <td style="padding:10px 14px; font-weight:bold;">Resort</td>
-                        <td style="padding:10px 14px;">${reservation.resort || '-'}</td>
+                        <td style="padding:10px 14px;">${safeResort}</td>
                     </tr>
                     <tr style="background:#f5f5f5;">
                         <td style="padding:10px 14px; font-weight:bold;">Start Date</td>
@@ -53,7 +71,7 @@ const sendReservationConfirmation = async (toEmail, customerName, reservation) =
                     </tr>
                     <tr>
                         <td style="padding:10px 14px; font-weight:bold;">Length</td>
-                        <td style="padding:10px 14px;">${reservation.length || '-'}</td>
+                        <td style="padding:10px 14px;">${safeLength}</td>
                     </tr>
                     <tr style="background:#f5f5f5;">
                         <td style="padding:10px 14px; font-weight:bold;">Price Per Person</td>
@@ -61,7 +79,7 @@ const sendReservationConfirmation = async (toEmail, customerName, reservation) =
                     </tr>
                     <tr>
                         <td style="padding:10px 14px; font-weight:bold;">Travelers</td>
-                        <td style="padding:10px 14px;">${reservation.people}</td>
+                        <td style="padding:10px 14px;">${safePeople}</td>
                     </tr>
                     <tr style="background:#2a7; color:#fff;">
                         <td style="padding:12px 14px; font-weight:bold; font-size:1.05rem;">Total Charged</td>

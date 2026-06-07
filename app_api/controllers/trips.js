@@ -2,6 +2,21 @@ const Trip = require('../../app_server/models/travlr');
 const { buildTripListOptions, tripPayloadFromBody } = require('../utils/tripQuery');
 const { rankSimilarTrips } = require('../utils/tripScoring');
 
+// Convert a Mongoose validation error into a client-safe message that lists
+// the invalid field names without leaking stack traces, internal paths, or
+// other engine-shaped details. Anything else gets a generic message; the full
+// error is always logged server-side so the operator can debug.
+const safeError = (err, fallback) => {
+    if (err && err.name === 'ValidationError' && err.errors) {
+        const fields = Object.keys(err.errors).join(', ');
+        return `Invalid input: ${fields}`;
+    }
+    if (err && err.name === 'CastError') {
+        return 'Invalid input';
+    }
+    return fallback;
+};
+
 // GET /api/trips  — return all trips as JSON
 const tripsList = async (req, res) => {
     try {
@@ -9,7 +24,8 @@ const tripsList = async (req, res) => {
         const trips = await Trip.find(filter).sort(sort).limit(limit).exec();
         return res.status(200).json(trips);
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        console.error('tripsList error:', err);
+        return res.status(500).json({ message: 'Unable to load trips' });
     }
 };
 
@@ -23,7 +39,8 @@ const tripsFindByCode = async (req, res) => {
         }
         return res.status(200).json(trip);
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        console.error('tripsFindByCode error:', err);
+        return res.status(500).json({ message: 'Unable to load trip' });
     }
 };
 
@@ -33,7 +50,8 @@ const tripsAddTrip = async (req, res) => {
         const trip = await Trip.create(tripPayloadFromBody(req.body));
         return res.status(201).json(trip);
     } catch (err) {
-        return res.status(400).json({ message: err.message });
+        console.error('tripsAddTrip error:', err);
+        return res.status(400).json({ message: safeError(err, 'Unable to create trip') });
     }
 };
 
@@ -51,7 +69,8 @@ const tripsUpdateTrip = async (req, res) => {
         }
         return res.status(200).json(trip);
     } catch (err) {
-        return res.status(400).json({ message: err.message });
+        console.error('tripsUpdateTrip error:', err);
+        return res.status(400).json({ message: safeError(err, 'Unable to update trip') });
     }
 };
 
@@ -66,7 +85,8 @@ const tripsDeleteTrip = async (req, res) => {
         }
         return res.status(200).json({ message: 'Trip deleted', trip });
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        console.error('tripsDeleteTrip error:', err);
+        return res.status(500).json({ message: 'Unable to delete trip' });
     }
 };
 
@@ -82,7 +102,8 @@ const tripsSimilar = async (req, res) => {
         const candidates = await Trip.find({ code: { $ne: tripCode } }).lean();
         return res.status(200).json(rankSimilarTrips(me, candidates, 4));
     } catch (err) {
-        return res.status(500).json({ message: err.message });
+        console.error('tripsSimilar error:', err);
+        return res.status(500).json({ message: 'Unable to load similar trips' });
     }
 };
 

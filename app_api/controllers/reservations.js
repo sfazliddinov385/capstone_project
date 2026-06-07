@@ -72,9 +72,25 @@ const createReservation = async (req, res) => {
         res.status(201).json(reservation);
     } catch (err) {
         if (reservedTripCode) {
-            await Trip.updateOne({ code: reservedTripCode }, { $inc: { spotsLeft: reservedPeople } }).exec();
+            // Compensation: roll the seats we held back into inventory. If this
+            // rollback itself fails (DB blip, lost connection, etc) we must NOT
+            // let it bubble or the original 500 response is lost and the
+            // request hangs. Log loudly so an operator can reconcile by hand.
+            try {
+                await Trip.updateOne({ code: reservedTripCode }, { $inc: { spotsLeft: reservedPeople } }).exec();
+            } catch (rollbackErr) {
+                console.error(
+                    'CRITICAL: reservation compensation rollback failed.',
+                    'tripCode=' + reservedTripCode,
+                    'people=' + reservedPeople,
+                    'userId=' + (req.user && req.user._id),
+                    'originalError=' + err.message,
+                    'rollbackError=' + rollbackErr.message
+                );
+            }
         }
-        res.status(500).json({ message: err.message });
+        console.error('createReservation error:', err);
+        res.status(500).json({ message: 'Unable to create reservation' });
     }
 };
 

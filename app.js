@@ -69,26 +69,31 @@ if (isProduction) {
     app.set('trust proxy', 1);
 }
 
-// CORS allowlist — comma-separated origins via CORS_ORIGIN (default: dev Angular).
+// CORS allowlist. Comma-separated origins via CORS_ORIGIN (default: dev Angular).
 // The server's own origin is always allowed so browser fetches from server-rendered
 // HBS pages (which include an Origin header on POST) are not rejected as cross-origin.
+// Wildcard "*" is explicitly rejected. If we accepted it, any origin could call the
+// API with credentials and we lose the whole point of an allowlist.
 const configuredOrigins = (process.env.CORS_ORIGIN || 'http://localhost:4200')
     .split(',')
     .map(o => o.trim())
     .filter(Boolean);
 
+if (configuredOrigins.includes('*')) {
+    console.error('\nFATAL: CORS_ORIGIN must not contain "*". List the actual origins instead.\n');
+    process.exit(1);
+}
+
 const sameOrigins = [`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`];
 const corsOrigins = Array.from(new Set([...sameOrigins, ...configuredOrigins]));
 
-const corsOptions = corsOrigins.includes('*')
-    ? { origin: true }
-    : {
-        origin(origin, cb) {
-            // Allow no-origin (curl, server-to-server) and any allowlisted origin.
-            if (!origin || corsOrigins.includes(origin)) return cb(null, true);
-            return cb(new Error(`Origin ${origin} not allowed by CORS`));
-        }
-    };
+const corsOptions = {
+    origin(origin, cb) {
+        // Allow no-origin (curl, server-to-server) and any allowlisted origin.
+        if (!origin || corsOrigins.includes(origin)) return cb(null, true);
+        return cb(new Error(`Origin ${origin} not allowed by CORS`));
+    }
+};
 
 app.use(cors(corsOptions));
 
