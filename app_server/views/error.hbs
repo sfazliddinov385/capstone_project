@@ -1,0 +1,29 @@
+{{> header}}
+
+<section class="tg-404">
+    <div class="tg-404-inner">
+        <div class="tg-404-code">{{#if code}}{{code}}{{else}}Error{{/if}}</div>
+        <h1 class="tg-404-title">{{#if heading}}{{heading}}{{else}}Something went wrong{{/if}}</h1>
+        <p class="tg-404-text">
+            {{#if message}}{{message}}{{else}}The page could not be loaded. Try again, or head back home.{{/if}}
+        </p>
+
+        <div class="tg-404-actions">
+            <a href="/" class="btn-primary">Back to home</a>
+            <a href="/travel" class="btn-secondary">Browse trips</a>
+            <a href="/news" class="btn-secondary">Read the news</a>
+        </div>
+
+        <div class="tg-404-help">
+            If this keeps happening, please <a href="/contact">contact us</a>.
+        </div>
+    </div>
+
+    <div class="tg-404-art" aria-hidden="true">
+        <div class="tg-404-blob tg-404-blob-1"></div>
+        <div class="tg-404-blob tg-404-blob-2"></div>
+        <div class="tg-404-blob tg-404-blob-3"></div>
+    </div>
+</section>
+
+{{> footer}}

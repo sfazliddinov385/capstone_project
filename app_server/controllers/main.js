@@ -22,7 +22,13 @@ const travel = async (req, res) => {
         const trips = await Trip.find({}).exec();
         renderView(res, 'travel', 'Travlr Getaways - Travel', { trips });
     } catch (err) {
-        res.status(500).render('error', { message: err.message });
+        console.error('travel render error:', err);
+        res.status(500).render('error', {
+            title: 'Something went wrong',
+            code: '500',
+            heading: 'We could not load the trip catalog',
+            message: 'Try again in a moment.'
+        });
     }
 };
 
@@ -30,10 +36,23 @@ const tripDetail = async (req, res) => {
     try {
         const code = String(req.params.tripCode || '').trim().toUpperCase();
         const trip = await Trip.findOne({ code }).lean();
-        if (!trip) return res.status(404).render('error', { message: `Trip ${code} not found.` });
+        if (!trip) {
+            return res.status(404).render('error', {
+                title: 'Trip not found',
+                code: '404',
+                heading: 'We could not find that trip',
+                message: `Trip ${code} does not exist or has been removed.`
+            });
+        }
         renderView(res, 'trip-detail', `${trip.name} - Travlr Getaways`, { trip });
     } catch (err) {
-        res.status(500).render('error', { message: err.message });
+        console.error('tripDetail render error:', err);
+        res.status(500).render('error', {
+            title: 'Something went wrong',
+            code: '500',
+            heading: 'We could not load that trip',
+            message: 'Try again in a moment.'
+        });
     }
 };
 
@@ -58,7 +77,14 @@ const news = (req, res) => {
 const newsArticle = (req, res) => {
     const slug = String(req.params.slug || '').toLowerCase();
     const article = newsItems.find(a => a.slug === slug);
-    if (!article) return res.status(404).render('error', { message: `Article not found.` });
+    if (!article) {
+        return res.status(404).render('error', {
+            title: 'Article not found',
+            code: '404',
+            heading: 'We could not find that article',
+            message: 'The story may have moved. Check the news index for the latest.'
+        });
+    }
     const related = newsItems.filter(a => a.slug !== slug).slice(0, 3);
     renderView(res, 'news-article', `${article.title} - Travlr Getaways`, { article, related });
 };
