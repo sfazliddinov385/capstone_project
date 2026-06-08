@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { TripDataService } from '../trip-data';
 import { Trip } from '../trip';
 import { AuthenticationService } from '../authentication.service';
@@ -29,12 +29,22 @@ export class TripListing implements OnInit {
   constructor(
     private tripDataService: TripDataService,
     private router: Router,
+    private route: ActivatedRoute,
     private authService: AuthenticationService,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    // Pick up the topbar's ?q= so a search from any page lands here pre-filled.
+    this.route.queryParamMap.subscribe(params => {
+      const q = params.get('q') || '';
+      if (q !== this.search) {
+        this.search = q;
+        this.applyView();
+        this.cdr.detectChanges();
+      }
+    });
     this.getTrips();
   }
 
