@@ -1,0 +1,88 @@
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">Reviews</h1>
+    <p class="admin-page-subtitle">Customer reviews across every trip. Moderate inappropriate content by removing it. The trip rating refreshes automatically.</p>
+  </div>
+  <div class="admin-page-actions">
+    <button class="btn-admin btn-admin-primary" type="button" (click)="load()">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      Refresh
+    </button>
+  </div>
+</div>
+
+<div *ngIf="error" class="admin-alert admin-alert-warning">
+  <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>
+  <div>{{ error }}</div>
+</div>
+
+<div class="admin-stats">
+  <div class="admin-stat-card">
+    <div class="admin-stat-head"><div class="admin-stat-label">Reviews shown</div></div>
+    <div class="admin-stat-value">{{ rows.length }}</div>
+    <div class="admin-stat-foot"><span class="admin-stat-pill">Live</span><span class="admin-stat-foot-label">in this view</span></div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-head"><div class="admin-stat-label">Average rating</div></div>
+    <div class="admin-stat-value">{{ averageRating() }} <small style="font-size:0.5em;color:#9ca3af;">/ 5</small></div>
+    <div class="admin-stat-foot"><span class="admin-stat-pill">Mean</span><span class="admin-stat-foot-label">across rows</span></div>
+  </div>
+</div>
+
+<div class="admin-card admin-table-card">
+  <div class="admin-table-toolbar">
+    <div class="admin-search-wrap">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+      <input
+        type="text"
+        class="admin-input"
+        placeholder="Search by trip, code, reviewer, or comment text..."
+        [(ngModel)]="search"
+        (keyup)="onSearchKey($event)">
+      <button *ngIf="search" class="admin-clear-btn" type="button" (click)="clearSearch()">Clear</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="admin-table-empty">Loading reviews...</div>
+
+  <div *ngIf="!loading && !rows.length" class="admin-table-empty">
+    No reviews found{{ search ? ' for "' + search + '"' : '' }}.
+  </div>
+
+  <table *ngIf="!loading && rows.length" class="admin-table">
+    <thead>
+      <tr>
+        <th>Posted</th>
+        <th>Reviewer</th>
+        <th>Trip</th>
+        <th>Rating</th>
+        <th>Comment</th>
+        <th class="t-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of rows">
+        <td><div class="admin-cell-primary">{{ formatDate(r.createdAt) }}</div></td>
+        <td><div class="admin-cell-primary">{{ r.userName }}</div></td>
+        <td>
+          <div class="admin-cell-primary">{{ r.tripName }}</div>
+          <div class="admin-cell-meta">{{ r.tripCode }}</div>
+        </td>
+        <td>
+          <span class="admin-rating" [class]="ratingClass(r.rating)">{{ stars(r.rating) }}</span>
+          <div class="admin-cell-meta">{{ r.rating }} / 5</div>
+        </td>
+        <td><div class="admin-review-comment">{{ r.comment }}</div></td>
+        <td class="t-right">
+          <button
+            class="btn-admin btn-admin-danger btn-sm"
+            type="button"
+            [disabled]="deleting[r._id]"
+            (click)="remove(r)">
+            {{ deleting[r._id] ? 'Deleting...' : 'Delete' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

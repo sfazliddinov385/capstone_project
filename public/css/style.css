@@ -3257,6 +3257,118 @@ a.tg-news-featured-img:hover img, a.tg-news-card-img:hover img { transform: scal
 
 
 /* ═══════════════════════════════════════════════════════════════
+   404 PAGE
+   ═══════════════════════════════════════════════════════════════ */
+.tg-404 {
+    position: relative;
+    min-height: calc(100vh - 200px);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 80% 10%, rgba(232, 184, 75, 0.08), transparent 45%),
+        radial-gradient(circle at 10% 90%, rgba(13, 71, 120, 0.55), transparent 50%),
+        linear-gradient(135deg, #062138 0%, #083050 55%, #0a3e63 100%);
+    color: #ffffff;
+    padding: 80px 24px;
+}
+.tg-404-inner {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 640px;
+}
+.tg-404-code {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(120px, 18vw, 220px);
+    font-weight: 800;
+    line-height: 0.9;
+    background: linear-gradient(135deg, #e8b84b 0%, #f5c842 50%, #ffe082 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -8px;
+    margin-bottom: 8px;
+}
+.tg-404-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: #ffffff;
+}
+.tg-404-text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin: 0 0 32px;
+}
+.tg-404-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 28px;
+}
+.tg-404-actions .btn-primary,
+.tg-404-actions .btn-secondary {
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.tg-404-actions .btn-secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+.tg-404-actions .btn-secondary:hover { background: rgba(255, 255, 255, 0.16); transform: translateY(-2px); }
+.tg-404-actions .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232, 184, 75, 0.45); }
+.tg-404-help {
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.88rem;
+}
+.tg-404-help a {
+    color: #e8b84b;
+    text-decoration: underline;
+    text-decoration-color: rgba(232, 184, 75, 0.4);
+    text-underline-offset: 3px;
+}
+.tg-404-help a:hover { text-decoration-color: #e8b84b; }
+.tg-404-art {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+.tg-404-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.35;
+}
+.tg-404-blob-1 {
+    width: 480px; height: 480px;
+    background: radial-gradient(circle, #e8b84b 0%, transparent 70%);
+    top: -160px; right: -120px;
+    animation: tg-blob-float 18s ease-in-out infinite;
+}
+.tg-404-blob-2 {
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, #2a6699 0%, transparent 70%);
+    bottom: -140px; left: -100px;
+    animation: tg-blob-float 22s ease-in-out infinite reverse;
+}
+.tg-404-blob-3 {
+    width: 260px; height: 260px;
+    background: radial-gradient(circle, #1a8fb8 0%, transparent 70%);
+    top: 40%; left: 45%;
+    opacity: 0.2;
+    animation: tg-blob-float 26s ease-in-out infinite;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    MODERN POLISH LAYER
    Appended last so cascade order lets it refine the styles above
    without rewriting them. Touches accessibility, motion, mobile

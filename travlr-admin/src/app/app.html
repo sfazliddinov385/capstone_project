@@ -30,6 +30,14 @@
           <svg class="icon" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.5 3-6 6.5-6s6.5 2.5 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M21.5 18c0-2.2-2-4-4.5-4"/></svg>
           Customers
         </a>
+        <a *ngIf="isAdmin()" routerLink="/reservations" routerLinkActive="active">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          Reservations
+        </a>
+        <a *ngIf="isAdmin()" routerLink="/reviews" routerLinkActive="active">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Reviews
+        </a>
       </nav>
 
       <div class="admin-nav-section">External</div>

@@ -8,6 +8,7 @@ const reservationsController = require('../controllers/reservations');
 const reviewsController      = require('../controllers/reviews');
 const favoritesController    = require('../controllers/favorites');
 const statsController        = require('../controllers/stats');
+const adminController        = require('../controllers/admin');
 const { authenticate, authorizeAdmin } = require('../middleware/auth');
 
 // Rate-limit credential endpoints to slow credential-stuffing and registration spam.
@@ -75,5 +76,11 @@ router.delete('/favorites/:tripCode',   authenticate, writeLimiter, favoritesCon
 
 // Admin dashboard stats — admin only
 router.get('/admin/stats', authenticate, authorizeAdmin, statsController.getDashboardStats);
+
+// Admin moderation: see and cancel every reservation, see and delete every review.
+router.get('/admin/reservations',        authenticate, authorizeAdmin, adminController.listAllReservations);
+router.delete('/admin/reservations/:id', authenticate, authorizeAdmin, writeLimiter, adminController.adminCancelReservation);
+router.get('/admin/reviews',             authenticate, authorizeAdmin, adminController.listAllReviews);
+router.delete('/admin/reviews/:id',      authenticate, authorizeAdmin, writeLimiter, adminController.adminDeleteReview);
 
 module.exports = router;

@@ -1,0 +1,99 @@
+<div class="admin-page-head">
+  <div>
+    <h1 class="admin-page-title">Reservations</h1>
+    <p class="admin-page-subtitle">Every booking across the platform. Search by trip name, code, or resort. Cancel returns seats to inventory.</p>
+  </div>
+  <div class="admin-page-actions">
+    <button class="btn-admin btn-admin-secondary" type="button" (click)="exportCsv()" [disabled]="!rows.length">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg>
+      Export
+    </button>
+    <button class="btn-admin btn-admin-primary" type="button" (click)="load()">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+      Refresh
+    </button>
+  </div>
+</div>
+
+<div *ngIf="error" class="admin-alert admin-alert-warning">
+  <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16v.5"/></svg>
+  <div>{{ error }}</div>
+</div>
+
+<div class="admin-stats">
+  <div class="admin-stat-card">
+    <div class="admin-stat-head"><div class="admin-stat-label">Bookings shown</div></div>
+    <div class="admin-stat-value">{{ rows.length }}</div>
+    <div class="admin-stat-foot"><span class="admin-stat-pill">Live</span><span class="admin-stat-foot-label">in this view</span></div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-head"><div class="admin-stat-label">Seats sold</div></div>
+    <div class="admin-stat-value">{{ totalSeats() }}</div>
+    <div class="admin-stat-foot"><span class="admin-stat-pill">Total</span><span class="admin-stat-foot-label">travelers</span></div>
+  </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-head"><div class="admin-stat-label">Revenue</div></div>
+    <div class="admin-stat-value">{{ formatCurrency(totalRevenue()) }}</div>
+    <div class="admin-stat-foot"><span class="admin-stat-pill">Sum</span><span class="admin-stat-foot-label">across rows</span></div>
+  </div>
+</div>
+
+<div class="admin-card admin-table-card">
+  <div class="admin-table-toolbar">
+    <div class="admin-search-wrap">
+      <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+      <input
+        type="text"
+        class="admin-input"
+        placeholder="Search by trip, code, or resort..."
+        [(ngModel)]="search"
+        (keyup)="onSearchKey($event)">
+      <button *ngIf="search" class="admin-clear-btn" type="button" (click)="clearSearch()">Clear</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="admin-table-empty">Loading reservations...</div>
+
+  <div *ngIf="!loading && !rows.length" class="admin-table-empty">
+    No reservations found{{ search ? ' for "' + search + '"' : '' }}.
+  </div>
+
+  <table *ngIf="!loading && rows.length" class="admin-table">
+    <thead>
+      <tr>
+        <th>Booked</th>
+        <th>Customer</th>
+        <th>Trip</th>
+        <th>Travelers</th>
+        <th>Total</th>
+        <th class="t-right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of rows">
+        <td>
+          <div class="admin-cell-primary">{{ formatDate(r.bookedAt) }}</div>
+        </td>
+        <td>
+          <div class="admin-cell-primary">{{ r.customerName }}</div>
+          <div class="admin-cell-meta">{{ r.customerEmail }}</div>
+        </td>
+        <td>
+          <div class="admin-cell-primary">{{ r.tripName }}</div>
+          <div class="admin-cell-meta">{{ r.tripCode }}<span *ngIf="r.resort"> &middot; {{ r.resort }}</span></div>
+        </td>
+        <td>{{ r.people }}</td>
+        <td><strong>{{ formatCurrency(r.totalPrice) }}</strong></td>
+        <td class="t-right">
+          <button
+            class="btn-admin btn-admin-danger btn-sm"
+            type="button"
+            [disabled]="cancelling[r._id]"
+            (click)="cancel(r)">
+            {{ cancelling[r._id] ? 'Cancelling...' : 'Cancel' }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

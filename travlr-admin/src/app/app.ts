@@ -8,12 +8,14 @@ import { AuthenticationService } from './authentication.service';
 import { environment } from '../environments/environment';
 
 const TITLES: Record<string, string> = {
-  '/':          'Dashboard',
-  '/trips':     'Trip Catalog',
-  '/add-trip':  'New Trip',
-  '/edit-trip': 'Edit Trip',
-  '/customers': 'Customers',
-  '/login':     'Sign In'
+  '/':             'Dashboard',
+  '/trips':        'Trip Catalog',
+  '/add-trip':     'New Trip',
+  '/edit-trip':    'Edit Trip',
+  '/customers':    'Customers',
+  '/reservations': 'Reservations',
+  '/reviews':      'Reviews',
+  '/login':        'Sign In'
 };
 
 interface RecentReservation {

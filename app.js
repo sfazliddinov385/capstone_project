@@ -110,6 +110,16 @@ app.use('/', indexRouter);
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
+// Catch-all 404 handler. Anything that fell through every router and the
+// static folder is genuinely unknown. /api/* gets JSON; everything else
+// gets the friendly HBS 404 page.
+app.use((req, res) => {
+    if (req.path.startsWith('/api/')) {
+        return res.status(404).json({ message: 'Not found' });
+    }
+    return res.status(404).render('404', { title: 'Page not found' });
+});
+
 const server = app.listen(PORT, () => {
     console.log(`Express server running at http://localhost:${PORT}`);
 });

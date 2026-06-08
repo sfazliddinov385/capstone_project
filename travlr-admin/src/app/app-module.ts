@@ -13,10 +13,12 @@ import { AddTrip } from './add-trip/add-trip';
 import { EditTrip } from './edit-trip/edit-trip';
 import { Login } from './login/login';
 import { CustomerList } from './customer-list/customer-list';
+import { AdminReservations } from './admin-reservations/admin-reservations';
+import { AdminReviews } from './admin-reviews/admin-reviews';
 import { jwtInterceptor } from './jwt.interceptor';
 
 @NgModule({
-  declarations: [App, Dashboard, TripListing, TripCard, AddTrip, EditTrip, Login, CustomerList],
+  declarations: [App, Dashboard, TripListing, TripCard, AddTrip, EditTrip, Login, CustomerList, AdminReservations, AdminReviews],
   imports: [
     BrowserModule,
     CommonModule,
