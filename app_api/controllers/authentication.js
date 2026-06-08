@@ -36,13 +36,16 @@ const login = async (req, res) => {
   }
 };
 
-// GET /api/customers — list all registered users (admin use)
+// GET /api/customers — list every registered user (admin only). Includes
+// the role so the admin SPA can hide admin accounts from the customer table
+// without filtering it out server-side (other internal tools may want them).
 const getCustomers = async (req, res) => {
   try {
-    const users = await User.find({}, 'name email _id').sort({ name: 1 });
+    const users = await User.find({}, 'name email role _id').sort({ name: 1 });
     return res.status(200).json(users);
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    console.error('getCustomers error:', err);
+    return res.status(500).json({ message: 'Unable to load customers' });
   }
 };
 
