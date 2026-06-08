@@ -168,6 +168,23 @@
                 }
                 var date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '';
                 var initial = (r.userName || 'T').charAt(0).toUpperCase();
+
+                // Operator response block, only when the admin has replied.
+                var replyHtml = '';
+                if (r.adminReply && String(r.adminReply).trim()) {
+                    var replyDate = r.adminReplyAt
+                        ? new Date(r.adminReplyAt).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' })
+                        : '';
+                    replyHtml = ''
+                        + '<div class="tg-review-reply">'
+                        +   '<div class="tg-review-reply-head">'
+                        +     '<span class="tg-review-reply-badge">Response from ' + escapeHtml(r.adminReplyByName || 'Travlr Getaways') + '</span>'
+                        +     (replyDate ? '<span class="tg-review-reply-date">' + escapeHtml(replyDate) + '</span>' : '')
+                        +   '</div>'
+                        +   '<p class="tg-review-reply-text">' + escapeHtml(r.adminReply) + '</p>'
+                        + '</div>';
+                }
+
                 return ''
                     + '<article class="tg-review">'
                     +   '<div class="tg-review-head">'
@@ -178,6 +195,7 @@
                     +     '</div>'
                     +   '</div>'
                     +   '<p class="tg-review-text">' + escapeHtml(r.comment || '') + '</p>'
+                    +   replyHtml
                     + '</article>';
             }).join('');
         })

@@ -3241,6 +3241,46 @@ a.tg-news-featured-img:hover img, a.tg-news-card-img:hover img { transform: scal
 .tg-review-meta { font-size: 0.78rem; color: #6b7280; margin-top: 2px; }
 .tg-review-text { color: #374151; font-size: 0.95rem; line-height: 1.65; margin: 0; }
 
+/* Operator response on a customer review */
+.tg-review-reply {
+    margin-top: 12px;
+    margin-left: 12px;
+    padding: 14px 16px;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 1px solid #e2e8f0;
+    border-left: 3px solid #083050;
+    border-radius: 10px;
+}
+.tg-review-reply-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+.tg-review-reply-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #083050;
+    background: #e0ecf6;
+    border-radius: 999px;
+    padding: 3px 10px;
+}
+.tg-review-reply-date {
+    font-size: 0.78rem;
+    color: #6b7280;
+}
+.tg-review-reply-text {
+    margin: 0;
+    color: #334155;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
 /* Similar trips below detail */
 .tg-detail-similar {
     background: #ffffff;

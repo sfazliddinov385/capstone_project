@@ -81,6 +81,7 @@ router.get('/admin/stats', authenticate, authorizeAdmin, statsController.getDash
 router.get('/admin/reservations',        authenticate, authorizeAdmin, adminController.listAllReservations);
 router.delete('/admin/reservations/:id', authenticate, authorizeAdmin, writeLimiter, adminController.adminCancelReservation);
 router.get('/admin/reviews',             authenticate, authorizeAdmin, adminController.listAllReviews);
+router.post('/admin/reviews/:id/reply',  authenticate, authorizeAdmin, writeLimiter, adminController.adminReplyToReview);
 router.delete('/admin/reviews/:id',      authenticate, authorizeAdmin, writeLimiter, adminController.adminDeleteReview);
 
 module.exports = router;

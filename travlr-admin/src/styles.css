@@ -1121,3 +1121,120 @@ button { font-family: inherit; }
   font-size: 0.95rem;
   font-style: italic;
 }
+
+/* ─── Review rows (card-per-row layout) ──────────────────────── */
+.admin-review-list {
+  display: flex; flex-direction: column;
+}
+.admin-review-row {
+  padding: 22px 24px;
+  border-top: 1px solid var(--border, #e2e8f0);
+}
+.admin-review-row:first-child { border-top: none; }
+.admin-review-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.admin-review-row-meta {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.admin-review-row-trip strong {
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-right: 8px;
+}
+.admin-review-row-author {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap;
+}
+.admin-review-row-actions {
+  display: flex; gap: 8px;
+  flex-shrink: 0;
+}
+.admin-review-comment-full {
+  color: #334155;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 6px 0 14px;
+  white-space: pre-wrap;
+}
+
+/* Operator response block */
+.admin-review-reply {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #1a4a72;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 8px;
+}
+.admin-review-reply-edit {
+  background: #ffffff;
+  border-left-color: #d99a2b;
+}
+.admin-review-reply-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+.admin-review-reply-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: #1a4a72;
+  background: #eff6ff;
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.admin-review-reply-edit .admin-review-reply-badge {
+  color: #92400e;
+  background: #fef3c7;
+}
+.admin-review-reply-text {
+  color: #334155;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+.admin-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.94rem;
+  line-height: 1.55;
+  resize: vertical;
+  transition: border-color 120ms, box-shadow 120ms;
+}
+.admin-textarea:focus {
+  outline: none;
+  border-color: #d99a2b;
+  box-shadow: 0 0 0 3px rgba(217, 154, 43, 0.15);
+}
+.admin-review-reply-row-actions {
+  display: flex; gap: 10px; margin-top: 10px;
+  flex-wrap: wrap;
+}
+.admin-link-btn {
+  background: transparent;
+  border: none;
+  color: #1a4a72;
+  font-weight: 500;
+  font-size: 0.82rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 120ms, color 120ms;
+}
+.admin-link-btn:hover { background: #eff6ff; }
+.admin-link-btn-danger { color: #dc2626; }
+.admin-link-btn-danger:hover { background: #fee2e2; color: #991b1b; }

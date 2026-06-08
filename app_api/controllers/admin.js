@@ -108,6 +108,45 @@ const listAllReviews = async (req, res) => {
     }
 };
 
+// POST /api/admin/reviews/:id/reply  — set or clear the operator response
+// shown on the customer trip detail page. Body: { reply: string }. An empty
+// reply clears the response so it disappears from the customer view.
+const adminReplyToReview = async (req, res) => {
+    try {
+        const raw = typeof req.body?.reply === 'string' ? req.body.reply.trim() : '';
+
+        if (raw.length > 1000) {
+            return res.status(400).json({ message: 'Reply must be 1000 characters or fewer' });
+        }
+
+        const update = raw === ''
+            ? { $set: { adminReply: '' }, $unset: { adminReplyAt: 1, adminReplyByName: 1 } }
+            : { $set: {
+                    adminReply:       raw,
+                    adminReplyAt:     new Date(),
+                    adminReplyByName: (req.user?.name || 'Travlr Team').slice(0, 80)
+                } };
+
+        const review = await Review.findByIdAndUpdate(
+            req.params.id,
+            update,
+            { new: true, runValidators: true }
+        );
+
+        if (!review) return res.status(404).json({ message: 'Review not found' });
+
+        console.log('admin.replyToReview',
+            'admin=' + req.user._id,
+            'review=' + review._id,
+            'cleared=' + (raw === ''));
+
+        res.status(200).json(review);
+    } catch (err) {
+        console.error('adminReplyToReview error:', err);
+        res.status(500).json({ message: 'Unable to save reply' });
+    }
+};
+
 // DELETE /api/admin/reviews/:id  — admin override of the user-scoped
 // delete. Refreshes the trip's aggregate rating so the public card
 // reflects reality.
@@ -136,5 +175,6 @@ module.exports = {
     listAllReservations,
     adminCancelReservation,
     listAllReviews,
+    adminReplyToReview,
     adminDeleteReview
 };

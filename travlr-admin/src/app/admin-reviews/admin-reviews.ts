@@ -3,13 +3,16 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 interface AdminReview {
-  _id:        string;
-  tripName:   string;
-  tripCode:   string;
-  userName:   string;
-  rating:     number;
-  comment:    string;
-  createdAt?: string;
+  _id:               string;
+  tripName:          string;
+  tripCode:          string;
+  userName:          string;
+  rating:            number;
+  comment:           string;
+  createdAt?:        string;
+  adminReply?:       string;
+  adminReplyAt?:     string;
+  adminReplyByName?: string;
 }
 
 @Component({
@@ -23,6 +26,12 @@ export class AdminReviews implements OnInit {
   error   = '';
   search  = '';
   deleting: Record<string, boolean> = {};
+
+  // Reply UI: which row is in edit mode, draft text per row, saving flags
+  replyEditing: Record<string, boolean> = {};
+  replyDraft:   Record<string, string>  = {};
+  replySaving:  Record<string, boolean> = {};
+  readonly REPLY_MAX = 1000;
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
@@ -82,5 +91,73 @@ export class AdminReviews implements OnInit {
     if (!this.rows.length) return 0;
     const sum = this.rows.reduce((s, r) => s + (Number(r.rating) || 0), 0);
     return Math.round((sum / this.rows.length) * 10) / 10;
+  }
+
+  // ── Reply workflow ─────────────────────────────────────────
+  startReply(row: AdminReview): void {
+    this.replyEditing[row._id] = true;
+    this.replyDraft[row._id] = row.adminReply || '';
+  }
+
+  cancelReply(row: AdminReview): void {
+    this.replyEditing[row._id] = false;
+    delete this.replyDraft[row._id];
+  }
+
+  saveReply(row: AdminReview): void {
+    const text = (this.replyDraft[row._id] || '').trim();
+    if (text.length > this.REPLY_MAX) return;
+    this.replySaving[row._id] = true;
+    this.http.post<AdminReview>(
+      `${environment.apiUrl}/admin/reviews/${row._id}/reply`,
+      { reply: text }
+    ).subscribe({
+      next: (updated) => {
+        Object.assign(row, updated);
+        this.replySaving[row._id] = false;
+        this.replyEditing[row._id] = false;
+        delete this.replyDraft[row._id];
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.replySaving[row._id] = false;
+        alert('Failed to save the reply.');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  clearReply(row: AdminReview): void {
+    if (!confirm('Remove your reply from this review?')) return;
+    this.replySaving[row._id] = true;
+    this.http.post<AdminReview>(
+      `${environment.apiUrl}/admin/reviews/${row._id}/reply`,
+      { reply: '' }
+    ).subscribe({
+      next: (updated) => {
+        Object.assign(row, updated);
+        // Mongoose $unset removes the fields; reflect that on the client.
+        row.adminReply       = '';
+        row.adminReplyAt     = undefined;
+        row.adminReplyByName = undefined;
+        this.replySaving[row._id] = false;
+        this.replyEditing[row._id] = false;
+        delete this.replyDraft[row._id];
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.replySaving[row._id] = false;
+        alert('Failed to clear the reply.');
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  replyCharsLeft(row: AdminReview): number {
+    return this.REPLY_MAX - (this.replyDraft[row._id]?.length || 0);
+  }
+
+  replyCount(): number {
+    return this.rows.filter(r => (r.adminReply || '').trim().length > 0).length;
   }
 }

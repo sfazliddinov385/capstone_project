@@ -1,7 +1,7 @@
 <div class="admin-page-head">
   <div>
     <h1 class="admin-page-title">Reviews</h1>
-    <p class="admin-page-subtitle">Customer reviews across every trip. Moderate inappropriate content by removing it. The trip rating refreshes automatically.</p>
+    <p class="admin-page-subtitle">Customer reviews across every trip. Reply to acknowledge feedback, or remove abusive content. The trip rating refreshes automatically.</p>
   </div>
   <div class="admin-page-actions">
     <button class="btn-admin btn-admin-primary" type="button" (click)="load()">
@@ -27,6 +27,14 @@
     <div class="admin-stat-value">{{ averageRating() }} <small style="font-size:0.5em;color:#9ca3af;">/ 5</small></div>
     <div class="admin-stat-foot"><span class="admin-stat-pill">Mean</span><span class="admin-stat-foot-label">across rows</span></div>
   </div>
+  <div class="admin-stat-card">
+    <div class="admin-stat-head"><div class="admin-stat-label">Replied</div></div>
+    <div class="admin-stat-value">{{ replyCount() }}</div>
+    <div class="admin-stat-foot">
+      <span class="admin-stat-pill">{{ rows.length ? ((replyCount() * 100 / rows.length) | number:'1.0-0') : 0 }}%</span>
+      <span class="admin-stat-foot-label">of visible reviews</span>
+    </div>
+  </div>
 </div>
 
 <div class="admin-card admin-table-card">
@@ -49,31 +57,27 @@
     No reviews found{{ search ? ' for "' + search + '"' : '' }}.
   </div>
 
-  <table *ngIf="!loading && rows.length" class="admin-table">
-    <thead>
-      <tr>
-        <th>Posted</th>
-        <th>Reviewer</th>
-        <th>Trip</th>
-        <th>Rating</th>
-        <th>Comment</th>
-        <th class="t-right">Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let r of rows">
-        <td><div class="admin-cell-primary">{{ formatDate(r.createdAt) }}</div></td>
-        <td><div class="admin-cell-primary">{{ r.userName }}</div></td>
-        <td>
-          <div class="admin-cell-primary">{{ r.tripName }}</div>
-          <div class="admin-cell-meta">{{ r.tripCode }}</div>
-        </td>
-        <td>
-          <span class="admin-rating" [class]="ratingClass(r.rating)">{{ stars(r.rating) }}</span>
-          <div class="admin-cell-meta">{{ r.rating }} / 5</div>
-        </td>
-        <td><div class="admin-review-comment">{{ r.comment }}</div></td>
-        <td class="t-right">
+  <div *ngIf="!loading && rows.length" class="admin-review-list">
+    <article *ngFor="let r of rows" class="admin-review-row">
+      <header class="admin-review-row-head">
+        <div class="admin-review-row-meta">
+          <div class="admin-review-row-trip">
+            <strong>{{ r.tripName }}</strong>
+            <span class="admin-cell-meta">{{ r.tripCode }}</span>
+          </div>
+          <div class="admin-review-row-author">
+            <span class="admin-rating" [class]="ratingClass(r.rating)">{{ stars(r.rating) }}</span>
+            <span class="admin-cell-meta">by {{ r.userName }} &middot; {{ formatDate(r.createdAt) }}</span>
+          </div>
+        </div>
+        <div class="admin-review-row-actions">
+          <button
+            *ngIf="!replyEditing[r._id]"
+            class="btn-admin btn-admin-secondary btn-sm"
+            type="button"
+            (click)="startReply(r)">
+            {{ r.adminReply ? 'Edit reply' : 'Reply' }}
+          </button>
           <button
             class="btn-admin btn-admin-danger btn-sm"
             type="button"
@@ -81,8 +85,53 @@
             (click)="remove(r)">
             {{ deleting[r._id] ? 'Deleting...' : 'Delete' }}
           </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        </div>
+      </header>
+
+      <p class="admin-review-comment-full">{{ r.comment }}</p>
+
+      <!-- Saved reply, collapsed view -->
+      <div *ngIf="!replyEditing[r._id] && r.adminReply" class="admin-review-reply">
+        <div class="admin-review-reply-head">
+          <span class="admin-review-reply-badge">Operator response</span>
+          <span class="admin-cell-meta">{{ r.adminReplyByName || 'Travlr Team' }} &middot; {{ formatDate(r.adminReplyAt) }}</span>
+        </div>
+        <p class="admin-review-reply-text">{{ r.adminReply }}</p>
+        <div class="admin-review-reply-row-actions">
+          <button class="admin-link-btn" type="button" (click)="startReply(r)">Edit</button>
+          <button class="admin-link-btn admin-link-btn-danger" type="button" (click)="clearReply(r)">Remove</button>
+        </div>
+      </div>
+
+      <!-- Editing -->
+      <div *ngIf="replyEditing[r._id]" class="admin-review-reply admin-review-reply-edit">
+        <div class="admin-review-reply-head">
+          <span class="admin-review-reply-badge">Compose response</span>
+          <span class="admin-cell-meta">{{ replyCharsLeft(r) }} / {{ REPLY_MAX }} characters left</span>
+        </div>
+        <textarea
+          class="admin-input admin-textarea"
+          rows="3"
+          [maxlength]="REPLY_MAX"
+          [(ngModel)]="replyDraft[r._id]"
+          placeholder="Thank the reviewer, acknowledge specifics, or invite them back..."></textarea>
+        <div class="admin-review-reply-row-actions">
+          <button
+            class="btn-admin btn-admin-primary btn-sm"
+            type="button"
+            [disabled]="replySaving[r._id]"
+            (click)="saveReply(r)">
+            {{ replySaving[r._id] ? 'Saving...' : (r.adminReply ? 'Update reply' : 'Post reply') }}
+          </button>
+          <button
+            class="btn-admin btn-admin-secondary btn-sm"
+            type="button"
+            [disabled]="replySaving[r._id]"
+            (click)="cancelReply(r)">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </article>
+  </div>
 </div>
