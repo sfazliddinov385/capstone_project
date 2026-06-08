@@ -1,76 +1,277 @@
 {{> header}}
 
-<div class="tg-form-page">
-    <div class="tg-form-card">
-        <div class="tg-form-logo">Travlr <span>Getaways</span></div>
-        <h2>Welcome back</h2>
-        <p class="subtitle">Sign in to manage your reservations and bookings.</p>
+<section class="tg-auth-page">
 
-        <div id="login-error" class="tg-form-error"></div>
-
-        <form id="login-form">
-            <div class="tg-form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" placeholder="you@example.com" required>
-            </div>
-            <div class="tg-form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
-            </div>
-            <button type="submit" class="tg-form-submit">Sign In &rarr;</button>
-        </form>
-
-        <div class="tg-form-divider">or</div>
-
-        <div class="tg-form-footer">
-            Don&rsquo;t have an account? <a href="/register">Create one free &rarr;</a>
+    <!-- ── LEFT: brand panel (visual) ────────────────────────── -->
+    <aside class="tg-auth-brand" aria-hidden="true">
+        <div class="tg-auth-brand-bg">
+            <div class="tg-travel-blob tg-travel-blob-1"></div>
+            <div class="tg-travel-blob tg-travel-blob-2"></div>
+            <div class="tg-travel-blob tg-travel-blob-3"></div>
+            <div class="tg-travel-grid-overlay"></div>
         </div>
-    </div>
-</div>
+
+        <div class="tg-auth-brand-inner">
+            <a href="/" class="tg-auth-brand-logo">
+                <span class="tg-auth-brand-mark">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </span>
+                Travlr <span>Getaways</span>
+            </a>
+
+            <div class="tg-auth-brand-content">
+                <div class="tg-travel-hero-eyebrow">
+                    <span class="tg-eyebrow-dot"></span>
+                    Member access
+                </div>
+                <h2 class="tg-auth-brand-title">
+                    Your next <em data-shimmer>adventure</em> is waiting
+                </h2>
+                <p class="tg-auth-brand-sub">
+                    Sign in to manage your trips, leave reviews, and unlock member-only deals.
+                </p>
+
+                <div class="tg-auth-quote">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="tg-auth-quote-mark"><path d="M3 17h3c1.105 0 2-.895 2-2v-3c0-1.105-.895-2-2-2H4c0-2.205 1.794-4 4-4V3C4.691 3 2 5.691 2 9v6c0 1.105.895 2 2 2zm12 0h3c1.105 0 2-.895 2-2v-3c0-1.105-.895-2-2-2h-2c0-2.205 1.794-4 4-4V3c-3.309 0-6 2.691-6 6v6c0 1.105.895 2 2 2z"/></svg>
+                    <p>The booking experience felt effortless. We landed in Bali knowing every detail was handled.</p>
+                    <footer>
+                        <div class="tg-auth-quote-avatar">MJ</div>
+                        <div>
+                            <div class="tg-auth-quote-name">Maria &amp; James T.</div>
+                            <div class="tg-auth-quote-trip">Bali Bliss Retreat</div>
+                        </div>
+                    </footer>
+                </div>
+
+                <div class="tg-auth-trust-row">
+                    <div class="tg-auth-trust-item">
+                        <div class="tg-auth-trust-num">12k+</div>
+                        <div class="tg-auth-trust-label">Travelers</div>
+                    </div>
+                    <div class="tg-auth-trust-item">
+                        <div class="tg-auth-trust-num">4.9<span style="color:#e8b84b;">&#9733;</span></div>
+                        <div class="tg-auth-trust-label">Rating</div>
+                    </div>
+                    <div class="tg-auth-trust-item">
+                        <div class="tg-auth-trust-num">50+</div>
+                        <div class="tg-auth-trust-label">Destinations</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ── RIGHT: form panel ─────────────────────────────────── -->
+    <main class="tg-auth-form-panel" role="main">
+        <div class="tg-auth-form-wrap">
+
+            <div class="tg-auth-form-head">
+                <a href="/" class="tg-auth-back-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    Back to site
+                </a>
+                <div class="tg-auth-form-switch">
+                    No account? <a href="/register">Create one</a>
+                </div>
+            </div>
+
+            <div class="tg-auth-form-card">
+                <div class="tg-auth-form-card-head">
+                    <div class="tg-auth-form-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                    </div>
+                    <h1>Welcome back</h1>
+                    <p>Sign in to your Travlr account to manage trips and pick up where you left off.</p>
+                </div>
+
+                <div id="login-error" class="tg-alert tg-alert-danger" style="display:none;"></div>
+
+                <form id="login-form" novalidate>
+                    <div class="tg-auth-field">
+                        <label for="email">Email address</label>
+                        <div class="tg-auth-input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+                            <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="email" autocapitalize="none" spellcheck="false">
+                        </div>
+                    </div>
+
+                    <div class="tg-auth-field">
+                        <div class="tg-auth-label-row">
+                            <label for="password">Password</label>
+                            <a href="#" class="tg-auth-forgot" onclick="event.preventDefault(); window.tgToast && window.tgToast('Password reset coming soon. Contact support for help.', 'warn');">Forgot password?</a>
+                        </div>
+                        <div class="tg-auth-input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+                            <button type="button" class="tg-auth-eye" id="toggle-pw" aria-label="Show password" aria-pressed="false">
+                                <svg class="eye-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg class="eye-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                        </button>
+                        </div>
+                    </div>
+
+                    <div class="tg-auth-row-between">
+                        <label class="tg-auth-check">
+                            <input type="checkbox" id="remember" checked>
+                            <span class="tg-auth-check-box" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                            </span>
+                            Stay signed in
+                        </label>
+                    </div>
+
+                    <button type="submit" class="tg-auth-submit">
+                        <span class="tg-auth-submit-text">Sign in</span>
+                        <svg class="tg-auth-submit-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                        <svg class="tg-auth-submit-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg>
+                    </button>
+                </form>
+
+                <div class="tg-auth-demo">
+                    <div class="tg-auth-demo-head">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        Demo credentials
+                    </div>
+                    <button type="button" class="tg-auth-demo-btn" data-email="admin@travlr.com" data-pw="password123">
+                        <span>
+                            <span class="tg-auth-demo-role">Admin</span>
+                            <span class="tg-auth-demo-email">admin@travlr.com</span>
+                        </span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                    </button>
+                    <button type="button" class="tg-auth-demo-btn" data-email="sarah.smith1@example.com" data-pw="password123" style="margin-top:8px;">
+                        <span>
+                            <span class="tg-auth-demo-role">Customer</span>
+                            <span class="tg-auth-demo-email">sarah.smith1@example.com</span>
+                        </span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+
+                <div class="tg-auth-divider"><span>or</span></div>
+
+                <div class="tg-auth-form-foot">
+                    <p>Don't have an account?</p>
+                    <a href="/register" class="tg-auth-secondary-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+                        Create a free account
+                    </a>
+                </div>
+
+                <ul class="tg-auth-secure-list" aria-label="Security features">
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        Encrypted with industry-standard SSL
+                    </li>
+                    <li>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 5-3.5 9-9 9s-9-4-9-9 3.5-9 9-9 9 4 9 9z"/></svg>
+                        We never share your information
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+</section>
 
 <script>
-document.getElementById('login-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    var errorDiv = document.getElementById('login-error');
-    errorDiv.style.display = 'none';
-    var btn = this.querySelector('button[type=submit]');
-    btn.textContent = 'Signing in\u2026'; btn.disabled = true;
-
-    try {
-        var res  = await fetch('/api/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({
-                email:    document.getElementById('email').value,
-                password: document.getElementById('password').value
-            })
+(function() {
+    /* ── Password show/hide toggle ────────────────────────────── */
+    var pwInput = document.getElementById('password');
+    var toggle  = document.getElementById('toggle-pw');
+    if (pwInput && toggle) {
+        var on  = toggle.querySelector('.eye-on');
+        var off = toggle.querySelector('.eye-off');
+        toggle.addEventListener('click', function() {
+            var shown = pwInput.type === 'text';
+            pwInput.type = shown ? 'password' : 'text';
+            toggle.setAttribute('aria-pressed', String(!shown));
+            toggle.setAttribute('aria-label', shown ? 'Show password' : 'Hide password');
+            on.style.display  = shown ? '' : 'none';
+            off.style.display = shown ? 'none' : '';
         });
-
-        var raw = await res.text();
-        var data = {};
-        try { data = raw ? JSON.parse(raw) : {}; } catch (parseErr) {
-            errorDiv.textContent = 'Server returned an unexpected response (HTTP ' + res.status + '). Check the Express logs.';
-            errorDiv.style.display = 'block';
-            btn.textContent = 'Sign In \u2192'; btn.disabled = false;
-            console.error('Non-JSON response from /api/login:', raw);
-            return;
-        }
-
-        if (res.ok && data.token) {
-            localStorage.setItem('travlr-token', data.token);
-            window.location.href = '/reservations';
-        } else {
-            errorDiv.textContent = data.message || ('Login failed (HTTP ' + res.status + ').');
-            errorDiv.style.display = 'block';
-            btn.textContent = 'Sign In \u2192'; btn.disabled = false;
-        }
-    } catch (err) {
-        console.error('Login fetch failed:', err);
-        errorDiv.textContent = 'Network error: ' + (err && err.message ? err.message : 'request failed') + '. Is the server running on port 3000?';
-        errorDiv.style.display = 'block';
-        btn.textContent = 'Sign In \u2192'; btn.disabled = false;
     }
-});
+
+    /* ── Demo credentials autofill ────────────────────────────── */
+    document.querySelectorAll('.tg-auth-demo-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var em = btn.getAttribute('data-email');
+            var pw = btn.getAttribute('data-pw');
+            document.getElementById('email').value = em;
+            document.getElementById('password').value = pw;
+            document.getElementById('email').focus();
+            if (window.tgToast) window.tgToast('Demo credentials filled. Click Sign in to continue.', 'success');
+        });
+    });
+
+    /* ── Sign in submit ───────────────────────────────────────── */
+    var form    = document.getElementById('login-form');
+    var errorEl = document.getElementById('login-error');
+    var submit  = form.querySelector('.tg-auth-submit');
+    var submitText  = submit.querySelector('.tg-auth-submit-text');
+    var submitArrow = submit.querySelector('.tg-auth-submit-arrow');
+    var submitSpin  = submit.querySelector('.tg-auth-submit-spin');
+
+    function setLoading(state) {
+        if (state) {
+            submit.disabled = true;
+            submitText.textContent = 'Signing in…';
+            submitArrow.style.display = 'none';
+            submitSpin.style.display = '';
+            submitSpin.classList.add('tg-co-spin');
+        } else {
+            submit.disabled = false;
+            submitText.textContent = 'Sign in';
+            submitArrow.style.display = '';
+            submitSpin.style.display = 'none';
+            submitSpin.classList.remove('tg-co-spin');
+        }
+    }
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        errorEl.style.display = 'none';
+        setLoading(true);
+
+        try {
+            var res = await fetch('/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    email:    document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                })
+            });
+
+            var raw = await res.text();
+            var data = {};
+            try { data = raw ? JSON.parse(raw) : {}; } catch (parseErr) {
+                errorEl.textContent = 'Server returned an unexpected response (HTTP ' + res.status + '). Check the Express logs.';
+                errorEl.style.display = 'block';
+                setLoading(false);
+                console.error('Non-JSON response from /api/login:', raw);
+                return;
+            }
+
+            if (res.ok && data.token) {
+                localStorage.setItem('travlr-token', data.token);
+                submitText.textContent = 'Welcome back!';
+                // Honor ?redirect= URL if present (e.g. coming from /checkout)
+                var redirect = new URLSearchParams(window.location.search).get('redirect');
+                window.location.href = redirect || '/reservations';
+            } else {
+                errorEl.textContent = data.message || ('Login failed (HTTP ' + res.status + ').');
+                errorEl.style.display = 'block';
+                setLoading(false);
+            }
+        } catch (err) {
+            console.error('Login fetch failed:', err);
+            errorEl.textContent = 'Network error: ' + (err && err.message ? err.message : 'request failed') + '. Is the server running on port 3000?';
+            errorEl.style.display = 'block';
+            setLoading(false);
+        }
+    });
+})();
 </script>
 
 {{> footer}}

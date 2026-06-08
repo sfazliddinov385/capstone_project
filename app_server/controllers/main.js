@@ -71,7 +71,22 @@ const meals = (req, res) => {
 const news = (req, res) => {
     const featured = newsItems.find(a => a.featured) || newsItems[0];
     const articles = newsItems.filter(a => a.slug !== featured.slug);
-    renderView(res, 'news', 'Travlr Getaways - News', { featured, articles });
+
+    // Compute category counts so the sidebar reflects real data
+    const counts = newsItems.reduce((acc, a) => {
+        acc[a.category] = (acc[a.category] || 0) + 1;
+        return acc;
+    }, {});
+    const categories = Object.keys(counts)
+        .sort((a, b) => counts[b] - counts[a])
+        .map(name => ({ name, count: counts[name] }));
+
+    renderView(res, 'news', 'Travlr Getaways - News', {
+        featured,
+        articles,
+        categories,
+        totalCount: newsItems.length,
+    });
 };
 
 const newsArticle = (req, res) => {

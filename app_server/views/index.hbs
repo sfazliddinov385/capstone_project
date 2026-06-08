@@ -1,11 +1,14 @@
 {{> header}}
 
-<!-- ── HERO ── -->
-<section class="tg-hero">
+<!-- ══════════════════════════════════════════════════════
+     HERO — split layout, photo collage, animated mesh
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-hero tg-hero-v2">
     <div class="tg-hero-bg">
         <div class="tg-hero-blob tg-hero-blob-1"></div>
         <div class="tg-hero-blob tg-hero-blob-2"></div>
         <div class="tg-hero-blob tg-hero-blob-3"></div>
+        <div class="tg-hero-noise" aria-hidden="true"></div>
     </div>
 
     <div class="tg-hero-inner">
@@ -17,24 +20,44 @@
                 World-class travel experiences
             </div>
 
-            <h1>Where will your<br><em>next adventure</em><br>begin?</h1>
+            <h1 class="tg-hero-title-anim">
+                Where will your<br>
+                <em data-shimmer>next adventure</em><br>
+                begin?
+            </h1>
 
-            <p>Handpicked destinations, all-inclusive packages, and 24/7 concierge support. Everything you need for an unforgettable journey.</p>
+            <p class="tg-hero-sub">
+                Handpicked destinations, all-inclusive packages, and 24/7 concierge support.
+                Everything you need for an unforgettable journey.
+            </p>
 
-            <form class="tg-hero-search" onsubmit="event.preventDefault(); window.location.href='/travel?q='+encodeURIComponent(document.getElementById('hero-search').value);">
+            <form class="tg-hero-search tg-hero-search-pro"
+                  onsubmit="event.preventDefault(); window.location.href='/travel?q='+encodeURIComponent(document.getElementById('hero-search').value);">
                 <div class="tg-hero-search-field">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <input type="text" id="hero-search" placeholder="Where to? Bali, Maldives, Seychelles…" autocomplete="off">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <input type="text" id="hero-search" placeholder="Where to? Bali, Maldives, Seychelles…" autocomplete="off" aria-label="Search destinations">
                 </div>
                 <button type="submit" class="tg-hero-search-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
                     Search
                 </button>
             </form>
 
+            <!-- Quick-pick category chips -->
+            <div class="tg-hero-chips" role="list" aria-label="Popular categories">
+                <a href="/travel?q=beach"     class="tg-hero-chip" role="listitem"><span aria-hidden="true">&#127958;</span> Beach</a>
+                <a href="/travel?q=mountain"  class="tg-hero-chip" role="listitem"><span aria-hidden="true">&#127956;</span> Mountain</a>
+                <a href="/travel?q=city"      class="tg-hero-chip" role="listitem"><span aria-hidden="true">&#127961;</span> City</a>
+                <a href="/travel?q=adventure" class="tg-hero-chip" role="listitem"><span aria-hidden="true">&#129518;</span> Adventure</a>
+                <a href="/travel?q=culture"   class="tg-hero-chip" role="listitem"><span aria-hidden="true">&#127914;</span> Culture</a>
+            </div>
+
             <div class="tg-hero-cta-row">
-                <a href="/travel" class="btn-primary">Explore Trips &rarr;</a>
-                <a href="/register" class="btn-outline">Create Free Account</a>
+                <a href="/travel" class="btn-primary btn-primary-pro">
+                    Explore Trips
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                </a>
+                <a href="/register" class="btn-outline btn-outline-pro">Create Free Account</a>
             </div>
 
             <div class="tg-hero-trust">
@@ -55,34 +78,35 @@
             </div>
         </div>
 
-        <!-- ── RIGHT: photo collage ── -->
+        <!-- ── RIGHT: photo collage (3D tilt parallax) ── -->
         <div class="tg-hero-right">
-            <div class="tg-hero-photos">
-                <div class="tg-photo tg-photo-main">
+            <div class="tg-hero-photos" id="tg-hero-photos">
+                <div class="tg-photo tg-photo-main" data-parallax="0.025">
                     <img src="/images/tropical-lagoon.jpg" alt="Tropical lagoon">
                     <div class="tg-photo-meta">
                         <div class="tg-photo-pin">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                             Maldives
                         </div>
                         <div class="tg-photo-title">Crystal Lagoon Retreat</div>
                     </div>
+                    <span class="tg-photo-corner" aria-hidden="true"></span>
                 </div>
 
-                <div class="tg-photo tg-photo-side tg-photo-side-1">
+                <div class="tg-photo tg-photo-side tg-photo-side-1" data-parallax="0.04">
                     <img src="/images/swiss-alps.jpg" alt="Swiss Alps">
                     <div class="tg-photo-tag">Swiss Alps</div>
                 </div>
 
-                <div class="tg-photo tg-photo-side tg-photo-side-2">
+                <div class="tg-photo tg-photo-side tg-photo-side-2" data-parallax="0.035">
                     <img src="/images/seychelles.jpg" alt="Seychelles">
                     <div class="tg-photo-tag">Seychelles</div>
                 </div>
 
                 <!-- Floating rating card -->
-                <div class="tg-hero-float">
+                <div class="tg-hero-float" data-parallax="0.06">
                     <div class="tg-hero-float-icon">
-                        <svg viewBox="0 0 24 24" fill="#e8b84b" stroke="#e8b84b"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <svg viewBox="0 0 24 24" fill="#e8b84b" stroke="#e8b84b" aria-hidden="true"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                     </div>
                     <div>
                         <div class="tg-hero-float-num">4.9 / 5</div>
@@ -91,7 +115,7 @@
                 </div>
 
                 <!-- Floating destination count -->
-                <div class="tg-hero-float-2">
+                <div class="tg-hero-float-2" data-parallax="0.05">
                     <div class="tg-hero-float-bars">
                         <span></span><span></span><span></span><span></span>
                     </div>
@@ -104,77 +128,129 @@
         </div>
 
     </div>
+
+    <!-- Scroll cue -->
+    <a href="#tg-trust-strip" class="tg-hero-scroll-cue" aria-label="Scroll down">
+        <span class="tg-scroll-mouse"><span class="tg-scroll-dot"></span></span>
+        <span class="tg-scroll-label">Discover more</span>
+    </a>
 </section>
 
-<!-- ── STATS ── -->
-<div class="tg-stats">
+<!-- ══════════════════════════════════════════════════════
+     TRUST STRIP — partner / press logos marquee
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-trust-strip" id="tg-trust-strip" aria-label="Featured in">
+    <div class="tg-trust-strip-inner">
+        <div class="tg-trust-strip-label">As featured in</div>
+        <div class="tg-marquee" aria-hidden="true">
+            <div class="tg-marquee-track">
+                <span>Conde Nast Traveler</span>
+                <span>National Geographic</span>
+                <span>Travel + Leisure</span>
+                <span>Forbes</span>
+                <span>The New York Times</span>
+                <span>Lonely Planet</span>
+                <span>Bloomberg</span>
+                <span>Conde Nast Traveler</span>
+                <span>National Geographic</span>
+                <span>Travel + Leisure</span>
+                <span>Forbes</span>
+                <span>The New York Times</span>
+                <span>Lonely Planet</span>
+                <span>Bloomberg</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     STATS with count-up animation
+     ══════════════════════════════════════════════════════ -->
+<div class="tg-stats tg-stats-v2 tg-fade-in" id="tg-stats">
     <div class="tg-stats-inner">
         <div class="tg-stat">
-            <span class="tg-stat-number">50+</span>
+            <span class="tg-stat-number" data-count="50" data-suffix="+">0</span>
             <span class="tg-stat-label">Destinations</span>
         </div>
         <div class="tg-stat">
-            <span class="tg-stat-number">12K+</span>
+            <span class="tg-stat-number" data-count="12000" data-suffix="+" data-format="k">0</span>
             <span class="tg-stat-label">Happy Travelers</span>
         </div>
         <div class="tg-stat">
-            <span class="tg-stat-number">98%</span>
+            <span class="tg-stat-number" data-count="98" data-suffix="%">0</span>
             <span class="tg-stat-label">Satisfaction Rate</span>
         </div>
         <div class="tg-stat">
-            <span class="tg-stat-number">15+</span>
+            <span class="tg-stat-number" data-count="15" data-suffix="+">0</span>
             <span class="tg-stat-label">Years of Experience</span>
         </div>
     </div>
 </div>
 
-<!-- ── WHY CHOOSE US ── -->
+<!-- ══════════════════════════════════════════════════════
+     WHY CHOOSE US — gradient SVG icons + hover lift
+     ══════════════════════════════════════════════════════ -->
 <section class="tg-section tg-section-white">
     <div class="tg-section-wrap">
-        <div class="tg-section-head">
+        <div class="tg-section-head tg-fade-in">
             <div class="tg-section-label">Why Travlr</div>
             <h2 class="tg-section-title">Travel Smarter, Live Better</h2>
             <p class="tg-section-sub">We take the stress out of travel planning so every trip feels effortless.</p>
         </div>
-        <div class="tg-features">
-            <div class="tg-feature">
-                <div class="tg-feature-icon">&#9992;</div>
+        <div class="tg-features tg-features-v2">
+            <div class="tg-feature tg-feature-v2 tg-fade-in">
+                <div class="tg-feature-icon-v2 tg-feature-icon-blue">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12h6l2-3 4 6 2-3h6"/><circle cx="12" cy="12" r="10"/></svg>
+                </div>
                 <h3>Curated Packages</h3>
                 <p>Every trip is hand-selected by our travel experts for exceptional quality, value, and unforgettable experiences.</p>
+                <a href="/travel" class="tg-feature-link">Browse trips <span aria-hidden="true">&rarr;</span></a>
             </div>
-            <div class="tg-feature">
-                <div class="tg-feature-icon">&#128274;</div>
+            <div class="tg-feature tg-feature-v2 tg-fade-in">
+                <div class="tg-feature-icon-v2 tg-feature-icon-gold">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
                 <h3>Secure Booking</h3>
                 <p>Your payment and personal information are always protected with bank-level encryption and fraud protection.</p>
+                <a href="/about" class="tg-feature-link">Our security <span aria-hidden="true">&rarr;</span></a>
             </div>
-            <div class="tg-feature">
-                <div class="tg-feature-icon">&#127915;</div>
+            <div class="tg-feature tg-feature-v2 tg-fade-in">
+                <div class="tg-feature-icon-v2 tg-feature-icon-teal">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                </div>
                 <h3>Best Price Guarantee</h3>
-                <p>Find a lower price elsewhere? We&rsquo;ll match it. No hidden fees, no surprises, just transparent pricing.</p>
+                <p>Find a lower price elsewhere? We'll match it. No hidden fees, no surprises, just transparent pricing.</p>
+                <a href="/travel" class="tg-feature-link">See deals <span aria-hidden="true">&rarr;</span></a>
             </div>
-            <div class="tg-feature">
-                <div class="tg-feature-icon">&#128222;</div>
+            <div class="tg-feature tg-feature-v2 tg-fade-in">
+                <div class="tg-feature-icon-v2 tg-feature-icon-rose">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2A19.86 19.86 0 011 4.18 2 2 0 013 2h3a2 2 0 012 1.72c.12.8.31 1.59.57 2.34a2 2 0 01-.45 2.11l-1.27 1.27a16 16 0 006.29 6.29l1.27-1.27a2 2 0 012.11-.45c.75.26 1.54.45 2.34.57A2 2 0 0122 16.92z"/></svg>
+                </div>
                 <h3>24/7 Support</h3>
                 <p>Our dedicated travel concierge team is available around the clock before, during, and after your trip.</p>
+                <a href="/contact" class="tg-feature-link">Get in touch <span aria-hidden="true">&rarr;</span></a>
             </div>
         </div>
     </div>
 </section>
 
-<!-- ── FEATURED DESTINATIONS ── -->
+<!-- ══════════════════════════════════════════════════════
+     FEATURED DESTINATIONS
+     ══════════════════════════════════════════════════════ -->
 <section class="tg-section tg-section-gray">
     <div class="tg-section-wrap">
-        <div class="tg-section-head">
+        <div class="tg-section-head tg-fade-in">
             <div class="tg-section-label">Popular Right Now</div>
             <h2 class="tg-section-title">Trending Destinations</h2>
             <p class="tg-section-sub">Our most-booked escapes, loved by travelers just like you.</p>
         </div>
         <div class="tg-grid">
             {{#each featuredTrips}}
-            <div class="tg-card">
+            <div class="tg-card tg-card-pro tg-fade-in">
                 <div class="tg-card-img">
-                    <img src="{{image}}" alt="{{name}}" onerror="this.src='/images/sea-sound.jpg'">
+                    <img src="{{image}}" alt="{{name}}" loading="lazy" onerror="this.src='/images/sea-sound.jpg'">
                     <span class="tg-card-badge">&#128293; Featured</span>
+                    <span class="tg-card-overlay" aria-hidden="true"></span>
                 </div>
                 <div class="tg-card-body">
                     <div class="tg-card-resort">&#128205; {{resort}}</div>
@@ -195,23 +271,79 @@
             {{/each}}
         </div>
         <div style="text-align:center; margin-top:40px;">
-            <a href="/travel" class="btn-primary">View All Trips &rarr;</a>
+            <a href="/travel" class="btn-primary btn-primary-pro">
+                View All Trips
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+            </a>
         </div>
     </div>
 </section>
 
-<!-- ── TESTIMONIALS ── -->
-<section class="tg-section tg-section-white">
+<!-- ══════════════════════════════════════════════════════
+     TRAVEL INSPIRATION mosaic
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-section tg-section-white tg-section-inspire">
     <div class="tg-section-wrap">
-        <div class="tg-section-head">
+        <div class="tg-section-head tg-fade-in">
+            <div class="tg-section-label">Travel Inspiration</div>
+            <h2 class="tg-section-title">Wander a Little Further</h2>
+            <p class="tg-section-sub">Stunning corners of the world worth adding to your shortlist.</p>
+        </div>
+        <div class="tg-mosaic tg-fade-in">
+            <a href="/travel" class="tg-mosaic-tile tg-mosaic-1" aria-label="Tropical lagoon">
+                <img src="/images/tropical-lagoon.jpg" alt="" loading="lazy">
+                <div class="tg-mosaic-meta">
+                    <span class="tg-mosaic-tag">Beach</span>
+                    <h3>Tropical Lagoons</h3>
+                </div>
+            </a>
+            <a href="/travel" class="tg-mosaic-tile tg-mosaic-2" aria-label="Swiss alps">
+                <img src="/images/swiss-alps.jpg" alt="" loading="lazy">
+                <div class="tg-mosaic-meta">
+                    <span class="tg-mosaic-tag">Mountain</span>
+                    <h3>Alpine Escapes</h3>
+                </div>
+            </a>
+            <a href="/travel" class="tg-mosaic-tile tg-mosaic-3" aria-label="Seychelles">
+                <img src="/images/seychelles.jpg" alt="" loading="lazy">
+                <div class="tg-mosaic-meta">
+                    <span class="tg-mosaic-tag">Island</span>
+                    <h3>Pristine Islands</h3>
+                </div>
+            </a>
+            <a href="/travel" class="tg-mosaic-tile tg-mosaic-4" aria-label="Marrakech">
+                <img src="/images/marrakech-morocco.jpg" alt="" loading="lazy">
+                <div class="tg-mosaic-meta">
+                    <span class="tg-mosaic-tag">Culture</span>
+                    <h3>Old World Markets</h3>
+                </div>
+            </a>
+            <a href="/travel" class="tg-mosaic-tile tg-mosaic-5" aria-label="Coral snorkel">
+                <img src="/images/coral-snorkel.jpg" alt="" loading="lazy">
+                <div class="tg-mosaic-meta">
+                    <span class="tg-mosaic-tag">Adventure</span>
+                    <h3>Reef Snorkeling</h3>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     TESTIMONIALS — premium card design
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-section tg-section-gray">
+    <div class="tg-section-wrap">
+        <div class="tg-section-head tg-fade-in">
             <div class="tg-section-label">Real Experiences</div>
             <h2 class="tg-section-title">What Our Travelers Say</h2>
-            <p class="tg-section-sub">Don&rsquo;t take our word for it. Hear from people who&rsquo;ve experienced the Travlr difference.</p>
+            <p class="tg-section-sub">Don't take our word for it. Hear from people who've experienced the Travlr difference.</p>
         </div>
-        <div class="tg-testimonials">
-            <div class="tg-testimonial">
+        <div class="tg-testimonials tg-testimonials-v2">
+            <div class="tg-testimonial tg-testimonial-v2 tg-fade-in">
+                <div class="tg-testimonial-quote" aria-hidden="true">&ldquo;</div>
                 <div class="tg-testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <p class="tg-testimonial-text">&ldquo;Travlr Getaways made our honeymoon absolutely unforgettable. Every detail was taken care of, and all we had to do was show up and enjoy the adventure.&rdquo;</p>
+                <p class="tg-testimonial-text">Travlr Getaways made our honeymoon absolutely unforgettable. Every detail was taken care of, and all we had to do was show up and enjoy the adventure.</p>
                 <div class="tg-testimonial-author">
                     <div class="tg-testimonial-avatar">MJ</div>
                     <div>
@@ -220,9 +352,10 @@
                     </div>
                 </div>
             </div>
-            <div class="tg-testimonial">
+            <div class="tg-testimonial tg-testimonial-v2 tg-fade-in">
+                <div class="tg-testimonial-quote" aria-hidden="true">&ldquo;</div>
                 <div class="tg-testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <p class="tg-testimonial-text">&ldquo;Best vacation I&rsquo;ve ever taken. The Great Barrier Reef experience was beyond anything I could have imagined. Booking through Travlr was seamless.&rdquo;</p>
+                <p class="tg-testimonial-text">Best vacation I've ever taken. The Great Barrier Reef experience was beyond anything I could have imagined. Booking through Travlr was seamless.</p>
                 <div class="tg-testimonial-author">
                     <div class="tg-testimonial-avatar">DK</div>
                     <div>
@@ -231,9 +364,10 @@
                     </div>
                 </div>
             </div>
-            <div class="tg-testimonial">
+            <div class="tg-testimonial tg-testimonial-v2 tg-fade-in">
+                <div class="tg-testimonial-quote" aria-hidden="true">&ldquo;</div>
                 <div class="tg-testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-                <p class="tg-testimonial-text">&ldquo;I travel solo frequently and Travlr always makes me feel safe and well-supported. Their 24/7 support team once helped me rebook a missed flight in minutes.&rdquo;</p>
+                <p class="tg-testimonial-text">I travel solo frequently and Travlr always makes me feel safe and well-supported. Their 24/7 support team once helped me rebook a missed flight in minutes.</p>
                 <div class="tg-testimonial-author">
                     <div class="tg-testimonial-avatar">SC</div>
                     <div>
@@ -246,15 +380,145 @@
     </div>
 </section>
 
-<!-- ── CTA BANNER ── -->
-<section style="background: linear-gradient(135deg,#083050,#0a4a78); padding:72px 32px; text-align:center; color:#fff;">
-    <div style="max-width:620px; margin:0 auto;">
-        <div class="tg-section-label" style="color:#e8b84b;">Ready to Explore?</div>
-        <h2 style="font-family:'Poppins',sans-serif; font-size:2rem; font-weight:700; margin:12px 0 16px;">Your Next Adventure is One Click Away</h2>
-        <p style="color:rgba(255,255,255,0.78); margin-bottom:32px; font-size:1rem; line-height:1.7;">Join thousands of travelers who trust Travlr Getaways to deliver extraordinary experiences at unbeatable value.</p>
-        <a href="/register" class="btn-primary" style="margin-right:14px;">Get Started Free</a>
-        <a href="/travel" class="btn-outline">Browse Trips</a>
+<!-- ══════════════════════════════════════════════════════
+     NEWSLETTER — glass card with floating input
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-newsletter">
+    <div class="tg-newsletter-bg" aria-hidden="true">
+        <div class="tg-newsletter-blob tg-newsletter-blob-1"></div>
+        <div class="tg-newsletter-blob tg-newsletter-blob-2"></div>
+    </div>
+    <div class="tg-newsletter-inner tg-fade-in">
+        <div class="tg-newsletter-left">
+            <div class="tg-section-label" style="color:#e8b84b;">Travel deals delivered</div>
+            <h2>Join 12,000 travelers getting weekly inspiration</h2>
+            <p>Hand-picked deals, insider tips, and seasonal getaways. Unsubscribe anytime.</p>
+            <ul class="tg-newsletter-bullets">
+                <li><span aria-hidden="true">&#10003;</span> Member-only flash sales</li>
+                <li><span aria-hidden="true">&#10003;</span> Early access to new trips</li>
+                <li><span aria-hidden="true">&#10003;</span> No spam, ever</li>
+            </ul>
+        </div>
+        <form class="tg-newsletter-form" id="tg-newsletter-form" onsubmit="event.preventDefault(); window.tgNewsletterSubmit && window.tgNewsletterSubmit();">
+            <label for="tg-newsletter-email" class="tg-newsletter-form-label">Your email</label>
+            <div class="tg-newsletter-input-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                <input id="tg-newsletter-email" type="email" required placeholder="you@example.com" autocomplete="email">
+            </div>
+            <button type="submit" class="tg-newsletter-submit">
+                Subscribe
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+            </button>
+            <p class="tg-newsletter-tos">By subscribing you agree to our <a href="/privacy">privacy policy</a>.</p>
+        </form>
     </div>
 </section>
+
+<!-- ══════════════════════════════════════════════════════
+     CTA BANNER — animated gradient mesh
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-cta-banner">
+    <div class="tg-cta-mesh" aria-hidden="true"></div>
+    <div class="tg-cta-banner-inner tg-fade-in">
+        <div class="tg-section-label" style="color:#e8b84b;">Ready to Explore?</div>
+        <h2>Your Next Adventure is One Click Away</h2>
+        <p>Join thousands of travelers who trust Travlr Getaways to deliver extraordinary experiences at unbeatable value.</p>
+        <div class="tg-cta-actions">
+            <a href="/register" class="btn-primary btn-primary-pro">Get Started Free</a>
+            <a href="/travel" class="btn-outline btn-outline-pro">Browse Trips</a>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════
+     INLINE BEHAVIORS — parallax, count-up, newsletter
+     ══════════════════════════════════════════════════════ -->
+<script>
+(function() {
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ── Count-up stats ─────────────────────────────────────── */
+    function formatNum(n, suffix, format) {
+        if (format === 'k') {
+            var k = Math.round(n / 100) / 10;
+            return (k % 1 === 0 ? k.toFixed(0) : k.toFixed(1)) + 'K' + (suffix || '');
+        }
+        return Math.round(n).toLocaleString() + (suffix || '');
+    }
+    function animateCount(el) {
+        var target = parseFloat(el.getAttribute('data-count')) || 0;
+        var suffix = el.getAttribute('data-suffix') || '';
+        var format = el.getAttribute('data-format') || '';
+        if (reduceMotion) { el.textContent = formatNum(target, suffix, format); return; }
+        var start = performance.now();
+        var dur = 1400;
+        function tick(now) {
+            var p = Math.min(1, (now - start) / dur);
+            var eased = 1 - Math.pow(1 - p, 3);
+            el.textContent = formatNum(target * eased, suffix, format);
+            if (p < 1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+    if ('IntersectionObserver' in window) {
+        var statsEl = document.getElementById('tg-stats');
+        if (statsEl) {
+            var seen = false;
+            var io = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting && !seen) {
+                        seen = true;
+                        statsEl.querySelectorAll('.tg-stat-number[data-count]').forEach(animateCount);
+                        io.disconnect();
+                    }
+                });
+            }, { threshold: 0.4 });
+            io.observe(statsEl);
+        }
+    } else {
+        document.querySelectorAll('.tg-stat-number[data-count]').forEach(animateCount);
+    }
+
+    /* ── Hero photo parallax (mouse) ─────────────────────────── */
+    if (!reduceMotion) {
+        var photosWrap = document.getElementById('tg-hero-photos');
+        if (photosWrap) {
+            var els = photosWrap.querySelectorAll('[data-parallax]');
+            var rect = null;
+            var raf = null;
+            var mx = 0, my = 0;
+            function update() {
+                raf = null;
+                if (!rect) rect = photosWrap.getBoundingClientRect();
+                var dx = (mx - rect.left - rect.width  / 2) / rect.width;
+                var dy = (my - rect.top  - rect.height / 2) / rect.height;
+                els.forEach(function(el) {
+                    var s = parseFloat(el.getAttribute('data-parallax')) || 0.02;
+                    el.style.transform = 'translate3d(' + (dx * s * 60).toFixed(2) + 'px, ' + (dy * s * 60).toFixed(2) + 'px, 0)';
+                });
+            }
+            photosWrap.addEventListener('mousemove', function(e) {
+                mx = e.clientX; my = e.clientY;
+                if (!raf) raf = requestAnimationFrame(update);
+            });
+            photosWrap.addEventListener('mouseleave', function() {
+                els.forEach(function(el) { el.style.transform = ''; });
+                rect = null;
+            });
+            window.addEventListener('resize', function() { rect = null; }, { passive: true });
+        }
+    }
+
+    /* ── Newsletter submit ───────────────────────────────────── */
+    window.tgNewsletterSubmit = function() {
+        var input = document.getElementById('tg-newsletter-email');
+        var email = input && input.value.trim();
+        if (!email) return;
+        try { localStorage.setItem('travlr-newsletter', email); } catch (e) {}
+        if (input) input.value = '';
+        if (window.tgToast) window.tgToast('Thanks! Watch your inbox for the next drop.', 'success');
+    };
+})();
+</script>
 
 {{> footer}}

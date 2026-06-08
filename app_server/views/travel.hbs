@@ -1,10 +1,62 @@
 {{> header}}
 
-<!-- Page header -->
-<div class="tg-page-header">
-    <h1>&#127758; Explore Our Trips</h1>
-    <p>{{trips.length}} handpicked destinations waiting for you</p>
-</div>
+<!-- ══════════════════════════════════════════════════════
+     TRAVEL HERO — gradient, blobs, big title, search
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-travel-hero">
+    <div class="tg-travel-hero-bg" aria-hidden="true">
+        <div class="tg-travel-blob tg-travel-blob-1"></div>
+        <div class="tg-travel-blob tg-travel-blob-2"></div>
+        <div class="tg-travel-blob tg-travel-blob-3"></div>
+        <div class="tg-travel-grid-overlay"></div>
+    </div>
+
+    <div class="tg-travel-hero-inner">
+        <div class="tg-travel-hero-eyebrow">
+            <span class="tg-eyebrow-dot"></span>
+            {{trips.length}} curated journeys
+        </div>
+        <h1 class="tg-travel-hero-title">
+            Find your <em data-shimmer>perfect getaway</em>
+        </h1>
+        <p class="tg-travel-hero-sub">
+            From sun-soaked beaches to alpine summits, every trip is hand-selected
+            and ready to book. Filter by what you love.
+        </p>
+
+        <!-- Hero quick search -->
+        <form class="tg-travel-hero-search" onsubmit="event.preventDefault(); applyFilter(); document.getElementById('results-anchor').scrollIntoView({behavior:'smooth', block:'start'});">
+            <div class="tg-travel-hero-search-field">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+                <input id="hero-search-input" type="text" placeholder="Search destinations, resorts, or trip codes…" autocomplete="off" aria-label="Search trips">
+            </div>
+            <button type="submit" class="tg-travel-hero-search-btn">
+                Search
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+            </button>
+        </form>
+
+        <!-- Hero stats strip -->
+        <div class="tg-travel-hero-stats">
+            <div class="tg-travel-hero-stat">
+                <div class="tg-travel-hero-stat-num">{{trips.length}}</div>
+                <div class="tg-travel-hero-stat-label">Trips available</div>
+            </div>
+            <div class="tg-travel-hero-stat">
+                <div class="tg-travel-hero-stat-num">4.9<span style="color:#e8b84b;">&#9733;</span></div>
+                <div class="tg-travel-hero-stat-label">Avg rating</div>
+            </div>
+            <div class="tg-travel-hero-stat">
+                <div class="tg-travel-hero-stat-num">7</div>
+                <div class="tg-travel-hero-stat-label">Categories</div>
+            </div>
+            <div class="tg-travel-hero-stat">
+                <div class="tg-travel-hero-stat-num">All-inclusive</div>
+                <div class="tg-travel-hero-stat-label">Every package</div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- Toast notification -->
 <div id="cart-toast" class="tg-toast">
@@ -12,32 +64,79 @@
     <a href="/checkout">View Cart &rarr;</a>
 </div>
 
-<section class="tg-section tg-section-gray">
+<!-- ══════════════════════════════════════════════════════
+     FILTER + RESULTS
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-section tg-section-gray tg-travel-section" id="results-anchor">
     <div class="tg-section-wrap">
 
-        <!-- Category filter pills -->
-        <div class="tg-category-bar">
-            <button class="tg-cat-btn active" data-cat="All">&#127758; All</button>
-            <button class="tg-cat-btn" data-cat="Diving">&#129443; Diving</button>
-            <button class="tg-cat-btn" data-cat="Adventure">&#129517; Adventure</button>
-            <button class="tg-cat-btn" data-cat="Luxury">&#10024; Luxury</button>
-            <button class="tg-cat-btn" data-cat="Beach">&#127958;&#65039; Beach</button>
-            <button class="tg-cat-btn" data-cat="Cultural">&#127963;&#65039; Cultural</button>
-            <button class="tg-cat-btn" data-cat="Cruise">&#128674; Cruise</button>
+        <!-- Category filter pills (inline SVGs so icons match labels on every browser) -->
+        <div class="tg-category-bar tg-category-bar-v2">
+            <button class="tg-cat-btn tg-cat-btn-v2 active" data-cat="All">
+                <span class="tg-cat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+                </span>
+                All
+            </button>
+            <button class="tg-cat-btn tg-cat-btn-v2" data-cat="Diving">
+                <span class="tg-cat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9a2 2 0 012-2h14a2 2 0 012 2v3a4 4 0 01-4 4h-2a2 2 0 01-2-2v-1h-2v1a2 2 0 01-2 2H7a4 4 0 01-4-4V9z"/><path d="M12 7V5a2 2 0 012-2h5"/></svg>
+                </span>
+                Diving
+            </button>
+            <button class="tg-cat-btn tg-cat-btn-v2" data-cat="Adventure">
+                <span class="tg-cat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20l5-9 4 6 3-4 6 7H3z"/><circle cx="17" cy="5" r="2"/></svg>
+                </span>
+                Adventure
+            </button>
+            <button class="tg-cat-btn tg-cat-btn-v2" data-cat="Luxury">
+                <span class="tg-cat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9l4-6z"/><path d="M2 9h20"/><path d="M10 3l2 6 2-6"/><path d="M12 21L10 9"/><path d="M12 21l2-12"/></svg>
+                </span>
+                Luxury
+            </button>
+            <button class="tg-cat-btn tg-cat-btn-v2" data-cat="Beach">
+                <span class="tg-cat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M3 9c1.5-3 5-5 9-5 4 0 7.5 2 9 5-3-1-6 0-9 0S6 8 3 9z"/><path d="M3 18c2-1 4-1 6-1s4 0 6 1 4 1 6 0"/></svg>
+                </span>
+                Beach
+            </button>
+            <button class="tg-cat-btn tg-cat-btn-v2" data-cat="Cultural">
+                <span class="tg-cat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M3 10l9-6 9 6"/><path d="M5 10v10"/><path d="M9 10v10"/><path d="M15 10v10"/><path d="M19 10v10"/></svg>
+                </span>
+                Cultural
+            </button>
+            <button class="tg-cat-btn tg-cat-btn-v2" data-cat="Cruise">
+                <span class="tg-cat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18s2 2 4 2 3-2 5-2 3 2 5 2 4-2 4-2"/><path d="M4 14l8-3 8 3"/><path d="M6 14V9h12v5"/><path d="M12 3v6"/><path d="M10 6h4"/></svg>
+                </span>
+                Cruise
+            </button>
         </div>
 
-        <!-- Filter bar -->
-        <div class="tg-filter-bar">
+        <!-- Premium filter bar -->
+        <div class="tg-filter-bar tg-filter-bar-v2">
             <div class="tg-filter-group">
-                <label for="filter-text">Search by name or resort</label>
-                <input id="filter-text" type="text" placeholder="e.g. Bali, Reef, Maldives&hellip;">
+                <label for="filter-text">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+                    Search
+                </label>
+                <input id="filter-text" type="text" placeholder="e.g. Bali, Reef, Maldives…">
             </div>
             <div class="tg-filter-group" style="max-width:200px;">
-                <label for="filter-price">Max price per person ($)</label>
+                <label for="filter-price">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    Max price
+                </label>
                 <input id="filter-price" type="number" min="0" placeholder="Any">
             </div>
             <div class="tg-filter-group" style="max-width:220px;">
-                <label for="filter-sort">Sort by</label>
+                <label for="filter-sort">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18M6 12h12M10 18h4"/></svg>
+                    Sort by
+                </label>
                 <select id="filter-sort">
                     <option value="default">Featured</option>
                     <option value="price-asc">Price: Low to High</option>
@@ -47,19 +146,45 @@
                     <option value="spots">Spots Remaining</option>
                 </select>
             </div>
-            <div style="display:flex; align-items:flex-end; gap:10px;">
+            <div class="tg-filter-actions">
+                <div class="tg-view-toggle" role="tablist" aria-label="View mode">
+                    <button id="view-grid" class="tg-view-btn is-active" role="tab" aria-selected="true" title="Grid view">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </button>
+                    <button id="view-list" class="tg-view-btn" role="tab" aria-selected="false" title="List view">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    </button>
+                </div>
                 <button id="filter-clear" class="btn-filter-clear">&#215; Clear</button>
             </div>
         </div>
 
-        <p id="filter-none" style="display:none; color:#9ca3af; font-style:italic; margin-bottom:20px;">
-            No trips match your search. Try different keywords.
-        </p>
+        <!-- Results meta row -->
+        <div class="tg-results-meta">
+            <div class="tg-results-count">
+                <strong id="results-visible">{{trips.length}}</strong>
+                <span> of {{trips.length}} trips</span>
+            </div>
+            <div class="tg-active-chips" id="active-chips" aria-live="polite"></div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="filter-none" class="tg-empty-state" style="display:none;">
+            <div class="tg-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+            </div>
+            <h3>No trips match your search</h3>
+            <p>Try removing a filter, broadening your category, or clearing the search.</p>
+            <button type="button" class="btn-primary btn-primary-pro" onclick="document.getElementById('filter-clear').click();">
+                Clear filters
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+            </button>
+        </div>
 
         <!-- Trip cards grid -->
-        <div class="tg-grid" id="trips-grid">
+        <div class="tg-grid tg-grid-v2" id="trips-grid">
             {{#each trips}}
-            <div class="tg-card"
+            <div class="tg-card tg-card-pro tg-card-trip tg-fade-in"
                  data-name="{{name}}"
                  data-code="{{code}}"
                  data-resort="{{resort}}"
@@ -76,6 +201,7 @@
                              onerror="this.src='/images/sea-sound.jpg'">
                     </a>
                     <span class="tg-card-badge tg-cat-badge-{{category}}">{{category}}</span>
+                    <span class="tg-card-overlay" aria-hidden="true"></span>
                     <button class="tg-fav-heart" data-code="{{code}}" aria-label="Save {{name}} to favorites" aria-pressed="false">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
                     </button>
@@ -145,6 +271,25 @@
     </div>
 </section>
 
+<!-- ══════════════════════════════════════════════════════
+     CTA STRIP — bottom inspirational nudge
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-travel-cta">
+    <div class="tg-travel-cta-mesh" aria-hidden="true"></div>
+    <div class="tg-travel-cta-inner tg-fade-in">
+        <div class="tg-section-label" style="color:#e8b84b;">Need a hand picking?</div>
+        <h2>Talk to a travel concierge for free</h2>
+        <p>Our experts have been everywhere on this list. Get a personalized recommendation in under 24 hours.</p>
+        <div class="tg-cta-actions">
+            <a href="/contact" class="btn-primary btn-primary-pro">
+                Get expert help
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+            </a>
+            <a href="/news" class="btn-outline btn-outline-pro">Read trip stories</a>
+        </div>
+    </div>
+</section>
+
 <script>
 // ── Render star ratings ──
 document.querySelectorAll('.tg-stars').forEach(function(el) {
@@ -176,6 +321,22 @@ var priceInput = document.getElementById('filter-price');
 var sortSelect = document.getElementById('filter-sort');
 var noneMsg    = document.getElementById('filter-none');
 var grid       = document.getElementById('trips-grid');
+var heroInput  = document.getElementById('hero-search-input');
+var visibleEl  = document.getElementById('results-visible');
+var chipsEl    = document.getElementById('active-chips');
+var totalTrips = cards.length;
+
+function renderActiveChips(text, maxPx) {
+    if (!chipsEl) return;
+    var chips = [];
+    if (activeCat && activeCat !== 'All') chips.push({ k: 'cat',   label: activeCat });
+    if (text)                              chips.push({ k: 'text',  label: '"' + text + '"' });
+    if (!isNaN(maxPx))                     chips.push({ k: 'price', label: 'Under $' + maxPx });
+    if (sortSelect.value && sortSelect.value !== 'default') chips.push({ k: 'sort', label: sortSelect.options[sortSelect.selectedIndex].text });
+    chipsEl.innerHTML = chips.map(function(c) {
+        return '<span class="tg-active-chip" data-k="' + c.k + '">' + c.label + ' <button type="button" aria-label="Remove ' + c.label + '">&times;</button></span>';
+    }).join('');
+}
 
 function applyFilter() {
     var text  = textInput.value.trim().toLowerCase();
@@ -202,7 +363,9 @@ function applyFilter() {
         }
     });
 
-    noneMsg.style.display = visible.length === 0 ? 'block' : 'none';
+    noneMsg.style.display = visible.length === 0 ? 'flex' : 'none';
+    if (visibleEl) visibleEl.textContent = visible.length;
+    renderActiveChips(text, maxPx);
     sortCards(visible);
 }
 
@@ -223,20 +386,68 @@ textInput.addEventListener('input',   applyFilter);
 priceInput.addEventListener('input',  applyFilter);
 sortSelect.addEventListener('change', applyFilter);
 
+// Hero search mirrors the main filter input
+if (heroInput) {
+    heroInput.addEventListener('input', function() {
+        textInput.value = heroInput.value;
+        applyFilter();
+    });
+}
+
 document.getElementById('filter-clear').addEventListener('click', function() {
     textInput.value = '';
     priceInput.value = '';
     sortSelect.value = 'default';
+    if (heroInput) heroInput.value = '';
     activeCat = 'All';
     document.querySelectorAll('.tg-cat-btn').forEach(function(b) { b.classList.remove('active'); });
     document.querySelector('.tg-cat-btn[data-cat="All"]').classList.add('active');
     applyFilter();
 });
 
+// Click on active chip to remove that filter
+if (chipsEl) {
+    chipsEl.addEventListener('click', function(e) {
+        var chip = e.target.closest('.tg-active-chip');
+        if (!chip) return;
+        var k = chip.getAttribute('data-k');
+        if (k === 'cat')   { activeCat = 'All'; document.querySelectorAll('.tg-cat-btn').forEach(function(b){b.classList.remove('active');}); document.querySelector('.tg-cat-btn[data-cat="All"]').classList.add('active'); }
+        if (k === 'text')  { textInput.value = ''; if (heroInput) heroInput.value = ''; }
+        if (k === 'price') { priceInput.value = ''; }
+        if (k === 'sort')  { sortSelect.value = 'default'; }
+        applyFilter();
+    });
+}
+
+// ── View mode toggle (grid / list) ──
+var gridBtn = document.getElementById('view-grid');
+var listBtn = document.getElementById('view-list');
+if (gridBtn && listBtn) {
+    gridBtn.addEventListener('click', function() {
+        grid.classList.remove('tg-grid-list');
+        gridBtn.classList.add('is-active'); gridBtn.setAttribute('aria-selected', 'true');
+        listBtn.classList.remove('is-active'); listBtn.setAttribute('aria-selected', 'false');
+        try { localStorage.setItem('travlr-view', 'grid'); } catch(e) {}
+    });
+    listBtn.addEventListener('click', function() {
+        grid.classList.add('tg-grid-list');
+        listBtn.classList.add('is-active'); listBtn.setAttribute('aria-selected', 'true');
+        gridBtn.classList.remove('is-active'); gridBtn.setAttribute('aria-selected', 'false');
+        try { localStorage.setItem('travlr-view', 'list'); } catch(e) {}
+    });
+    try {
+        if (localStorage.getItem('travlr-view') === 'list') listBtn.click();
+    } catch(e) {}
+}
+
 // Pre-apply filter from URL ?q= parameter
 var urlParams = new URLSearchParams(window.location.search);
 var qParam = urlParams.get('q');
-if (qParam) { textInput.value = qParam; applyFilter(); }
+if (qParam) {
+    textInput.value = qParam;
+    if (heroInput) heroInput.value = qParam;
+    applyFilter();
+}
 
 // ── People counters ──
 document.querySelectorAll('#trips-grid .tg-card').forEach(function(card) {
@@ -289,7 +500,6 @@ document.querySelectorAll('.book-btn').forEach(function(btn) {
         btn.setAttribute('aria-pressed', String(on));
     }
 
-    // Paint pre-saved favorites on load
     if (token) {
         fetch('/api/favorites/codes', { headers: { 'Authorization': 'Bearer ' + token } })
             .then(function(r) { return r.ok ? r.json() : []; })
@@ -321,6 +531,22 @@ document.querySelectorAll('.book-btn').forEach(function(btn) {
             if (r.ok) paint(btn, !on);
         } catch (_) {} finally { btn.disabled = false; }
     });
+})();
+
+// ── Sticky filter bar shadow when scrolled ────────────────────
+(function() {
+    var bar = document.querySelector('.tg-filter-bar-v2');
+    if (!bar) return;
+    var sentinel = document.createElement('div');
+    sentinel.style.cssText = 'position:absolute; top:0; height:1px;';
+    bar.parentElement.style.position = 'relative';
+    bar.parentElement.insertBefore(sentinel, bar);
+    if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function(entries) {
+            bar.classList.toggle('is-stuck', !entries[0].isIntersecting);
+        }, { threshold: 0 });
+        io.observe(sentinel);
+    }
 })();
 </script>
 

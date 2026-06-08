@@ -1,114 +1,232 @@
 {{> header}}
 
-<!-- Page header -->
-<div class="tg-page-header">
-    <h1>&#128240; Travel News &amp; Tips</h1>
-    <p>Inspiration, guides, and updates from the Travlr team</p>
-</div>
+<!-- ══════════════════════════════════════════════════════
+     EDITORIAL HERO
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-nw-hero">
+    <div class="tg-nw-hero-bg" aria-hidden="true">
+        <div class="tg-travel-blob tg-travel-blob-1"></div>
+        <div class="tg-travel-blob tg-travel-blob-2"></div>
+        <div class="tg-travel-blob tg-travel-blob-3"></div>
+        <div class="tg-travel-grid-overlay"></div>
+    </div>
+    <div class="tg-nw-hero-inner">
+        <div class="tg-travel-hero-eyebrow">
+            <span class="tg-eyebrow-dot"></span>
+            The Travlr Journal
+        </div>
+        <h1 class="tg-travel-hero-title">
+            Stories from the <em data-shimmer>road less travelled</em>
+        </h1>
+        <p class="tg-travel-hero-sub">
+            Field reports, destination guides, and dispatches from our editors and certified guides.
+            New stories every week.
+        </p>
+        <div class="tg-nw-hero-strip">
+            <div class="tg-nw-hero-strip-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                <span><strong>{{totalCount}}</strong> stories published</span>
+            </div>
+            <div class="tg-nw-hero-strip-divider"></div>
+            <div class="tg-nw-hero-strip-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+                <span>Average <strong>4 min</strong> read</span>
+            </div>
+            <div class="tg-nw-hero-strip-divider"></div>
+            <div class="tg-nw-hero-strip-item">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11l-3-3-3 3"/><line x1="19" y1="8" x2="19" y2="16"/></svg>
+                <span>Field reports by certified guides</span>
+            </div>
+        </div>
+    </div>
+</section>
 
-<section class="tg-section tg-section-gray">
+<section class="tg-section tg-section-gray tg-nw-section">
     <div class="tg-section-wrap">
 
-        <div class="tg-news-layout">
+        <!-- Editorial toolbar: category chips + search -->
+        <div class="tg-nw-toolbar">
+            <div class="tg-nw-chips" role="tablist" aria-label="Filter by category">
+                <button type="button" class="tg-nw-chip is-active" data-cat="all" role="tab" aria-selected="true">
+                    All <span class="tg-nw-chip-count">{{totalCount}}</span>
+                </button>
+                {{#each categories}}
+                <button type="button" class="tg-nw-chip" data-cat="{{name}}" role="tab" aria-selected="false">
+                    {{name}} <span class="tg-nw-chip-count">{{count}}</span>
+                </button>
+                {{/each}}
+            </div>
+            <div class="tg-nw-search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+                <input id="news-search" type="text" placeholder="Search stories…" autocomplete="off" aria-label="Search articles">
+            </div>
+        </div>
 
-            <!-- ── MAIN CONTENT ── -->
-            <main class="tg-news-main">
+        <div class="tg-nw-layout">
 
-                <!-- Featured article -->
+            <!-- ── MAIN: featured + grid ── -->
+            <main class="tg-nw-main">
+
                 {{#if featured}}
-                <article class="tg-news-featured">
-                    <a href="/news/{{featured.slug}}" class="tg-news-featured-img">
+                <article class="tg-nw-featured" data-cat="{{featured.category}}" data-title="{{featured.title}}" data-excerpt="{{featured.excerpt}}">
+                    <a href="/news/{{featured.slug}}" class="tg-nw-featured-img" aria-label="Read {{featured.title}}">
                         <img src="{{featured.image}}" alt="{{featured.title}}" loading="lazy" onerror="this.src='/images/sea-sound.jpg'">
-                        <span class="tg-news-tag">{{featured.category}}</span>
-                    </a>
-                    <div class="tg-news-featured-body">
-                        <div class="tg-news-meta">
-                            <span class="tg-news-date">&#128197; {{featured.date}}</span>
-                            <span class="tg-news-author">&#9997;&#65039; {{featured.author}}</span>
-                            <span class="tg-news-read">&#9201; {{featured.readMin}} min read</span>
+                        <div class="tg-nw-featured-overlay" aria-hidden="true"></div>
+                        <div class="tg-nw-featured-corner">
+                            <span class="tg-nw-corner-tag">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                Editor's Pick
+                            </span>
+                            <span class="tg-nw-tag tg-nw-tag-{{featured.category}}">{{featured.category}}</span>
                         </div>
-                        <h2 class="tg-news-featured-title"><a href="/news/{{featured.slug}}" class="tg-news-link">{{featured.title}}</a></h2>
-                        <p class="tg-news-excerpt">{{featured.excerpt}}</p>
-                        <a href="/news/{{featured.slug}}" class="btn-primary" style="display:inline-block; margin-top:12px;">Read the Full Story &rarr;</a>
+                    </a>
+                    <div class="tg-nw-featured-body">
+                        <div class="tg-nw-meta">
+                            <span class="tg-nw-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                {{featured.date}}
+                            </span>
+                            <span class="tg-nw-meta-dot" aria-hidden="true"></span>
+                            <span class="tg-nw-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                {{featured.author}}
+                            </span>
+                            <span class="tg-nw-meta-dot" aria-hidden="true"></span>
+                            <span class="tg-nw-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+                                {{featured.readMin}} min read
+                            </span>
+                        </div>
+                        <h2 class="tg-nw-featured-title">
+                            <a href="/news/{{featured.slug}}" class="tg-nw-link">{{featured.title}}</a>
+                        </h2>
+                        <p class="tg-nw-excerpt">{{featured.excerpt}}</p>
+                        <a href="/news/{{featured.slug}}" class="btn-primary btn-primary-pro">
+                            Read the full story
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                        </a>
                     </div>
                 </article>
                 {{/if}}
 
-                <!-- Article grid -->
-                <h3 class="tg-news-section-title">Latest Stories</h3>
-                <div class="tg-news-grid">
+                <!-- Section header -->
+                <div class="tg-nw-section-head">
+                    <div>
+                        <span class="tg-nw-section-label">More stories</span>
+                        <h3 class="tg-nw-section-title">Latest from the journal</h3>
+                    </div>
+                    <span class="tg-nw-result-count" id="nw-result-count"></span>
+                </div>
+
+                <div class="tg-nw-grid" id="nw-grid">
                     {{#each articles}}
-                    <article class="tg-news-card">
-                        <a href="/news/{{slug}}" class="tg-news-card-img">
+                    <article class="tg-nw-card tg-fade-in" data-cat="{{category}}" data-title="{{title}}" data-excerpt="{{excerpt}}">
+                        <a href="/news/{{slug}}" class="tg-nw-card-img" aria-label="Read {{title}}">
                             <img src="{{image}}" alt="{{title}}" loading="lazy" onerror="this.src='/images/sea-sound.jpg'">
-                            <span class="tg-news-tag {{tagClass}}">{{category}}</span>
+                            <span class="tg-nw-tag tg-nw-tag-{{category}}">{{category}}</span>
+                            <div class="tg-nw-card-overlay" aria-hidden="true"></div>
                         </a>
-                        <div class="tg-news-card-body">
-                            <div class="tg-news-meta">
-                                <span class="tg-news-date">&#128197; {{date}}</span>
-                                <span class="tg-news-read">&#9201; {{readMin}} min read</span>
+                        <div class="tg-nw-card-body">
+                            <div class="tg-nw-meta">
+                                <span class="tg-nw-meta-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                    {{date}}
+                                </span>
+                                <span class="tg-nw-meta-dot" aria-hidden="true"></span>
+                                <span class="tg-nw-meta-item">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+                                    {{readMin}} min
+                                </span>
                             </div>
-                            <h4 class="tg-news-card-title"><a href="/news/{{slug}}" class="tg-news-link">{{title}}</a></h4>
-                            <p class="tg-news-card-excerpt">{{excerpt}}</p>
-                            <a href="/news/{{slug}}" class="tg-news-read-more">Read More &rarr;</a>
+                            <h4 class="tg-nw-card-title">
+                                <a href="/news/{{slug}}" class="tg-nw-link">{{title}}</a>
+                            </h4>
+                            <p class="tg-nw-card-excerpt">{{excerpt}}</p>
+                            <a href="/news/{{slug}}" class="tg-nw-read-more">
+                                Read more
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                            </a>
                         </div>
                     </article>
                     {{/each}}
                 </div>
+
+                <!-- No-match state -->
+                <div id="nw-empty" class="tg-empty-state tg-res-empty" style="display:none;">
+                    <div class="tg-empty-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+                    </div>
+                    <h3>No stories match</h3>
+                    <p>Try a different category or clear your search.</p>
+                </div>
             </main>
 
             <!-- ── SIDEBAR ── -->
-            <aside class="tg-news-sidebar">
-
-                <!-- Search -->
-                <div class="tg-news-widget">
-                    <h4 class="tg-news-widget-title">&#128269; Search Articles</h4>
-                    <div class="tg-news-search">
-                        <input type="text" id="news-search" placeholder="Search news&hellip;">
-                        <button>Go</button>
-                    </div>
-                </div>
+            <aside class="tg-nw-sidebar">
 
                 <!-- Categories -->
-                <div class="tg-news-widget">
-                    <h4 class="tg-news-widget-title">&#128196; Categories</h4>
-                    <ul class="tg-news-cat-list">
-                        <li><a href="/news">&#129343; Diving <span>3</span></a></li>
-                        <li><a href="/news">&#9992;&#65039; Travel Tips <span>5</span></a></li>
-                        <li><a href="/news">&#127757; Environment <span>2</span></a></li>
-                        <li><a href="/news">&#129517; Adventure <span>4</span></a></li>
-                        <li><a href="/news">&#127869;&#65039; Food &amp; Culture <span>3</span></a></li>
-                        <li><a href="/news">&#128737;&#65039; Safety <span>2</span></a></li>
+                <div class="tg-nw-widget">
+                    <h4 class="tg-nw-widget-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        Categories
+                    </h4>
+                    <ul class="tg-nw-cat-list">
+                        {{#each categories}}
+                        <li>
+                            <button type="button" class="tg-nw-cat-link" data-cat="{{name}}">
+                                <span>{{name}}</span>
+                                <span class="tg-nw-cat-count">{{count}}</span>
+                            </button>
+                        </li>
+                        {{/each}}
                     </ul>
                 </div>
 
-                <!-- Vacation Tips -->
-                <div class="tg-news-widget">
-                    <h4 class="tg-news-widget-title">&#128161; Vacation Tips</h4>
-                    <ul class="tg-news-tip-list">
-                        <li><a href="/news">What to bring on the beach?</a></li>
-                        <li><a href="/news">Planning Fun Activities</a></li>
-                        <li><a href="/news">Diving Checklist</a></li>
-                        <li><a href="/news">First Aid Basics for Travelers</a></li>
-                        <li><a href="/news">How to Build a Sand Castle</a></li>
-                        <li><a href="/news">Safe Tanning Tips</a></li>
+                <!-- Newsletter -->
+                <div class="tg-nw-widget tg-nw-newsletter">
+                    <div class="tg-nw-newsletter-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22 6 12 13 2 6"/></svg>
+                    </div>
+                    <h4>The Travlr Brief</h4>
+                    <p>A short weekly digest of fresh stories, member deals, and travel ideas. No spam.</p>
+                    <form class="tg-nw-newsletter-form" onsubmit="event.preventDefault(); window.tgNwSubscribe && window.tgNwSubscribe();">
+                        <input id="nw-newsletter-email" type="email" required placeholder="you@example.com" autocomplete="email" aria-label="Email">
+                        <button type="submit">
+                            Subscribe
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Editor's picks -->
+                <div class="tg-nw-widget">
+                    <h4 class="tg-nw-widget-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Editor's picks
+                    </h4>
+                    <ul class="tg-nw-tip-list" id="nw-picks-list">
+                        {{#each articles}}
+                        <li class="nw-pick-item" data-index="{{@index}}">
+                            <a href="/news/{{slug}}">
+                                <span class="tg-nw-tip-num"></span>
+                                <span>{{title}}</span>
+                            </a>
+                        </li>
+                        {{/each}}
                     </ul>
                 </div>
 
-                <!-- Newsletter signup -->
-                <div class="tg-news-widget tg-news-newsletter">
-                    <h4 class="tg-news-widget-title">&#128139; Stay in the Loop</h4>
-                    <p>Get the latest travel news, deals, and tips delivered to your inbox every week.</p>
-                    <input type="email" placeholder="Your email address">
-                    <button class="btn-primary" style="width:100%; margin-top:10px;">Subscribe &rarr;</button>
-                </div>
-
-                <!-- Popular trips CTA -->
-                <div class="tg-news-widget tg-news-cta">
-                    <div class="tg-news-cta-icon">&#127758;</div>
-                    <h4>Ready to Travel?</h4>
-                    <p>Browse our 15 all-inclusive trip packages and find your perfect getaway.</p>
-                    <a href="/travel" class="btn-primary" style="display:block; text-align:center; margin-top:14px;">View All Trips &rarr;</a>
+                <!-- CTA card -->
+                <div class="tg-nw-widget tg-nw-cta">
+                    <div class="tg-nw-cta-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    </div>
+                    <h4>Ready to travel?</h4>
+                    <p>Browse 15 all-inclusive packages, hand-picked by our team.</p>
+                    <a href="/travel" class="btn-primary btn-primary-pro">
+                        View all trips
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                    </a>
                 </div>
 
             </aside>
@@ -116,5 +234,99 @@
 
     </div>
 </section>
+
+<script>
+(function() {
+    /* ── Category filter + search ─────────────────────────────── */
+    var activeCat = 'all';
+    var searchTerm = '';
+    var grid = document.getElementById('nw-grid');
+    var emptyEl = document.getElementById('nw-empty');
+    var countEl = document.getElementById('nw-result-count');
+    var chips = document.querySelectorAll('.tg-nw-chip');
+    var sidebarLinks = document.querySelectorAll('.tg-nw-cat-link');
+    var featured = document.querySelector('.tg-nw-featured');
+    var cards = Array.from(document.querySelectorAll('.tg-nw-card'));
+
+    function setActiveChip(cat) {
+        chips.forEach(function(c) {
+            var on = c.getAttribute('data-cat') === cat;
+            c.classList.toggle('is-active', on);
+            c.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        sidebarLinks.forEach(function(l) {
+            l.classList.toggle('is-active', l.getAttribute('data-cat') === cat);
+        });
+    }
+
+    function applyFilter() {
+        var shown = 0;
+        // Featured visibility — hide when filtering to anything other than its own cat
+        if (featured) {
+            var fc = featured.getAttribute('data-cat');
+            var hay = (featured.getAttribute('data-title') + ' ' + featured.getAttribute('data-excerpt')).toLowerCase();
+            var matchSearch = !searchTerm || hay.indexOf(searchTerm) !== -1;
+            var matchCat = activeCat === 'all' || fc === activeCat;
+            featured.style.display = (matchSearch && matchCat) ? '' : 'none';
+            if (matchSearch && matchCat) shown++;
+        }
+        cards.forEach(function(card) {
+            var cat = card.getAttribute('data-cat');
+            var hay = (card.getAttribute('data-title') + ' ' + card.getAttribute('data-excerpt')).toLowerCase();
+            var matchSearch = !searchTerm || hay.indexOf(searchTerm) !== -1;
+            var matchCat = activeCat === 'all' || cat === activeCat;
+            var show = matchSearch && matchCat;
+            card.style.display = show ? '' : 'none';
+            if (show) shown++;
+        });
+        emptyEl.style.display = shown === 0 ? 'flex' : 'none';
+        if (countEl) {
+            countEl.textContent = activeCat === 'all' && !searchTerm
+                ? ''
+                : 'Showing ' + shown + ' of ' + (cards.length + (featured ? 1 : 0));
+        }
+    }
+
+    chips.forEach(function(c) {
+        c.addEventListener('click', function() {
+            activeCat = c.getAttribute('data-cat');
+            setActiveChip(activeCat);
+            applyFilter();
+        });
+    });
+    sidebarLinks.forEach(function(l) {
+        l.addEventListener('click', function() {
+            activeCat = l.getAttribute('data-cat');
+            setActiveChip(activeCat);
+            applyFilter();
+            window.scrollTo({ top: document.querySelector('.tg-nw-toolbar').getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+        });
+    });
+    document.getElementById('news-search').addEventListener('input', function(e) {
+        searchTerm = e.target.value.trim().toLowerCase();
+        applyFilter();
+    });
+
+    /* ── Editor's picks: number + cap to 4 ───────────────────── */
+    (function() {
+        var picks = document.querySelectorAll('#nw-picks-list .nw-pick-item');
+        picks.forEach(function(li, i) {
+            if (i >= 4) { li.remove(); return; }
+            var num = li.querySelector('.tg-nw-tip-num');
+            if (num) num.textContent = '0' + (i + 1);
+        });
+    })();
+
+    /* ── Newsletter signup ────────────────────────────────────── */
+    window.tgNwSubscribe = function() {
+        var input = document.getElementById('nw-newsletter-email');
+        var val = input && input.value.trim();
+        if (!val) return;
+        try { localStorage.setItem('travlr-newsletter', val); } catch (e) {}
+        if (input) input.value = '';
+        if (window.tgToast) window.tgToast('Subscribed! Watch your inbox for the next brief.', 'success');
+    };
+})();
+</script>
 
 {{> footer}}

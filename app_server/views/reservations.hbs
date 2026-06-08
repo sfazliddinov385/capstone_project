@@ -1,95 +1,194 @@
 {{> header}}
 
-<div class="tg-page-header">
-    <h1>&#128203; My Reservations</h1>
-    <p>View and manage your upcoming trips</p>
-</div>
+<!-- ══════════════════════════════════════════════════════
+     HERO
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-res-hero">
+    <div class="tg-res-hero-bg" aria-hidden="true">
+        <div class="tg-travel-blob tg-travel-blob-1"></div>
+        <div class="tg-travel-blob tg-travel-blob-2"></div>
+        <div class="tg-travel-blob tg-travel-blob-3"></div>
+        <div class="tg-travel-grid-overlay"></div>
+    </div>
+    <div class="tg-res-hero-inner">
+        <div class="tg-travel-hero-eyebrow">
+            <span class="tg-eyebrow-dot"></span>
+            <span id="hero-sub-eyebrow">Your travel calendar</span>
+        </div>
+        <h1 class="tg-travel-hero-title">
+            <span id="hero-name-block">My <em data-shimmer>Reservations</em></span>
+        </h1>
+        <p class="tg-travel-hero-sub" id="hero-sub-text">
+            View, manage, and reflect on every journey you've booked with Travlr.
+        </p>
+    </div>
+</section>
 
-<section class="tg-section tg-section-gray">
+<section class="tg-section tg-section-gray tg-res-section">
     <div class="tg-section-wrap">
 
-        <!-- Guest message -->
+        <!-- ── GUEST GATE (shown when not signed in) ────────────── -->
         <div id="guest-message" style="display:none;">
-            <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.07); padding:60px 40px; text-align:center; max-width:500px; margin:0 auto;">
-                <div style="font-size:3rem; margin-bottom:16px;">&#128274;</div>
-                <h2 style="font-family:'Poppins',sans-serif; color:#083050; margin-bottom:12px;">Sign In Required</h2>
-                <p style="color:#6b7280; margin-bottom:28px; line-height:1.7;">This page is available to logged-in customers only. Sign in to view your reservations.</p>
-                <a href="/login" class="btn-primary" style="margin-right:12px;">Sign In</a>
-                <a href="/register" class="btn-outline" style="background:transparent; color:#083050; border-color:#083050;">Create Account</a>
+            <div class="tg-res-gate tg-fade-in">
+                <div class="tg-res-gate-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                </div>
+                <h2>Sign in to see your trips</h2>
+                <p>This page is for logged-in customers. Sign in with your Travlr account to view, manage, and review your reservations.</p>
+                <div class="tg-res-gate-actions">
+                    <a href="/login" class="btn-primary btn-primary-pro">
+                        Sign in
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="/register" class="btn-outline btn-outline-pro">Create account</a>
+                </div>
             </div>
         </div>
 
-        <!-- Review modal -->
-        <div id="review-modal" role="dialog" aria-modal="true" aria-labelledby="review-modal-title" style="display:none; position:fixed; inset:0; background:rgba(8,32,56,0.55); z-index:1000; align-items:center; justify-content:center; padding:20px;">
-            <div style="background:#fff; border-radius:16px; padding:32px; max-width:520px; width:100%; box-shadow:0 30px 60px rgba(0,0,0,0.35);">
-                <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:6px;">
-                    <h3 id="review-modal-title" style="font-family:'Poppins',sans-serif; color:#083050; font-size:1.3rem; margin:0;">Leave a Review</h3>
-                    <button id="review-close" style="background:transparent; border:none; cursor:pointer; font-size:1.4rem; color:#9ca3af; line-height:1;">&times;</button>
+        <!-- ── LOGGED-IN CONTENT ────────────────────────────────── -->
+        <div id="reservations-content" style="display:none;">
+
+            <!-- Action toolbar -->
+            <div class="tg-res-toolbar">
+                <div class="tg-res-toolbar-info">
+                    <span class="tg-res-toolbar-label">Signed in as</span>
+                    <span class="tg-res-toolbar-name" id="customer-name">—</span>
                 </div>
-                <p style="color:#6b7280; font-size:0.92rem; margin-bottom:18px;">Reviewing <strong id="review-trip-name" style="color:#083050;"></strong></p>
+                <div class="tg-res-toolbar-actions">
+                    <a href="/travel" class="btn-primary btn-primary-pro">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        Book new trip
+                    </a>
+                    <button id="logout-btn" type="button" class="tg-res-logout">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Sign out
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI strip -->
+            <div class="tg-res-kpis">
+                <div class="tg-res-kpi tg-res-kpi-blue tg-fade-in">
+                    <div class="tg-res-kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    </div>
+                    <div>
+                        <div class="tg-res-kpi-num" id="kpi-total">0</div>
+                        <div class="tg-res-kpi-label">Total Bookings</div>
+                    </div>
+                </div>
+                <div class="tg-res-kpi tg-res-kpi-teal tg-fade-in">
+                    <div class="tg-res-kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+                    </div>
+                    <div>
+                        <div class="tg-res-kpi-num" id="kpi-upcoming">0</div>
+                        <div class="tg-res-kpi-label">Upcoming</div>
+                    </div>
+                </div>
+                <div class="tg-res-kpi tg-res-kpi-rose tg-fade-in">
+                    <div class="tg-res-kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12V8H4v4"/><path d="M4 12v6a2 2 0 002 2h12a2 2 0 002-2v-6"/><path d="M2 8h20l-2-4H4l-2 4z"/></svg>
+                    </div>
+                    <div>
+                        <div class="tg-res-kpi-num" id="kpi-travelers">0</div>
+                        <div class="tg-res-kpi-label">Travelers</div>
+                    </div>
+                </div>
+                <div class="tg-res-kpi tg-res-kpi-gold tg-fade-in">
+                    <div class="tg-res-kpi-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                    </div>
+                    <div>
+                        <div class="tg-res-kpi-num" id="kpi-total-spent">$0</div>
+                        <div class="tg-res-kpi-label">Total Spent</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs + search -->
+            <div class="tg-res-tabs-bar">
+                <div class="tg-res-tabs" role="tablist" aria-label="Filter reservations">
+                    <button class="tg-res-tab is-active" data-filter="all" role="tab" aria-selected="true">
+                        All <span class="tg-res-tab-count" id="count-all">0</span>
+                    </button>
+                    <button class="tg-res-tab" data-filter="upcoming" role="tab" aria-selected="false">
+                        Upcoming <span class="tg-res-tab-count" id="count-upcoming">0</span>
+                    </button>
+                    <button class="tg-res-tab" data-filter="past" role="tab" aria-selected="false">
+                        Past <span class="tg-res-tab-count" id="count-past">0</span>
+                    </button>
+                </div>
+                <div class="tg-res-search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+                    <input id="res-search" type="text" placeholder="Search by trip name or resort…" autocomplete="off" aria-label="Search reservations">
+                </div>
+            </div>
+
+            <!-- Toast / banner area -->
+            <div id="cancel-message" class="tg-alert tg-alert-success" style="display:none;"></div>
+
+            <!-- Reservation cards -->
+            <div class="tg-res-grid" id="reservations-list">
+                <!-- Loading skeleton -->
+                <div class="tg-res-skeleton" id="res-skeleton">
+                    <div class="tg-res-card-skel"></div>
+                    <div class="tg-res-card-skel"></div>
+                    <div class="tg-res-card-skel"></div>
+                </div>
+            </div>
+
+            <!-- Empty state (no reservations) -->
+            <div id="res-empty" class="tg-empty-state tg-res-empty" style="display:none;">
+                <div class="tg-empty-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <h3>No reservations yet</h3>
+                <p>When you book a trip it will appear here. Ready for your next adventure?</p>
+                <a href="/travel" class="btn-primary btn-primary-pro">
+                    Browse trips
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+            <!-- No-match state (filtered out) -->
+            <div id="res-no-match" class="tg-empty-state tg-res-empty" style="display:none;">
+                <div class="tg-empty-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
+                </div>
+                <h3>No matches</h3>
+                <p>No reservations match the current filter. Try clearing your search or pick another tab.</p>
+            </div>
+        </div>
+
+        <!-- ── REVIEW MODAL ─────────────────────────────────────── -->
+        <div id="review-modal" class="tg-res-modal" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+            <div class="tg-res-modal-dialog">
+                <div class="tg-res-modal-head">
+                    <h3 id="review-modal-title">Leave a review</h3>
+                    <button id="review-close" type="button" class="tg-res-modal-close" aria-label="Close review dialog">&times;</button>
+                </div>
+                <p class="tg-res-modal-sub">Reviewing <strong id="review-trip-name"></strong></p>
 
                 <div id="review-error" class="tg-alert tg-alert-danger" style="display:none; margin-bottom:14px;"></div>
 
-                <label style="display:block; font-size:0.85rem; font-weight:600; color:#374151; margin-bottom:8px;">Your rating</label>
-                <div id="review-stars" style="display:flex; gap:4px; margin-bottom:18px;">
-                    <button type="button" class="rev-star" data-v="1" aria-label="1 star" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
-                    <button type="button" class="rev-star" data-v="2" aria-label="2 stars" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
-                    <button type="button" class="rev-star" data-v="3" aria-label="3 stars" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
-                    <button type="button" class="rev-star" data-v="4" aria-label="4 stars" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
-                    <button type="button" class="rev-star" data-v="5" aria-label="5 stars" style="background:none; border:none; font-size:2rem; cursor:pointer; color:#d1d5db; padding:0 2px; line-height:1;">&#9733;</button>
+                <label class="tg-res-modal-label">Your rating</label>
+                <div id="review-stars" class="tg-res-stars">
+                    <button type="button" class="rev-star" data-v="1" aria-label="1 star">&#9733;</button>
+                    <button type="button" class="rev-star" data-v="2" aria-label="2 stars">&#9733;</button>
+                    <button type="button" class="rev-star" data-v="3" aria-label="3 stars">&#9733;</button>
+                    <button type="button" class="rev-star" data-v="4" aria-label="4 stars">&#9733;</button>
+                    <button type="button" class="rev-star" data-v="5" aria-label="5 stars">&#9733;</button>
                 </div>
 
-                <label style="display:block; font-size:0.85rem; font-weight:600; color:#374151; margin-bottom:8px;">Your review</label>
-                <textarea id="review-comment" rows="4" maxlength="1200" placeholder="Share what you loved and what could be better..." style="width:100%; padding:12px 14px; border:1.5px solid #e5e7eb; border-radius:9px; font-size:0.95rem; font-family:inherit; resize:vertical;"></textarea>
-                <div style="text-align:right; font-size:0.78rem; color:#9ca3af; margin-top:4px;"><span id="review-count">0</span> / 1200</div>
+                <label class="tg-res-modal-label" for="review-comment">Your review</label>
+                <textarea id="review-comment" rows="4" maxlength="1200" placeholder="Share what you loved and what could be better…"></textarea>
+                <div class="tg-res-modal-count"><span id="review-count">0</span> / 1200</div>
 
-                <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
-                    <button id="review-cancel" type="button" class="btn-outline" style="background:transparent; color:#374151; border-color:#d1d5db;">Cancel</button>
-                    <button id="review-submit" type="button" class="btn-primary">Submit Review</button>
+                <div class="tg-res-modal-actions">
+                    <button id="review-cancel" type="button" class="btn-outline btn-outline-pro">Cancel</button>
+                    <button id="review-submit" type="button" class="btn-primary btn-primary-pro">Submit review</button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Logged-in content -->
-        <div id="reservations-content" style="display:none;">
-            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:8px;">
-                <div>
-                    <h2 style="font-family:'Poppins',sans-serif; font-size:1.5rem; font-weight:700; color:#083050; margin-bottom:4px;">
-                        Welcome back, <span id="customer-name"></span>!
-                    </h2>
-                    <p style="color:#6b7280; font-size:0.92rem;">Your upcoming trip reservations are listed below.</p>
-                </div>
-                <div style="display:flex; gap:12px;">
-                    <a href="/travel" class="btn-primary">+ Book New Trip</a>
-                    <button id="logout-btn" style="background:#fef2f2; color:#c0392b; border:1px solid #fca5a5; border-radius:9px; padding:10px 18px; font-size:0.88rem; font-weight:700; cursor:pointer;">Sign Out</button>
-                </div>
-            </div>
-
-            <div id="cancel-message" class="tg-alert tg-alert-success" style="display:none;"></div>
-
-            <div class="tg-table-wrap">
-                <table class="tg-table">
-                    <thead>
-                        <tr>
-                            <th>Trip</th>
-                            <th>Resort</th>
-                            <th>Start Date</th>
-                            <th>Length</th>
-                            <th>Per Person</th>
-                            <th style="text-align:center;">Travelers</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="reservations-table-body">
-                        <tr>
-                            <td colspan="9" style="padding:40px; text-align:center; color:#9ca3af; font-style:italic;">
-                                No reservations yet. <a href="/travel" style="color:#083050; font-weight:700;">Browse available trips &rarr;</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
         </div>
 
@@ -98,18 +197,15 @@
 
 <script>
 (async function() {
-    var token     = localStorage.getItem('travlr-token');
+    var token = localStorage.getItem('travlr-token');
     var isLoggedIn = false;
-    var payload   = null;
+    var payload = null;
 
     if (token) {
         try {
-            payload    = JSON.parse(atob(token.split('.')[1]));
+            payload = JSON.parse(atob(token.split('.')[1]));
             isLoggedIn = payload.exp > Math.floor(Date.now() / 1000);
-            if (isLoggedIn) {
-                document.getElementById('customer-name').textContent = payload.name || payload.email;
-            }
-        } catch(e) { isLoggedIn = false; }
+        } catch (e) { isLoggedIn = false; }
     }
 
     if (!isLoggedIn) {
@@ -118,75 +214,245 @@
     }
 
     document.getElementById('reservations-content').style.display = 'block';
+    var displayName = payload.name || payload.email;
+    var firstName = displayName.split(' ')[0] || displayName;
+    document.getElementById('customer-name').textContent = displayName;
+    document.getElementById('hero-name-block').innerHTML = 'Welcome back, <em data-shimmer>' + escapeHtml(firstName) + '</em>';
+    document.getElementById('hero-sub-text').textContent = 'View, manage, and reflect on every journey you have booked with Travlr.';
+
+    /* ── Util helpers ────────────────────────────────────────── */
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+    function money(n) {
+        var v = parseFloat(n) || 0;
+        return '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function fmtDate(d) {
+        if (!d) return 'TBD';
+        return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+    function daysFromNow(d) {
+        if (!d) return null;
+        var diff = new Date(d).getTime() - Date.now();
+        return Math.round(diff / 86400000);
+    }
+    function destClass(name) {
+        // Pick a deterministic gradient class from the trip name for variety
+        var sum = 0;
+        for (var i = 0; i < (name || '').length; i++) sum = (sum + name.charCodeAt(i)) % 6;
+        return 'tg-res-dest-' + (sum + 1);
+    }
+
+    /* ── Fetch reservations ──────────────────────────────────── */
+    var listEl = document.getElementById('reservations-list');
+    var skeletonEl = document.getElementById('res-skeleton');
+    var emptyEl = document.getElementById('res-empty');
+    var noMatchEl = document.getElementById('res-no-match');
+    var data = [];
 
     try {
-        var res  = await fetch('/api/reservations', { headers: { 'Authorization': 'Bearer ' + token } });
-        var data = await res.json();
+        var res = await fetch('/api/reservations', { headers: { 'Authorization': 'Bearer ' + token } });
+        data = (res.ok ? await res.json() : []) || [];
+    } catch (err) {
+        data = [];
+    }
 
-        if (res.ok && data.length > 0) {
-            var tbody = document.getElementById('reservations-table-body');
-            tbody.innerHTML = '';
-            data.forEach(function(r) {
-                var startDate  = r.start ? new Date(r.start).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : 'TBD';
-                var perPerson  = r.perPerson  ? '$' + parseFloat(r.perPerson).toLocaleString('en-US',  { minimumFractionDigits: 2 }) : '-';
-                var totalPrice = r.totalPrice ? '$' + parseFloat(r.totalPrice).toLocaleString('en-US', { minimumFractionDigits: 2 }) : '-';
-                var tr = document.createElement('tr');
-                tr.setAttribute('data-id', r._id);
-                tr.innerHTML =
-                    '<td style="font-weight:600; color:#083050;">' + r.tripName + '</td>' +
-                    '<td>' + (r.resort || '-') + '</td>' +
-                    '<td>' + startDate + '</td>' +
-                    '<td>' + (r.length || '-') + '</td>' +
-                    '<td>' + perPerson + '</td>' +
-                    '<td style="text-align:center;">' + (r.people || 1) + '</td>' +
-                    '<td style="font-weight:700; color:#083050;">' + totalPrice + '</td>' +
-                    '<td><span class="tg-badge-status">&#10003; Confirmed</span></td>' +
-                    '<td style="white-space:nowrap;">' +
-                        '<button class="btn-review" data-code="' + r.tripCode + '" data-trip="' + (r.tripName || '').replace(/"/g,'&quot;') + '">Review</button> ' +
-                        '<button class="btn-cancel" data-id="' + r._id + '">Cancel</button>' +
-                    '</td>';
-                tbody.appendChild(tr);
-            });
+    if (skeletonEl) skeletonEl.remove();
 
-            tbody.querySelectorAll('.btn-cancel').forEach(function(btn) {
-                btn.addEventListener('click', async function() {
-                    var id = btn.getAttribute('data-id');
-                    if (!confirm('Cancel this reservation? This cannot be undone.')) return;
-                    btn.disabled = true; btn.textContent = 'Cancelling\u2026';
-                    try {
-                        var delRes = await fetch('/api/reservations/' + id, {
-                            method: 'DELETE',
-                            headers: { 'Authorization': 'Bearer ' + token }
-                        });
-                        if (delRes.ok) {
-                            tbody.querySelector('tr[data-id="' + id + '"]').remove();
-                            var msg = document.getElementById('cancel-message');
-                            msg.textContent = '\u2713 Reservation cancelled successfully.';
-                            msg.style.display = 'block';
-                            setTimeout(function() { msg.style.display = 'none'; }, 4000);
-                            if (tbody.querySelectorAll('tr').length === 0) {
-                                tbody.innerHTML = '<tr><td colspan="9" style="padding:40px;text-align:center;color:#9ca3af;font-style:italic;">No reservations yet. <a href="/travel" style="color:#083050;font-weight:700;">Browse available trips &rarr;</a></td></tr>';
-                            }
-                        } else {
-                            var d = await delRes.json();
-                            alert(d.message || 'Could not cancel reservation.');
-                            btn.disabled = false; btn.textContent = 'Cancel';
-                        }
-                    } catch(err) {
-                        alert('Unable to connect. Please try again.');
-                        btn.disabled = false; btn.textContent = 'Cancel';
-                    }
-                });
-            });
+    if (!data.length) {
+        emptyEl.style.display = 'flex';
+        updateKpis([]);
+        updateTabCounts([]);
+        return;
+    }
+
+    /* ── Render cards ─────────────────────────────────────────── */
+    function renderCards(list) {
+        listEl.innerHTML = '';
+        if (!list.length) {
+            noMatchEl.style.display = 'flex';
+            return;
         }
-    } catch(err) { /* leave default empty row */ }
+        noMatchEl.style.display = 'none';
+
+        list.forEach(function(r) {
+            var dleft = daysFromNow(r.start);
+            var statusLabel = '', statusKind = '';
+            if (dleft === null)        { statusLabel = 'Date TBD';            statusKind = 'pending'; }
+            else if (dleft > 30)       { statusLabel = 'In ' + dleft + ' days'; statusKind = 'upcoming'; }
+            else if (dleft > 0)        { statusLabel = 'In ' + dleft + ' days'; statusKind = 'soon'; }
+            else if (dleft === 0)      { statusLabel = 'Today!';                statusKind = 'soon'; }
+            else                       { statusLabel = 'Completed';             statusKind = 'past'; }
+
+            var card = document.createElement('article');
+            card.className = 'tg-res-card tg-fade-in';
+            card.setAttribute('data-id', r._id);
+            card.setAttribute('data-status', dleft !== null && dleft < 0 ? 'past' : 'upcoming');
+
+            card.innerHTML =
+                '<div class="tg-res-card-banner ' + destClass(r.tripName) + '">' +
+                    '<div class="tg-res-card-banner-overlay">' +
+                        '<div class="tg-res-card-code">' + escapeHtml(r.tripCode || '') + '</div>' +
+                        '<div class="tg-res-card-title">' + escapeHtml(r.tripName || 'Trip') + '</div>' +
+                        '<div class="tg-res-card-resort"><span aria-hidden="true">&#128205;</span> ' + escapeHtml(r.resort || '—') + '</div>' +
+                    '</div>' +
+                    '<span class="tg-res-status tg-res-status-' + statusKind + '">' + statusLabel + '</span>' +
+                '</div>' +
+                '<div class="tg-res-card-body">' +
+                    '<div class="tg-res-card-meta">' +
+                        '<div class="tg-res-meta-item">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+                            '<div><span class="tg-res-meta-label">Start date</span><span class="tg-res-meta-val">' + fmtDate(r.start) + '</span></div>' +
+                        '</div>' +
+                        '<div class="tg-res-meta-item">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>' +
+                            '<div><span class="tg-res-meta-label">Length</span><span class="tg-res-meta-val">' + escapeHtml(r.length || '—') + '</span></div>' +
+                        '</div>' +
+                        '<div class="tg-res-meta-item">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>' +
+                            '<div><span class="tg-res-meta-label">Travelers</span><span class="tg-res-meta-val">' + (r.people || 1) + '</span></div>' +
+                        '</div>' +
+                        '<div class="tg-res-meta-item">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>' +
+                            '<div><span class="tg-res-meta-label">Per person</span><span class="tg-res-meta-val">' + money(r.perPerson) + '</span></div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="tg-res-card-footer">' +
+                        '<div class="tg-res-card-total">' +
+                            '<span class="tg-res-card-total-label">Total paid</span>' +
+                            '<span class="tg-res-card-total-amount">' + money(r.totalPrice) + '</span>' +
+                        '</div>' +
+                        '<div class="tg-res-card-actions">' +
+                            '<button class="tg-res-btn tg-res-btn-review btn-review" data-code="' + escapeHtml(r.tripCode) + '" data-trip="' + escapeHtml(r.tripName) + '">' +
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>' +
+                                'Review' +
+                            '</button>' +
+                            '<button class="tg-res-btn tg-res-btn-cancel btn-cancel" data-id="' + r._id + '">' +
+                                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+                                'Cancel' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+
+            listEl.appendChild(card);
+            if (window.tgObserveFade) window.tgObserveFade(card);
+        });
+
+        wireCardActions();
+    }
+
+    /* ── Filtering + search ───────────────────────────────────── */
+    var activeFilter = 'all';
+    var searchTerm = '';
+
+    function getFiltered() {
+        return data.filter(function(r) {
+            var d = daysFromNow(r.start);
+            var isPast = d !== null && d < 0;
+            if (activeFilter === 'upcoming' && isPast) return false;
+            if (activeFilter === 'past' && !isPast) return false;
+            if (searchTerm) {
+                var hay = ((r.tripName || '') + ' ' + (r.resort || '') + ' ' + (r.tripCode || '')).toLowerCase();
+                if (hay.indexOf(searchTerm) === -1) return false;
+            }
+            return true;
+        });
+    }
+
+    function refreshList() {
+        renderCards(getFiltered());
+    }
+
+    document.querySelectorAll('.tg-res-tab').forEach(function(t) {
+        t.addEventListener('click', function() {
+            document.querySelectorAll('.tg-res-tab').forEach(function(b) {
+                b.classList.remove('is-active');
+                b.setAttribute('aria-selected', 'false');
+            });
+            t.classList.add('is-active');
+            t.setAttribute('aria-selected', 'true');
+            activeFilter = t.getAttribute('data-filter');
+            refreshList();
+        });
+    });
+
+    document.getElementById('res-search').addEventListener('input', function(e) {
+        searchTerm = e.target.value.trim().toLowerCase();
+        refreshList();
+    });
+
+    /* ── KPI + tab counts ─────────────────────────────────────── */
+    function updateKpis(rows) {
+        document.getElementById('kpi-total').textContent = rows.length;
+        var upcoming = rows.filter(function(r) {
+            var d = daysFromNow(r.start); return d === null || d >= 0;
+        }).length;
+        document.getElementById('kpi-upcoming').textContent = upcoming;
+        var travelers = rows.reduce(function(s, r) { return s + (parseInt(r.people, 10) || 1); }, 0);
+        document.getElementById('kpi-travelers').textContent = travelers;
+        var total = rows.reduce(function(s, r) { return s + (parseFloat(r.totalPrice) || 0); }, 0);
+        document.getElementById('kpi-total-spent').textContent = '$' + total.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    }
+    function updateTabCounts(rows) {
+        var all = rows.length;
+        var up = rows.filter(function(r) { var d = daysFromNow(r.start); return d === null || d >= 0; }).length;
+        var past = rows.filter(function(r) { var d = daysFromNow(r.start); return d !== null && d < 0; }).length;
+        document.getElementById('count-all').textContent = all;
+        document.getElementById('count-upcoming').textContent = up;
+        document.getElementById('count-past').textContent = past;
+    }
+
+    updateKpis(data);
+    updateTabCounts(data);
+    refreshList();
+
+    /* ── Cancel / review wiring (delegated) ───────────────────── */
+    function wireCardActions() {
+        listEl.querySelectorAll('.btn-cancel').forEach(function(btn) {
+            btn.onclick = async function() {
+                var id = btn.getAttribute('data-id');
+                if (!confirm('Cancel this reservation? This cannot be undone.')) return;
+                btn.disabled = true;
+                btn.innerHTML = 'Cancelling…';
+                try {
+                    var delRes = await fetch('/api/reservations/' + id, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (delRes.ok) {
+                        data = data.filter(function(r) { return r._id !== id; });
+                        updateKpis(data);
+                        updateTabCounts(data);
+                        refreshList();
+                        var msg = document.getElementById('cancel-message');
+                        msg.textContent = '✓ Reservation cancelled successfully.';
+                        msg.style.display = 'block';
+                        setTimeout(function() { msg.style.display = 'none'; }, 4000);
+                        if (!data.length) emptyEl.style.display = 'flex';
+                    } else {
+                        var d = await delRes.json();
+                        if (window.tgToast) window.tgToast(d.message || 'Could not cancel reservation.', 'danger');
+                        else alert(d.message || 'Could not cancel reservation.');
+                    }
+                } catch (err) {
+                    if (window.tgToast) window.tgToast('Unable to connect. Please try again.', 'danger');
+                } finally {
+                    btn.disabled = false;
+                }
+            };
+        });
+    }
 
     document.getElementById('logout-btn').addEventListener('click', function() {
         localStorage.removeItem('travlr-token');
         window.location.href = '/login';
     });
 
-    // ── Review modal logic ─────────────────────────────────────────────
+    /* ── Review modal ─────────────────────────────────────────── */
     var modal      = document.getElementById('review-modal');
     var stars      = document.querySelectorAll('.rev-star');
     var ratingVal  = 0;
@@ -197,13 +463,13 @@
 
     function paintStars(v) {
         stars.forEach(function(s) {
-            s.style.color = (parseInt(s.getAttribute('data-v'),10) <= v) ? '#e8b84b' : '#d1d5db';
+            s.classList.toggle('is-lit', parseInt(s.getAttribute('data-v'), 10) <= v);
         });
     }
     stars.forEach(function(s) {
-        s.addEventListener('mouseenter', function() { paintStars(parseInt(s.getAttribute('data-v'),10)); });
+        s.addEventListener('mouseenter', function() { paintStars(parseInt(s.getAttribute('data-v'), 10)); });
         s.addEventListener('click', function() {
-            ratingVal = parseInt(s.getAttribute('data-v'),10);
+            ratingVal = parseInt(s.getAttribute('data-v'), 10);
             paintStars(ratingVal);
         });
     });
@@ -212,7 +478,7 @@
 
     var lastFocused = null;
     function trapFocus(e) {
-        if (modal.style.display === 'none') return;
+        if (!modal.classList.contains('is-open')) return;
         if (e.key === 'Escape') { closeModal(); return; }
         if (e.key !== 'Tab') return;
         var focusable = modal.querySelectorAll('button, textarea, [href], [tabindex]:not([tabindex="-1"])');
@@ -229,17 +495,16 @@
         commentEl.value = ''; countEl.textContent = '0';
         errEl.style.display = 'none';
         lastFocused = document.activeElement;
-        modal.style.display = 'flex';
+        modal.classList.add('is-open');
         document.body.style.overflow = 'hidden';
         document.addEventListener('keydown', trapFocus);
-        // Move focus into the modal so screen readers/keyboard users land there.
         setTimeout(function() {
             var firstStar = modal.querySelector('.rev-star');
             if (firstStar) firstStar.focus();
         }, 30);
     }
     function closeModal() {
-        modal.style.display = 'none';
+        modal.classList.remove('is-open');
         document.body.style.overflow = '';
         document.removeEventListener('keydown', trapFocus);
         if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
@@ -266,7 +531,7 @@
                 body: JSON.stringify({ rating: ratingVal, comment: commentEl.value.trim() })
             });
             var raw = await r.text();
-            var d = {}; try { d = raw ? JSON.parse(raw) : {}; } catch(e) {}
+            var d = {}; try { d = raw ? JSON.parse(raw) : {}; } catch (e) {}
 
             if (r.ok) {
                 closeModal();
@@ -278,7 +543,7 @@
                 errEl.textContent = d.message || ('Could not save your review (HTTP ' + r.status + ').');
                 errEl.style.display = 'block';
             }
-        } catch(err) {
+        } catch (err) {
             errEl.textContent = 'Network error: ' + err.message;
             errEl.style.display = 'block';
         } finally {

@@ -1,125 +1,243 @@
 {{> header}}
 
-<div class="tg-page-header">
-    <h1>&#128722; Your Cart</h1>
-    <p>Review your trips and complete your booking</p>
-</div>
-
-<div class="tg-checkout-page">
-<div class="tg-checkout-wrap">
-
-    <div id="checkout-loading" style="text-align:center; padding:60px 0;">
-        <div style="font-size:2rem; margin-bottom:12px;">&#128336;</div>
-        <p style="color:#9ca3af;">Loading your cart&hellip;</p>
+<!-- ══════════════════════════════════════════════════════
+     HERO + step indicator
+     ══════════════════════════════════════════════════════ -->
+<section class="tg-co-hero">
+    <div class="tg-co-hero-bg" aria-hidden="true">
+        <div class="tg-travel-blob tg-travel-blob-1"></div>
+        <div class="tg-travel-blob tg-travel-blob-2"></div>
+        <div class="tg-travel-blob tg-travel-blob-3"></div>
+        <div class="tg-travel-grid-overlay"></div>
     </div>
+    <div class="tg-co-hero-inner">
+        <div class="tg-travel-hero-eyebrow">
+            <span class="tg-eyebrow-dot"></span>
+            Secure checkout
+        </div>
+        <h1 class="tg-travel-hero-title">
+            Almost <em data-shimmer>there</em>
+        </h1>
+        <p class="tg-travel-hero-sub">
+            Review your trips, add traveler protection if you like, then pay securely.
+            Your seats are held while you complete checkout.
+        </p>
 
-    <div id="checkout-empty" style="display:none;">
-        <div style="background:#fff; border-radius:16px; box-shadow:0 4px 24px rgba(0,0,0,0.07); padding:60px 40px; text-align:center;">
-            <div style="font-size:3.5rem; margin-bottom:16px;">&#128722;</div>
-            <h2 style="font-family:'Poppins',sans-serif; color:#083050; margin-bottom:12px;">Your cart is empty</h2>
-            <p style="color:#6b7280; margin-bottom:28px;">Browse our handpicked destinations and add a trip to get started.</p>
-            <a href="/travel" class="btn-primary">Explore Trips &rarr;</a>
+        <!-- 3-step progress -->
+        <div class="tg-co-steps" aria-label="Checkout progress">
+            <div class="tg-co-step is-active">
+                <div class="tg-co-step-num">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/></svg>
+                </div>
+                <div class="tg-co-step-meta">
+                    <div class="tg-co-step-label">Step 1</div>
+                    <div class="tg-co-step-title">Your cart</div>
+                </div>
+            </div>
+            <div class="tg-co-step-link"></div>
+            <div class="tg-co-step is-active">
+                <div class="tg-co-step-num">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                </div>
+                <div class="tg-co-step-meta">
+                    <div class="tg-co-step-label">Step 2</div>
+                    <div class="tg-co-step-title">Payment</div>
+                </div>
+            </div>
+            <div class="tg-co-step-link"></div>
+            <div class="tg-co-step">
+                <div class="tg-co-step-num">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                </div>
+                <div class="tg-co-step-meta">
+                    <div class="tg-co-step-label">Step 3</div>
+                    <div class="tg-co-step-title">Confirmation</div>
+                </div>
+            </div>
         </div>
     </div>
+</section>
 
-    <div id="checkout-form" style="display:none;">
+<section class="tg-section tg-section-gray tg-co-section">
+    <div class="tg-section-wrap">
 
-                        <!-- Cart items injected here -->
-                        <div id="cart-items"></div>
+        <!-- ── Loading skeleton ─────────────────────────────────── -->
+        <div id="checkout-loading" class="tg-co-loading">
+            <div class="tg-res-card-skel"></div>
+            <div class="tg-res-card-skel"></div>
+        </div>
 
-                        <!-- Price breakdown -->
-                        <div style="background:#f9f9f9; border:1px solid #ddd; border-radius:4px; padding:20px; margin-bottom:28px;">
-                            <h3 style="margin:0 0 14px; font-size:1rem; color:#333;">Price Breakdown</h3>
-                            <table style="width:100%; font-size:0.92rem; border-collapse:collapse;">
-                                <tbody id="fee-rows">
-                                    <!-- Trip line items injected by JS -->
-                                </tbody>
-                                <tbody>
-                                    <tr><td colspan="2" style="padding:6px 0;"><hr style="margin:0; border:none; border-top:1px solid #ddd;"></td></tr>
-                                    <tr>
-                                        <td style="padding:5px 0; color:#555;">Subtotal</td>
-                                        <td style="padding:5px 0; text-align:right;" id="co-subtotal">$0.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:5px 0; color:#555;">
-                                            Taxes &amp; Government Fees
-                                            <span style="font-size:0.78rem; color:#999;">(10%)</span>
-                                        </td>
-                                        <td style="padding:5px 0; text-align:right;" id="co-taxes">$0.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="padding:5px 0; color:#555;">
-                                            Travlr Service Fee
-                                            <span style="font-size:0.78rem; color:#999;">(5%)</span>
-                                        </td>
-                                        <td style="padding:5px 0; text-align:right;" id="co-service-fee">$0.00</td>
-                                    </tr>
-                                    <tr id="protection-row" style="display:none;">
-                                        <td style="padding:5px 0; color:#555;">Travel Protection</td>
-                                        <td style="padding:5px 0; text-align:right;" id="co-protection">$0.00</td>
-                                    </tr>
-                                    <tr><td colspan="2" style="padding:6px 0;"><hr style="margin:0; border:none; border-top:2px solid #333;"></td></tr>
-                                    <tr>
-                                        <td style="padding:6px 0; font-weight:bold; font-size:1.05rem;">Total Charge</td>
-                                        <td style="padding:6px 0; text-align:right; font-weight:bold; font-size:1.3rem; color:#1a6;" id="co-grand-total">$0.00</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+        <!-- ── Empty cart ───────────────────────────────────────── -->
+        <div id="checkout-empty" class="tg-empty-state tg-res-empty" style="display:none;">
+            <div class="tg-empty-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/></svg>
+            </div>
+            <h3>Your cart is empty</h3>
+            <p>Browse handpicked destinations and add a trip to begin checkout.</p>
+            <a href="/travel" class="btn-primary btn-primary-pro">
+                Explore trips
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 5l7 7-7 7"/></svg>
+            </a>
+        </div>
 
-                            <!-- Travel protection opt-in -->
-                            <div style="margin-top:16px; padding:12px 14px; background:#fffbea; border:1px solid #e8d96b; border-radius:3px; font-size:0.88rem;">
-                                <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer;">
-                                    <input id="opt-protection" type="checkbox" style="margin-top:2px; width:16px; height:16px; flex-shrink:0;">
-                                    <span>
-                                        <strong>Add Travel Protection &middot; $49 / traveler</strong><br>
-                                        <span style="color:#666;">Covers trip cancellations, medical emergencies, lost luggage, and flight delays. Underwritten by TravlrGuard Insurance.</span>
-                                    </span>
-                                </label>
+        <!-- ── Main checkout layout (2-col on desktop) ──────────── -->
+        <div id="checkout-form" class="tg-co-grid" style="display:none;">
+
+            <!-- LEFT COLUMN: cart items + payment -->
+            <div class="tg-co-main">
+
+                <!-- Cart card -->
+                <section class="tg-co-card">
+                    <header class="tg-co-card-head">
+                        <div class="tg-co-card-head-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/></svg>
+                        </div>
+                        <div>
+                            <h2>Your trips</h2>
+                            <p>Adjust traveler count or remove items below.</p>
+                        </div>
+                    </header>
+                    <div id="cart-items" class="tg-co-cart-items"></div>
+                    <a href="/travel" class="tg-co-add-more">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        Add another trip
+                    </a>
+                </section>
+
+                <!-- Travel protection card -->
+                <section class="tg-co-card tg-co-protection-card">
+                    <label class="tg-co-protection-row">
+                        <input id="opt-protection" type="checkbox">
+                        <span class="tg-co-protection-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </span>
+                        <span class="tg-co-protection-text">
+                            <strong>Travel protection · $49 / traveler</strong>
+                            <span>Covers cancellations, medical emergencies, lost luggage, and flight delays. Underwritten by TravlrGuard Insurance.</span>
+                        </span>
+                    </label>
+                </section>
+
+                <!-- Payment card -->
+                <section class="tg-co-card tg-co-payment-card">
+                    <header class="tg-co-card-head">
+                        <div class="tg-co-card-head-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                        </div>
+                        <div>
+                            <h2>Payment</h2>
+                            <p>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:14px;height:14px;margin-right:4px;vertical-align:-2px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                                Demo mode — no real charges are processed.
+                            </p>
+                        </div>
+                        <div class="tg-co-cardbrands" aria-hidden="true">
+                            <span class="tg-co-brand tg-co-brand-visa">VISA</span>
+                            <span class="tg-co-brand tg-co-brand-mc">MC</span>
+                            <span class="tg-co-brand tg-co-brand-amex">AMEX</span>
+                        </div>
+                    </header>
+
+                    <div class="tg-co-form-group">
+                        <label for="co-card-name">Name on card</label>
+                        <div class="tg-co-input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <input id="co-card-name" type="text" placeholder="Jane Smith" autocomplete="cc-name">
+                        </div>
+                    </div>
+
+                    <div class="tg-co-form-group">
+                        <label for="co-card-number">Card number</label>
+                        <div class="tg-co-input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            <input id="co-card-number" type="text" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" inputmode="numeric">
+                        </div>
+                    </div>
+
+                    <div class="tg-co-form-row">
+                        <div class="tg-co-form-group">
+                            <label for="co-expiry">Expiry date</label>
+                            <div class="tg-co-input-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                                <input id="co-expiry" type="text" placeholder="MM / YY" maxlength="7" autocomplete="cc-exp" inputmode="numeric">
                             </div>
                         </div>
+                        <div class="tg-co-form-group">
+                            <label for="co-cvv">CVV</label>
+                            <div class="tg-co-input-wrap">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                                <input id="co-cvv" type="password" placeholder="123" maxlength="4" autocomplete="cc-csc" inputmode="numeric">
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Payment card -->
-        <div class="tg-checkout-section">
-            <h3>&#128179; Payment Information</h3>
-            <p style="font-size:0.82rem; color:#9ca3af; margin:-10px 0 20px; font-style:italic;">
-                &#128274; Demo only. No real charges are processed.
-            </p>
+                    <div id="checkout-error" class="tg-alert tg-alert-danger" style="display:none; margin-top:14px;"></div>
+                    <div id="checkout-success" class="tg-alert tg-alert-success" style="display:none; margin-top:14px;"></div>
+                </section>
 
-            <div class="tg-form-group">
-                <label>Name on Card <span style="color:#c0392b;">*</span></label>
-                <input id="co-card-name" type="text" placeholder="Jane Smith" autocomplete="cc-name">
             </div>
 
-            <div class="tg-form-group">
-                <label>Card Number <span style="color:#c0392b;">*</span></label>
-                <input id="co-card-number" type="text" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" style="letter-spacing:1.5px;">
-            </div>
+            <!-- RIGHT COLUMN: sticky summary -->
+            <aside class="tg-co-aside">
+                <div class="tg-co-summary">
+                    <h2>Order summary</h2>
 
-            <div class="tg-form-row">
-                <div class="tg-form-group">
-                    <label>Expiry Date <span style="color:#c0392b;">*</span></label>
-                    <input id="co-expiry" type="text" placeholder="MM / YY" maxlength="7" autocomplete="cc-exp">
+                    <div class="tg-co-summary-lines">
+                        <table>
+                            <tbody id="fee-rows"></tbody>
+                            <tbody>
+                                <tr class="tg-co-summary-divider"><td colspan="2"></td></tr>
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td class="tg-co-summary-val" id="co-subtotal">$0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Taxes &amp; fees <span class="tg-co-summary-pct">10%</span></td>
+                                    <td class="tg-co-summary-val" id="co-taxes">$0.00</td>
+                                </tr>
+                                <tr>
+                                    <td>Service fee <span class="tg-co-summary-pct">5%</span></td>
+                                    <td class="tg-co-summary-val" id="co-service-fee">$0.00</td>
+                                </tr>
+                                <tr id="protection-row" style="display:none;">
+                                    <td>Travel protection</td>
+                                    <td class="tg-co-summary-val" id="co-protection">$0.00</td>
+                                </tr>
+                                <tr class="tg-co-summary-divider tg-co-summary-divider-strong"><td colspan="2"></td></tr>
+                                <tr class="tg-co-summary-grand">
+                                    <td>Total</td>
+                                    <td class="tg-co-summary-val" id="co-grand-total">$0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button id="co-confirm" type="button" class="tg-co-pay-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                        Confirm &amp; pay
+                    </button>
+
+                    <ul class="tg-co-trust-list">
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            Encrypted SSL checkout
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 109-9"/><path d="M21 4L12 13"/></svg>
+                            Free cancellation up to 30 days
+                        </li>
+                        <li>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>
+                            24/7 traveler support
+                        </li>
+                    </ul>
                 </div>
-                <div class="tg-form-group">
-                    <label>CVV <span style="color:#c0392b;">*</span></label>
-                    <input id="co-cvv" type="text" placeholder="123" maxlength="4" autocomplete="cc-csc">
-                </div>
-            </div>
+            </aside>
 
-            <div id="checkout-error" class="tg-form-error"></div>
-            <div id="checkout-success" class="tg-form-success"></div>
-
-            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-top:8px;">
-                <button id="co-confirm" class="btn-primary" style="padding:13px 36px; font-size:1rem;">
-                    &#128274; Confirm &amp; Pay
-                </button>
-                <a href="/travel" style="color:#083050; font-size:0.9rem; font-weight:600;">&#43; Add more trips</a>
-            </div>
         </div>
 
-    </div><!-- /.tg-checkout-form -->
-</div><!-- /.tg-checkout-wrap -->
-</div><!-- /.tg-checkout-page -->
+    </div>
+</section>
 
 <script>
 (async function() {
@@ -127,10 +245,11 @@
     var cart = [];
     try { cart = JSON.parse(localStorage.getItem('travlr-cart') || '[]'); } catch(e) {}
 
-    document.getElementById('checkout-loading').style.display = 'none';
+    var loadingEl = document.getElementById('checkout-loading');
+    if (loadingEl) loadingEl.style.display = 'none';
 
     if (cart.length === 0) {
-        document.getElementById('checkout-empty').style.display = 'block';
+        document.getElementById('checkout-empty').style.display = 'flex';
         return;
     }
 
@@ -146,43 +265,44 @@
     resolved = resolved.filter(Boolean);
 
     if (resolved.length === 0) {
-        document.getElementById('checkout-empty').style.display = 'block';
+        document.getElementById('checkout-empty').style.display = 'flex';
         return;
     }
 
     var cartItemsEl = document.getElementById('cart-items');
 
-    var TAX_RATE     = 0.10;   // 10% taxes & government fees
-    var SERVICE_RATE = 0.05;   // 5% Travlr service fee
-    var PROTECTION_PP = 49;    // $49 per traveler for travel protection
+    var TAX_RATE     = 0.10;
+    var SERVICE_RATE = 0.05;
+    var PROTECTION_PP = 49;
 
     function fmt(n) {
         return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
     function updateGrandTotal() {
         var subtotal    = 0;
         var totalPeople = 0;
 
-        // Rebuild trip line items in fee-rows
         var feeRows = document.getElementById('fee-rows');
         feeRows.innerHTML = '';
         cartItemsEl.querySelectorAll('.cart-card').forEach(function(card) {
             var price  = parseFloat(card.getAttribute('data-price')) || 0;
             var people = parseInt(card.querySelector('.item-people').textContent, 10) || 1;
-            var name   = card.querySelector('h2').textContent.trim();
+            var name   = card.querySelector('h3').textContent.trim();
             var lineTotal = price * people;
             subtotal    += lineTotal;
             totalPeople += people;
 
             var tr = document.createElement('tr');
+            tr.className = 'tg-co-summary-line';
             tr.innerHTML =
-                '<td style="padding:4px 0; color:#444; font-size:0.88rem;">' +
-                    name + ' &times; ' + people + ' traveler' + (people > 1 ? 's' : '') +
-                '</td>' +
-                '<td style="padding:4px 0; text-align:right; color:#444; font-size:0.88rem;">' +
-                    fmt(lineTotal) +
-                '</td>';
+                '<td>' + escapeHtml(name) + ' <span class="tg-co-summary-mult">× ' + people + '</span></td>' +
+                '<td class="tg-co-summary-val">' + fmt(lineTotal) + '</td>';
             feeRows.appendChild(tr);
         });
 
@@ -218,39 +338,75 @@
         if (window.refreshCartBadge) window.refreshCartBadge();
     }
 
+    /* deterministic gradient per trip name */
+    function destClass(name) {
+        var sum = 0;
+        for (var i = 0; i < (name || '').length; i++) sum = (sum + name.charCodeAt(i)) % 6;
+        return 'tg-res-dest-' + (sum + 1);
+    }
+
     resolved.forEach(function(item) {
         var trip           = item.trip;
         var pricePerPerson = parseFloat(trip.perPerson) || 0;
         var people         = item.people;
 
-        var card = document.createElement('div');
-        card.className = 'cart-card tg-checkout-section';
+        var card = document.createElement('article');
+        card.className = 'cart-card tg-co-trip';
         card.setAttribute('data-code',  trip.code);
         card.setAttribute('data-price', pricePerPerson);
-        card.style.cssText = 'margin-bottom:16px;';
+
+        var startDate = trip.start ? new Date(trip.start).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'TBD';
 
         card.innerHTML =
-            '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px;">' +
-                '<div>' +
-                    '<h2 style="font-family:Poppins,sans-serif; font-size:1.15rem; font-weight:700; color:#083050; margin:0 0 4px;">' + trip.name + '</h2>' +
-                    '<span style="font-size:0.78rem; color:#e8b84b; font-weight:700; text-transform:uppercase; letter-spacing:1px;">&#128205; ' + (trip.resort || '') + '</span>' +
+            '<div class="tg-co-trip-thumb ' + destClass(trip.name) + '" aria-hidden="true">' +
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+            '</div>' +
+            '<div class="tg-co-trip-body">' +
+                '<div class="tg-co-trip-head">' +
+                    '<div>' +
+                        '<div class="tg-co-trip-code">' + escapeHtml(trip.code) + '</div>' +
+                        '<h3>' + escapeHtml(trip.name) + '</h3>' +
+                        '<div class="tg-co-trip-resort">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+                            escapeHtml(trip.resort || '—') +
+                        '</div>' +
+                    '</div>' +
+                    '<button type="button" class="tg-co-trip-remove item-remove" aria-label="Remove ' + escapeHtml(trip.name) + ' from cart">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+                    '</button>' +
                 '</div>' +
-                '<button class="btn-cancel item-remove" style="border-radius:7px; padding:6px 14px; font-size:0.8rem; font-weight:700; cursor:pointer;">&#10005; Remove</button>' +
-            '</div>' +
-            '<div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px;">' +
-                '<span style="display:flex;align-items:center;gap:5px;font-size:0.78rem;color:#555;background:#f4f6f9;padding:4px 10px;border-radius:20px;">&#128197; ' + (trip.length || '-') + '</span>' +
-                '<span style="display:flex;align-items:center;gap:5px;font-size:0.78rem;color:#555;background:#f4f6f9;padding:4px 10px;border-radius:20px;">&#127775; ' + (trip.start ? new Date(trip.start).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : 'TBD') + '</span>' +
-                '<span style="display:flex;align-items:center;gap:5px;font-size:0.78rem;color:#555;background:#f4f6f9;padding:4px 10px;border-radius:20px;">&#128176; $' + pricePerPerson.toLocaleString('en-US',{minimumFractionDigits:2}) + ' / person</span>' +
-            '</div>' +
-            '<div style="display:flex; align-items:center; gap:12px; border-top:1px solid #f4f6f9; padding-top:16px;">' +
-                '<span style="font-size:0.82rem; font-weight:700; color:#374151;">Travelers:</span>' +
-                '<button class="tg-btn-counter item-dec">&#8722;</button>' +
-                '<span class="item-people" style="min-width:24px; text-align:center; font-size:1rem; font-weight:700;">' + people + '</span>' +
-                '<button class="tg-btn-counter item-inc">&#43;</button>' +
-                '<span style="font-size:0.85rem; color:#6b7280; margin-left:8px;">Base: <strong class="item-subtotal" style="color:#083050;">$' + (pricePerPerson * people).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</strong></span>' +
+                '<div class="tg-co-trip-chips">' +
+                    '<span class="tg-co-chip">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 14"/></svg>' +
+                        escapeHtml(trip.length || '—') +
+                    '</span>' +
+                    '<span class="tg-co-chip">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+                        startDate +
+                    '</span>' +
+                    '<span class="tg-co-chip">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>' +
+                        fmt(pricePerPerson) + ' / person' +
+                    '</span>' +
+                '</div>' +
+                '<div class="tg-co-trip-foot">' +
+                    '<div class="tg-co-counter">' +
+                        '<span class="tg-co-counter-label">Travelers</span>' +
+                        '<button type="button" class="tg-co-counter-btn item-dec" aria-label="Decrease travelers">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+                        '</button>' +
+                        '<span class="item-people tg-co-counter-num">' + people + '</span>' +
+                        '<button type="button" class="tg-co-counter-btn item-inc" aria-label="Increase travelers">' +
+                            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="tg-co-trip-subtotal">' +
+                        '<span class="tg-co-trip-subtotal-label">Base price</span>' +
+                        '<strong class="item-subtotal">' + fmt(pricePerPerson * people) + '</strong>' +
+                    '</div>' +
+                '</div>' +
             '</div>';
 
-        // Remove
         card.querySelector('.item-remove').addEventListener('click', function() {
             if (confirm('Remove "' + trip.name + '" from your cart?')) {
                 card.remove();
@@ -258,30 +414,28 @@
                 updateGrandTotal();
                 if (cartItemsEl.querySelectorAll('.cart-card').length === 0) {
                     document.getElementById('checkout-form').style.display  = 'none';
-                    document.getElementById('checkout-empty').style.display = 'block';
+                    document.getElementById('checkout-empty').style.display = 'flex';
                 }
             }
         });
 
-        // Decrement
         card.querySelector('.item-dec').addEventListener('click', function() {
             var el = card.querySelector('.item-people');
             var n  = parseInt(el.textContent, 10);
             if (n > 1) {
                 el.textContent = n - 1;
-                card.querySelector('.item-subtotal').textContent = '$' + (pricePerPerson * (n - 1)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                card.querySelector('.item-subtotal').textContent = fmt(pricePerPerson * (n - 1));
                 saveCartFromDOM();
                 updateGrandTotal();
             }
         });
 
-        // Increment
         card.querySelector('.item-inc').addEventListener('click', function() {
             var el = card.querySelector('.item-people');
             var n  = parseInt(el.textContent, 10);
             if (n < 20) {
                 el.textContent = n + 1;
-                card.querySelector('.item-subtotal').textContent = '$' + (pricePerPerson * (n + 1)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                card.querySelector('.item-subtotal').textContent = fmt(pricePerPerson * (n + 1));
                 saveCartFromDOM();
                 updateGrandTotal();
             }
@@ -291,52 +445,58 @@
     });
 
     updateGrandTotal();
-    document.getElementById('checkout-form').style.display = 'block';
+    document.getElementById('checkout-form').style.display = 'grid';
 
-    // Protection checkbox toggles protection row + grand total
     document.getElementById('opt-protection').addEventListener('change', updateGrandTotal);
 
     // ── Card number formatting ──
     document.getElementById('co-card-number').addEventListener('input', function() {
         var v = this.value.replace(/\D/g, '').slice(0, 16);
         this.value = v.match(/.{1,4}/g) ? v.match(/.{1,4}/g).join(' ') : v;
+        // Highlight brand
+        var brands = document.querySelectorAll('.tg-co-brand');
+        brands.forEach(function(b) { b.classList.remove('is-active'); });
+        if (/^4/.test(v))      document.querySelector('.tg-co-brand-visa').classList.add('is-active');
+        else if (/^5[1-5]/.test(v) || /^2[2-7]/.test(v)) document.querySelector('.tg-co-brand-mc').classList.add('is-active');
+        else if (/^3[47]/.test(v)) document.querySelector('.tg-co-brand-amex').classList.add('is-active');
     });
 
-    // ── Expiry formatting ──
     document.getElementById('co-expiry').addEventListener('input', function() {
         var v = this.value.replace(/\D/g, '').slice(0, 4);
         this.value = v.length >= 3 ? v.slice(0, 2) + ' / ' + v.slice(2) : v;
     });
 
-    // ── CVV digits only ──
     document.getElementById('co-cvv').addEventListener('input', function() {
         this.value = this.value.replace(/\D/g, '').slice(0, 4);
     });
 
-    // ── Confirm & Pay ──
     document.getElementById('co-confirm').addEventListener('click', async function() {
         var errorDiv   = document.getElementById('checkout-error');
         var successDiv = document.getElementById('checkout-success');
         errorDiv.style.display   = 'none';
         successDiv.style.display = 'none';
 
-        // Login check
+        function showError(msg) {
+            errorDiv.textContent   = msg;
+            errorDiv.style.display = 'block';
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
         token = localStorage.getItem('travlr-token');
         if (!token) {
-            showError('You must be logged in to complete your booking. Redirecting to login\u2026');
+            showError('You must be logged in to complete your booking. Redirecting to login…');
             setTimeout(function() { window.location.href = '/login?redirect=' + encodeURIComponent(window.location.href); }, 1800);
             return;
         }
         try {
             var pl = JSON.parse(atob(token.split('.')[1]));
             if (pl.exp <= Math.floor(Date.now() / 1000)) throw new Error();
-        } catch(e) {
-            showError('Your session has expired. Redirecting to login\u2026');
+        } catch (e) {
+            showError('Your session has expired. Redirecting to login…');
             setTimeout(function() { window.location.href = '/login?redirect=' + encodeURIComponent(window.location.href); }, 1800);
             return;
         }
 
-        // Validate card fields
         var cardName   = document.getElementById('co-card-name').value.trim();
         var cardNumber = document.getElementById('co-card-number').value.replace(/\s/g, '');
         var expiry     = document.getElementById('co-expiry').value.replace(/\s/g, '');
@@ -362,10 +522,10 @@
         }
 
         var btn = this;
-        btn.disabled    = true;
-        btn.textContent = 'Processing\u2026';
+        var origHtml = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="tg-co-spin" aria-hidden="true"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Processing…';
 
-        // Collect current cart state from DOM
         var currentCart = [];
         cartItemsEl.querySelectorAll('.cart-card').forEach(function(card) {
             currentCart.push({
@@ -374,7 +534,6 @@
             });
         });
 
-        // Book each item
         var failed = [];
         for (var i = 0; i < currentCart.length; i++) {
             try {
@@ -393,21 +552,17 @@
         if (failed.length === 0) {
             localStorage.removeItem('travlr-cart');
             if (window.refreshCartBadge) window.refreshCartBadge();
-            successDiv.innerHTML = '&#10003; All reservations confirmed! Redirecting to your reservations&hellip;';
+            successDiv.innerHTML = '<strong>✓ All reservations confirmed!</strong> Redirecting to your reservations…';
             successDiv.style.display = 'block';
-            btn.textContent = '&#10003; Confirmed!';
+            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Confirmed';
             setTimeout(function() { window.location.href = '/reservations'; }, 2200);
         } else {
             showError('Some bookings failed: ' + failed.join(', ') + '. Please try again.');
-            btn.disabled    = false;
-            btn.textContent = '&#128274; Confirm & Pay';
-        }
-
-        function showError(msg) {
-            errorDiv.textContent   = msg;
-            errorDiv.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = origHtml;
         }
     });
 })();
 </script>
+
 {{> footer}}
