@@ -1,13 +1,18 @@
 /**
  * load-db.js
- * Seed script: drops and repopulates the trips collection from trips.json.
- * Usage: node app_server/data/load-db.js
+ * Wipes the trips collection and refills it from trips.json.
+ * Run it with: node app_server/data/load-db.js
  */
 const mongoose = require('mongoose');
 require('dotenv').config();
 
 const Trip = require('../models/travlr');
 const trips = require('./trips.json');
+
+if (process.env.NODE_ENV === 'production') {
+    console.error('FATAL: load-db wipes the trips collection and must not run in production.');
+    process.exit(1);
+}
 
 const dbURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/travlr';
 

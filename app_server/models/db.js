@@ -8,8 +8,8 @@ const connect = () => {
         .connect(dbURI)
         .catch(err => {
             console.error('FATAL: Mongoose connection error:', err.message);
-            // Exit so a supervisor (pm2, systemd, k8s) restarts us cleanly,
-            // instead of running a half-broken server that 500s on every request.
+            // Exit so a process manager (pm2, systemd, k8s) starts a fresh one.
+            // We do not want a broken server returning 500s on every request.
             process.exit(1);
         });
 };

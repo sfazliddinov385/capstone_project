@@ -3,8 +3,8 @@ const Reservation = require('../models/reservation');
 const Trip        = require('../../app_server/models/travlr');
 const { validateReviewInput } = require('../utils/reviewValidation');
 
-// Recompute aggregate rating + count on the Trip document so the public
-// listing/cards reflect real reviews. Called after any write on a trip's reviews.
+// Recompute the trip's average rating and review count. Run this after any
+// review change so the public trip cards show real numbers.
 async function refreshTripRating(tripCode) {
     const [agg] = await Review.aggregate([
         { $match: { tripCode } },
@@ -12,7 +12,7 @@ async function refreshTripRating(tripCode) {
     ]);
 
     if (!agg) {
-        // No reviews left — reset to neutral. Keep schema-valid values.
+        // No reviews left. Reset to zero so the schema stays happy.
         await Trip.updateOne({ code: tripCode }, { rating: 0, reviewCount: 0 }).exec();
         return;
     }
@@ -23,7 +23,7 @@ async function refreshTripRating(tripCode) {
     ).exec();
 }
 
-// GET /api/trips/:tripCode/reviews — public
+// GET /api/trips/:tripCode/reviews. Public list for one trip.
 const listForTrip = async (req, res) => {
     try {
         const tripCode = (req.params.tripCode || '').toUpperCase();
@@ -34,7 +34,7 @@ const listForTrip = async (req, res) => {
     }
 };
 
-// GET /api/reviews/mine — every review the logged-in user has written
+// GET /api/reviews/mine. Every review the signed-in user has written.
 const listMine = async (req, res) => {
     try {
         const reviews = await Review.find({ userId: req.user._id }).sort({ createdAt: -1 }).lean();
@@ -44,13 +44,13 @@ const listMine = async (req, res) => {
     }
 };
 
-// POST /api/trips/:tripCode/reviews — auth required; user must have booked the trip
+// POST /api/trips/:tripCode/reviews. Sign in required. The user must have booked this trip.
 const create = async (req, res) => {
     try {
         const tripCode = (req.params.tripCode || '').toUpperCase();
 
-        // Validation rules live in a pure helper so the SPA, HBS site, and
-        // any future client share one canonical contract that we can test.
+        // The validation rules live in a small helper. The admin SPA, the public
+        // site, and any future client all use the same checks. Easier to test too.
         const v = validateReviewInput(req.body);
         if (!v.ok) return res.status(v.status).json({ message: v.message });
         const { rating, comment } = v;
@@ -58,7 +58,7 @@ const create = async (req, res) => {
         const trip = await Trip.findOne({ code: tripCode }).select('code name').lean();
         if (!trip) return res.status(404).json({ message: 'Trip not found' });
 
-        // Eligibility: must have an active reservation for this trip.
+        // The user must have an active booking for this trip.
         const booked = await Reservation.exists({ userId: req.user._id, tripCode });
         if (!booked) {
             return res.status(403).json({ message: 'You can only review trips you have booked' });
@@ -83,7 +83,7 @@ const create = async (req, res) => {
     }
 };
 
-// DELETE /api/reviews/:id — auth required; user can only delete their own
+// DELETE /api/reviews/:id. Sign in required. A user can only delete their own review.
 const remove = async (req, res) => {
     try {
         const review = await Review.findOne({ _id: req.params.id, userId: req.user._id });

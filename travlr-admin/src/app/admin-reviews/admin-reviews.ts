@@ -1,5 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 interface AdminReview {
@@ -20,29 +22,36 @@ interface AdminReview {
   standalone: false,
   templateUrl: './admin-reviews.html'
 })
-export class AdminReviews implements OnInit {
+export class AdminReviews implements OnInit, OnDestroy {
   rows:    AdminReview[] = [];
   loading = true;
   error   = '';
   search  = '';
   deleting: Record<string, boolean> = {};
 
-  // Reply UI: which row is in edit mode, draft text per row, saving flags
+  // Reply state. Tracks which row is being edited, the draft text per row, and the save state.
   replyEditing: Record<string, boolean> = {};
   replyDraft:   Record<string, string>  = {};
   replySaving:  Record<string, boolean> = {};
   readonly REPLY_MAX = 1000;
 
+  private destroy$ = new Subject<void>();
+
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void { this.load(); }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   load(): void {
     this.loading = true;
     this.error = '';
     const q = this.search.trim();
     const url = `${environment.apiUrl}/admin/reviews${q ? '?q=' + encodeURIComponent(q) : ''}`;
-    this.http.get<AdminReview[]>(url).subscribe({
+    this.http.get<AdminReview[]>(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.rows = data || []; this.loading = false; this.cdr.detectChanges(); },
       error: () =>   { this.error = 'Could not load reviews.'; this.loading = false; this.cdr.detectChanges(); }
     });
@@ -54,7 +63,7 @@ export class AdminReviews implements OnInit {
   remove(row: AdminReview): void {
     if (!confirm(`Delete this review by "${row.userName}" for "${row.tripName}"?\nThis cannot be undone.`)) return;
     this.deleting[row._id] = true;
-    this.http.delete(`${environment.apiUrl}/admin/reviews/${row._id}`).subscribe({
+    this.http.delete(`${environment.apiUrl}/admin/reviews/${row._id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.rows = this.rows.filter(r => r._id !== row._id);
         this.deleting[row._id] = false;
@@ -93,7 +102,7 @@ export class AdminReviews implements OnInit {
     return Math.round((sum / this.rows.length) * 10) / 10;
   }
 
-  // ── Reply workflow ─────────────────────────────────────────
+  // Reply flow.
   startReply(row: AdminReview): void {
     this.replyEditing[row._id] = true;
     this.replyDraft[row._id] = row.adminReply || '';
@@ -111,7 +120,7 @@ export class AdminReviews implements OnInit {
     this.http.post<AdminReview>(
       `${environment.apiUrl}/admin/reviews/${row._id}/reply`,
       { reply: text }
-    ).subscribe({
+    ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (updated) => {
         Object.assign(row, updated);
         this.replySaving[row._id] = false;
@@ -133,10 +142,10 @@ export class AdminReviews implements OnInit {
     this.http.post<AdminReview>(
       `${environment.apiUrl}/admin/reviews/${row._id}/reply`,
       { reply: '' }
-    ).subscribe({
+    ).pipe(takeUntil(this.destroy$)).subscribe({
       next: (updated) => {
         Object.assign(row, updated);
-        // Mongoose $unset removes the fields; reflect that on the client.
+        // The server used $unset to drop the fields. Mirror that on the client.
         row.adminReply       = '';
         row.adminReplyAt     = undefined;
         row.adminReplyByName = undefined;

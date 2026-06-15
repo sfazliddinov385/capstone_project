@@ -39,7 +39,7 @@ The polished capstone narratives and professional self-assessment live in [`/doc
 | 2 | Algorithms & data structures | Pure `tripQuery` helper — regex-escaped search, strategy-mapped sorts, clamped result limits, fully unit-tested. |
 | 3 | Databases | Schema validation, text + compound indexes, and **atomic** reservation flow that cannot oversell. |
 
-See [docs/index.html](./docs/index.md) for the full ePortfolio.
+See the [ePortfolio](./docs/index.md) for the full capstone submission, including the professional self-assessment and the three enhancement narratives.
 
 ## Quickstart
 

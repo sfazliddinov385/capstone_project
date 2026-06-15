@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TripDataService } from '../trip-data';
 import { Trip } from '../trip';
 
@@ -21,11 +21,16 @@ export class EditTrip implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
+    private route: ActivatedRoute,
     private tripDataService: TripDataService
   ) {}
 
   ngOnInit(): void {
-    const tripCode = localStorage.getItem('tripCode') ?? '';
+    // Prefer the route param. Fall back to the legacy localStorage handoff
+    // for backwards compatibility with older callers.
+    const tripCode = this.route.snapshot.paramMap.get('code')
+      || localStorage.getItem('tripCode')
+      || '';
     if (!tripCode) {
       this.router.navigateByUrl('/');
       return;
@@ -53,7 +58,7 @@ export class EditTrip implements OnInit {
     this.tripDataService.getTrip(tripCode).subscribe({
       next: (trip: Trip) => {
         const startDate = new Date(trip.start).toISOString().substring(0, 10);
-        // Convert includes array to comma-separated string for the input
+        // Join the includes array into a comma-separated string for the input.
         const includesStr = Array.isArray(trip.includes) ? trip.includes.join(', ') : '';
         this.editForm.patchValue({ ...trip, start: startDate, includes: includesStr });
       },
@@ -70,7 +75,7 @@ export class EditTrip implements OnInit {
     if (this.editForm.invalid) { return; }
 
     const raw = { ...this.editForm.getRawValue() };
-    // Convert includes from comma-separated string to array
+    // Turn the includes string back into an array. Split on commas.
     const includesRaw: string = raw.includes || '';
     const trip = {
       ...raw,

@@ -1,6 +1,6 @@
-// Admin-scoped controllers for moderating reservations and reviews. Each
-// route is guarded by authenticate + authorizeAdmin at the router so we
-// can assume req.user.role === 'admin' when these run.
+// Admin endpoints for moderating reservations and reviews.
+// The router guards every route with authenticate + authorizeAdmin,
+// so by the time these run, req.user.role is already 'admin'.
 
 const Reservation = require('../models/reservation');
 const Review      = require('../models/review');
@@ -8,11 +8,11 @@ const Trip        = require('../../app_server/models/travlr');
 const User        = require('../models/user');
 const { refreshTripRating } = require('./reviews');
 
-// Escape regex specials so a hostile ?q= can't blow up the engine.
+// Strip regex special characters so a bad ?q= cannot crash the engine.
 const escapeRegExp = (v) => String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// GET /api/admin/reservations  — every reservation across the platform,
-// optionally filtered by ?q= matching trip name, trip code, or resort.
+// GET /api/admin/reservations. Every reservation in the system.
+// You can pass ?q= to match trip name, trip code, or resort.
 const listAllReservations = async (req, res) => {
     try {
         const q = String(req.query.q || '').trim();
@@ -32,7 +32,8 @@ const listAllReservations = async (req, res) => {
             .limit(500)
             .lean();
 
-        // Join customer name/email so the table is useful without N+1 calls.
+        // Pull the customer name and email in one query so the table is useful
+        // without making one extra call per row.
         const userIds = [...new Set(reservations.map(r => String(r.userId)))];
         const users = await User.find({ _id: { $in: userIds } })
             .select('name email')
@@ -52,9 +53,8 @@ const listAllReservations = async (req, res) => {
     }
 };
 
-// DELETE /api/admin/reservations/:id  — admin override of the user-scoped
-// cancel. Returns seats to inventory atomically. Logs an audit line so the
-// action can be traced back to the operator.
+// DELETE /api/admin/reservations/:id. Admin override for canceling.
+// Puts the seats back in one atomic step. Logs who did it so we can trace it later.
 const adminCancelReservation = async (req, res) => {
     try {
         const reservation = await Reservation.findOne({ _id: req.params.id });
@@ -79,8 +79,8 @@ const adminCancelReservation = async (req, res) => {
     }
 };
 
-// GET /api/admin/reviews  — every review, optionally filtered by ?q=
-// matching trip name, trip code, customer name, or comment text.
+// GET /api/admin/reviews. Every review in the system.
+// You can pass ?q= to match trip name, trip code, customer name, or comment text.
 const listAllReviews = async (req, res) => {
     try {
         const q = String(req.query.q || '').trim();
@@ -108,9 +108,9 @@ const listAllReviews = async (req, res) => {
     }
 };
 
-// POST /api/admin/reviews/:id/reply  — set or clear the operator response
-// shown on the customer trip detail page. Body: { reply: string }. An empty
-// reply clears the response so it disappears from the customer view.
+// POST /api/admin/reviews/:id/reply. Set or clear the team response shown
+// on the trip detail page. Body: { reply: string }. An empty reply removes
+// the response so the customer no longer sees it.
 const adminReplyToReview = async (req, res) => {
     try {
         const raw = typeof req.body?.reply === 'string' ? req.body.reply.trim() : '';
@@ -147,9 +147,8 @@ const adminReplyToReview = async (req, res) => {
     }
 };
 
-// DELETE /api/admin/reviews/:id  — admin override of the user-scoped
-// delete. Refreshes the trip's aggregate rating so the public card
-// reflects reality.
+// DELETE /api/admin/reviews/:id. Admin override for deleting a review.
+// Recomputes the trip's average rating so the public card stays correct.
 const adminDeleteReview = async (req, res) => {
     try {
         const review = await Review.findOne({ _id: req.params.id });

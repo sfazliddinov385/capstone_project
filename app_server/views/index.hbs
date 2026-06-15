@@ -269,6 +269,13 @@
                 </div>
             </div>
             {{/each}}
+            {{#if noFeaturedTrips}}
+            <div class="tg-empty-state" style="grid-column:1/-1; text-align:center; padding:48px 16px; color:#5a5a5a;">
+                <p style="font-size:18px; margin-bottom:12px;">No featured trips yet.</p>
+                <p style="margin-bottom:20px;">New escapes are added every week. Browse the full catalog while we curate the next batch.</p>
+                <a href="/travel" class="btn-primary">Browse all trips</a>
+            </div>
+            {{/if}}
         </div>
         <div style="text-align:center; margin-top:40px;">
             <a href="/travel" class="btn-primary btn-primary-pro">

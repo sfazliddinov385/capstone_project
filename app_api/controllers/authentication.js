@@ -1,6 +1,6 @@
 const User = require('../models/user');
 
-// POST /api/register
+// POST /api/register. Create a new account and return a token.
 const register = async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
@@ -15,11 +15,17 @@ const register = async (req, res) => {
     if (err.code === 11000) {
       return res.status(409).json({ message: 'Email already registered' });
     }
-    return res.status(400).json({ message: err.message });
+    // Translate validation errors into a single user-friendly message.
+    // Anything else gets a generic response so we do not leak internals.
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Please check the form and try again' });
+    }
+    console.error('register error:', err);
+    return res.status(500).json({ message: 'Unable to create account' });
   }
 };
 
-// POST /api/login
+// POST /api/login. Check the password and return a token.
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -32,13 +38,14 @@ const login = async (req, res) => {
     }
     return res.status(200).json({ token: user.generateJwt() });
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    console.error('login error:', err);
+    return res.status(500).json({ message: 'Unable to sign in' });
   }
 };
 
-// GET /api/customers — list every registered user (admin only). Includes
-// the role so the admin SPA can hide admin accounts from the customer table
-// without filtering it out server-side (other internal tools may want them).
+// GET /api/customers. Return every user. Admin only.
+// We include the role so the admin SPA can hide admin accounts from the
+// customer list. We do not filter server side because other tools may want them.
 const getCustomers = async (req, res) => {
   try {
     const users = await User.find({}, 'name email role _id').sort({ name: 1 });

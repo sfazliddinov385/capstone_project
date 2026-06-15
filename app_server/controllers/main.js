@@ -11,9 +11,16 @@ const renderView = (res, viewName, title, extraContext = {}) => {
 const index = async (req, res) => {
     try {
         const featuredTrips = await Trip.find({}).limit(3).exec();
-        renderView(res, 'index', 'Travlr Getaways', { featuredTrips });
+        renderView(res, 'index', 'Travlr Getaways', {
+            featuredTrips,
+            noFeaturedTrips: !featuredTrips || featuredTrips.length === 0,
+        });
     } catch (err) {
-        renderView(res, 'index', 'Travlr Getaways');
+        console.error('index render error:', err);
+        renderView(res, 'index', 'Travlr Getaways', {
+            featuredTrips: [],
+            noFeaturedTrips: true,
+        });
     }
 };
 
@@ -69,10 +76,20 @@ const meals = (req, res) => {
 };
 
 const news = (req, res) => {
-    const featured = newsItems.find(a => a.featured) || newsItems[0];
-    const articles = newsItems.filter(a => a.slug !== featured.slug);
+    // Defensive: if news.json is empty or missing entries, do not crash.
+    if (!Array.isArray(newsItems) || newsItems.length === 0) {
+        return renderView(res, 'news', 'Travlr Getaways - News', {
+            featured: null,
+            articles: [],
+            categories: [],
+            totalCount: 0,
+        });
+    }
 
-    // Compute category counts so the sidebar reflects real data
+    const featured = newsItems.find(a => a && a.featured) || newsItems[0];
+    const articles = newsItems.filter(a => a && a.slug && a.slug !== featured.slug);
+
+    // Count articles per category so the sidebar shows real numbers.
     const counts = newsItems.reduce((acc, a) => {
         acc[a.category] = (acc[a.category] || 0) + 1;
         return acc;

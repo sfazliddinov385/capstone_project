@@ -4,10 +4,10 @@ const Review      = require('../models/review');
 const Trip        = require('../../app_server/models/travlr');
 const User        = require('../models/user');
 
-// GET /api/admin/stats — aggregate metrics for the admin dashboard.
-// Returns a single payload that the SPA can render into KPI cards + charts
-// in one round-trip. All aggregations run server-side so the SPA never
-// pulls the raw collections to the browser.
+// GET /api/admin/stats. All the numbers the admin dashboard needs.
+// We return one payload so the page can build every KPI and chart
+// in a single request. The math runs on the server. The browser never
+// sees the raw collections.
 const getDashboardStats = async (_req, res) => {
     try {
         const [
@@ -33,7 +33,7 @@ const getDashboardStats = async (_req, res) => {
                 }}
             ]),
 
-            // Bookings & revenue grouped by year-month for the last 6 months.
+            // Bookings and revenue grouped by year and month. Last six months.
             Reservation.aggregate([
                 { $match: { bookedAt: { $gte: new Date(Date.now() - 1000 * 60 * 60 * 24 * 200) } } },
                 { $group: {
@@ -47,7 +47,7 @@ const getDashboardStats = async (_req, res) => {
                 { $sort: { '_id.year': 1, '_id.month': 1 } }
             ]),
 
-            // Top 5 trips by booking count + revenue.
+            // Top 5 trips by booking count and revenue.
             Reservation.aggregate([
                 { $group: {
                     _id: '$tripCode',
@@ -59,7 +59,7 @@ const getDashboardStats = async (_req, res) => {
                 { $limit: 5 }
             ]),
 
-            // Revenue by trip category (joined via lookup to trips).
+            // Revenue by trip category. Joins each reservation to its trip.
             Reservation.aggregate([
                 { $lookup: {
                     from: 'trips',

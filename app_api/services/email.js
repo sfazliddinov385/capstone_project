@@ -1,13 +1,13 @@
 const nodemailer = require('nodemailer');
 
-// Public URL used in outbound emails. Set PUBLIC_URL in production to the real
-// origin so the "your reservations" link works for customers; falls back to
-// localhost for development.
+// The base URL used in outbound emails. Set PUBLIC_URL in production so
+// the "your reservations" link points at the real site. In dev we fall
+// back to localhost.
 const PUBLIC_URL = (process.env.PUBLIC_URL || `http://localhost:${process.env.PORT || 3000}`).replace(/\/$/, '');
 
-// Escape user-controlled fields before they are interpolated into the HTML
-// email template. Without this, a customer name like `</td><script>...` could
-// inject markup into the inbox of whoever opens the confirmation.
+// Escape any user text before we drop it into the HTML email.
+// Without this, a name like </td><script>... could inject markup into
+// the inbox of whoever opens the confirmation.
 const escapeHtml = (v) => String(v == null ? '' : v)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -15,9 +15,10 @@ const escapeHtml = (v) => String(v == null ? '' : v)
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 
-// Create transporter using environment variables
-// For Gmail: set EMAIL_USER and EMAIL_PASS (use an App Password, not your real password)
-// For testing without real credentials, emails are skipped (no PII logged).
+// Build the mail transport from env vars.
+// For Gmail, set EMAIL_USER and EMAIL_PASS. Use a Gmail App Password,
+// not your real account password. If neither is set, we skip sending and
+// do not log any personal info.
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -34,8 +35,7 @@ const sendReservationConfirmation = async (toEmail, customerName, reservation) =
     const perPerson  = parseFloat(reservation.perPerson  || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     const totalPrice = parseFloat(reservation.totalPrice || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
-    // Pre-escape every user-controlled field exactly once before it is dropped
-    // into the HTML template below.
+    // Escape every user value once, before it goes into the HTML below.
     const safeCustomer = escapeHtml(customerName);
     const safeTripName = escapeHtml(reservation.tripName);
     const safeResort   = escapeHtml(reservation.resort || '-');
@@ -101,9 +101,9 @@ const sendReservationConfirmation = async (toEmail, customerName, reservation) =
     };
 
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        // No credentials configured. Skip sending. We intentionally do not log
-        // recipient, trip, or price details because those are PII and would end
-        // up in production log aggregation.
+        // No email credentials set. Skip sending. We do not log the recipient,
+        // trip, or price. Those are personal details and would end up in the
+        // production log if we did.
         console.log('Email skipped: EMAIL_USER/EMAIL_PASS not configured.');
         return;
     }

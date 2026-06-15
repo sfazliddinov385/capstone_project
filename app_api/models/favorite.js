@@ -5,7 +5,7 @@ const favoriteSchema = new mongoose.Schema({
     tripCode: { type: String, required: true, trim: true, uppercase: true }
 }, { timestamps: true });
 
-// One favorite per (user, trip) — fast lookups, no duplicates.
+// One row per user and trip. Fast lookups. No duplicates.
 favoriteSchema.index({ userId: 1, tripCode: 1 }, { unique: true });
 
 module.exports = mongoose.model('Favorite', favoriteSchema);

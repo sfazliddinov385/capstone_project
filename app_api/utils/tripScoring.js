@@ -1,30 +1,26 @@
 /**
- * Pure scoring helpers for the "similar trips" recommendation.
+ * Score trips for the "similar trips" suggestion.
  *
- * ─── Pseudocode ─────────────────────────────────────────────────────────────
- *   for each candidate trip C ≠ source S:
- *       score = 0
- *       if S.category exists AND C.category == S.category:   score += 2
- *       if C.price is within ±PRICE_BAND of S.price:         score += 1
- *   sort candidates by score DESC, then by rating DESC
- *   return first N
- * ────────────────────────────────────────────────────────────────────────────
+ * The shape of the check:
+ *   For each other trip:
+ *     If the category matches, add 2 points.
+ *     If the price is within the band, add 1 point.
+ *   Sort by score, then by rating. Return the top N.
  *
- * The function is intentionally pure (no I/O, no Mongoose) so the
- * recommendation logic can be unit-tested without a database. The controller
- * is responsible for fetching candidates and then handing them here.
+ * No database calls here. That keeps it easy to unit test. The controller
+ * loads the candidates and hands them in.
  */
 
-const PRICE_BAND      = 0.30;   // ±30% of the reference price counts as "close"
-const SAME_CATEGORY   = 2;      // category match is worth twice a price match
+const PRICE_BAND      = 0.30;   // Within 30% of the source price counts as close.
+const SAME_CATEGORY   = 2;      // A category match is worth twice a price match.
 const PRICE_NEAR      = 1;
 const DEFAULT_RESULTS = 4;
 
 /**
- * Score one candidate against the reference trip.
- * @param {Object} source     The trip the user is viewing.
+ * Score one candidate against the trip the user is viewing.
+ * @param {Object} source     The trip the user is on.
  * @param {Object} candidate  Another trip to score.
- * @returns {number}  Non-negative integer score.
+ * @returns {number}  A score that is zero or higher.
  */
 function scoreTrip(source, candidate) {
     if (!source || !candidate) return 0;
@@ -41,14 +37,14 @@ function scoreTrip(source, candidate) {
 }
 
 /**
- * Rank a list of candidate trips against a source trip and return the top N.
- * Ties are broken by `rating` (higher first). The source itself is filtered out
- * by `code` so callers can pass the full collection.
+ * Rank candidates against the source trip and return the top N.
+ * Ties go to the higher rating. The source itself is removed by code,
+ * so the caller can pass the whole collection.
  *
- * @param {Object}   source        The reference trip.
- * @param {Object[]} candidates    Pool of trips to choose from.
- * @param {number}   [limit]       How many similar trips to return (default 4).
- * @returns {Object[]}  Top-N candidates (no internal scoring field exposed).
+ * @param {Object}   source        The trip the user is on.
+ * @param {Object[]} candidates    Trips to choose from.
+ * @param {number}   [limit]       How many to return. Default is 4.
+ * @returns {Object[]}  The top N trips. We do not expose the internal score.
  */
 function rankSimilarTrips(source, candidates, limit = DEFAULT_RESULTS) {
     if (!source || !Array.isArray(candidates)) return [];

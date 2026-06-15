@@ -9,57 +9,56 @@ const userSchema = new mongoose.Schema({
   role:  { type: String, enum: ['customer', 'admin'], default: 'customer' },
   hash:  { type: String, required: true },
 
-  // This is only kept for old users who still have older password records.
-  // New users using bcrypt do not need a separate salt because bcrypt stores it in the hash.
+  // Only kept for old accounts that still use the older password format.
+  // bcrypt stores the salt inside the hash, so new users do not need this.
   salt:  { type: String, default: '' }
 }, { timestamps: true });
 
-// This checks if the saved password hash is a bcrypt hash.
+// Does this hash look like bcrypt?
 const BCRYPT_PREFIX = /^\$2[aby]\$/;
 
-// This decides how many bcrypt rounds to use.
-// If there is no value in the environment file, it uses 12.
+// How many bcrypt rounds to use. Default is 12 if .env does not say.
 const rounds = () => Math.max(4, parseInt(process.env.BCRYPT_ROUNDS, 10) || 12);
 
-// This creates a secure hashed password and saves it.
-// The salt field is cleared because bcrypt already stores the salt inside the hash.
+// Hash a new password and save it.
+// We clear the salt because bcrypt already keeps the salt inside the hash.
 userSchema.methods.setPassword = async function (password) {
   this.hash = await bcrypt.hash(password, rounds());
   this.salt = '';
 };
 
-// This checks if the password the user typed is correct.
+// Check if the typed password matches the saved one.
 userSchema.methods.validPassword = async function (password) {
   if (!this.hash) return false;
 
-  // If the password was saved with bcrypt, compare it using bcrypt.
+  // If the saved hash is bcrypt, use bcrypt to compare.
   if (BCRYPT_PREFIX.test(this.hash)) {
     return bcrypt.compare(password, this.hash);
   }
 
-  // This part is for old accounts that used the older PBKDF2 password system.
+  // Old accounts used PBKDF2. Handle them here.
   if (!this.salt) return false;
   const candidate = crypto.pbkdf2Sync(password, this.salt, 1000, 64, 'sha512');
   const stored    = Buffer.from(this.hash, 'hex');
 
-  // If the saved password and typed password do not match in length, reject it.
+  // Different length means it cannot match.
   if (stored.length !== candidate.length) return false;
 
-  // Safely compare the old saved password with the typed password.
+  // Constant time compare to avoid timing attacks.
   if (!crypto.timingSafeEqual(stored, candidate)) return false;
 
   try {
-    // If the old password worked, update it to the newer bcrypt system.
+    // The old password worked. Upgrade the saved hash to bcrypt.
     await this.setPassword(password);
     await this.save();
   } catch {
-    // If the update fails, still allow login because the password was correct.
+    // If the upgrade save fails, still let the user in. The password was right.
   }
 
   return true;
 };
 
-// This creates a login token that lasts for 7 days.
+// Build a login token that lasts seven days.
 userSchema.methods.generateJwt = function () {
   if (!process.env.JWT_SECRET) {
     throw new Error('JWT_SECRET is required to generate authentication tokens');

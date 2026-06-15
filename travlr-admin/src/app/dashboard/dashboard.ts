@@ -79,7 +79,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
     this.charts.forEach(c => c.destroy());
     this.charts = [];
 
-    // ─── Bookings + revenue by month ───────────────────────────
+    // Bookings and revenue per month chart.
     const months = this.stats.bookingsByMonth;
     const labels = months.map(m => `${MONTH_NAMES[m.month - 1]} ${String(m.year).slice(-2)}`);
 
@@ -131,7 +131,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
       }));
     }
 
-    // ─── Top trips by bookings ─────────────────────────────────
+    // Top trips by booking count chart.
     if (this.topTripsChart?.nativeElement) {
       this.charts.push(new Chart(this.topTripsChart.nativeElement, {
         type: 'bar',
@@ -155,7 +155,7 @@ export class Dashboard implements OnInit, AfterViewInit, OnDestroy {
       }));
     }
 
-    // ─── Revenue by category ──────────────────────────────────
+    // Revenue by category chart.
     if (this.categoryChart?.nativeElement) {
       const palette = ['#1a4a72', '#d99a2b', '#0f8a4a', '#6b3bd1', '#c0292b', '#0e6b62'];
       this.charts.push(new Chart(this.categoryChart.nativeElement, {

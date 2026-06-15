@@ -2,9 +2,9 @@
 
 /* ═══════════════════════════════════════════════════════════════
    DESIGN TOKENS
-   One source of truth for the visual system. Used by the polish
-   layer at the bottom of this file; the older sections still use
-   literal hex values for now to avoid touching working styles.
+   One place for the colors, shadows, radii, and motion timings.
+   The new sections use these. The older sections still use raw
+   hex values. I left those alone so I do not break what works.
    ═══════════════════════════════════════════════════════════════ */
 :root {
     /* Brand */
@@ -3409,10 +3409,10 @@ a.tg-news-featured-img:hover img, a.tg-news-card-img:hover img { transform: scal
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   MODERN POLISH LAYER
-   Appended last so cascade order lets it refine the styles above
-   without rewriting them. Touches accessibility, motion, mobile
-   navigation, scroll UX, and print.
+   POLISH LAYER
+   Added last so cascade order lets it refine the styles above
+   without rewriting them. Covers accessibility, motion, mobile
+   nav, scroll behavior, and print.
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Accessible focus ring on every interactive element ───────── */
@@ -3575,10 +3575,10 @@ a.tg-news-featured-img:hover img, a.tg-news-card-img:hover img { transform: scal
 }
 
 /* ════════════════════════════════════════════════════════════
-   HOMEPAGE V2 — premium polish layer (appended)
-   Animated hero noise, shimmer text, glass chips, scroll cue,
-   trust marquee, count-up stats, gradient feature icons,
-   mosaic, premium testimonials, newsletter, CTA mesh.
+   HOMEPAGE V2 polish (added on top of the older home page styles).
+   Includes hero noise, shimmer text, glass chips, scroll cue,
+   press marquee, count-up stats, gradient feature icons,
+   inspiration mosaic, testimonial cards, newsletter, and CTA mesh.
    ════════════════════════════════════════════════════════════ */
 
 /* ── Hero v2: text shimmer + noise + scroll cue ─────────────── */
@@ -5827,8 +5827,9 @@ a.tg-news-featured-img:hover img, a.tg-news-card-img:hover img { transform: scal
 }
 
 /* ════════════════════════════════════════════════════════════
-   NEWS / JOURNAL V2 — editorial hero, featured story,
-   category chips, premium cards, reading page, share row
+   NEWS / JOURNAL V2.
+   Editorial hero, featured story, category chips, story cards,
+   reading page, and the share row.
    ════════════════════════════════════════════════════════════ */
 
 /* Hero */
@@ -6747,8 +6748,9 @@ a.tg-news-featured-img:hover img, a.tg-news-card-img:hover img { transform: scal
 .tg-art-cta .btn-primary-pro { width: 100%; justify-content: center; }
 
 /* ════════════════════════════════════════════════════════════
-   AUTH PAGE V2 — split-screen brand + form layout
-   Used by /login (and ready to reuse for /register)
+   AUTH PAGE V2.
+   Split screen with brand panel on the left and form on the right.
+   Used by /login and /register.
    ════════════════════════════════════════════════════════════ */
 
 .tg-auth-page {

@@ -1,12 +1,12 @@
-// Seed the database with realistic demo data so the admin dashboard
-// has interesting numbers to show. Creates ~50 customer users, ~100
-// reservations spread across the last 6 months, and ~25 reviews.
+// Fill the database with demo data so the admin dashboard has real numbers
+// to show. Adds about 50 customers, about 100 reservations across the last
+// six months, and about 25 reviews.
 //
 // Run from the project root:
 //   node scripts/seed-demo-data.js
 //
-// All seeded customers log in with password "password123".
-// Re-running is safe but will skip emails that already exist.
+// All seeded customers use the password "password123".
+// You can run this again. It will skip any email that already exists.
 
 require('dotenv').config();
 const mongoose    = require('mongoose');
@@ -53,6 +53,11 @@ const pick  = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const pickN = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 
 async function main() {
+    if (process.env.NODE_ENV === 'production') {
+        console.error('FATAL: seed-demo-data must not run in production.');
+        process.exit(1);
+    }
+
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/travlr');
     console.log('Connected to MongoDB');
 
@@ -64,7 +69,7 @@ async function main() {
     }
     console.log('Loaded', trips.length, 'trips from catalog');
 
-    // ── Users ──────────────────────────────────────────────────
+    // Create the customer users.
     const created = [];
     const TARGET_USERS = 50;
     for (let i = 0; i < TARGET_USERS; i++) {
@@ -82,7 +87,7 @@ async function main() {
             await u.save();
             created.push(u);
         } catch (e) {
-            // Email already exists — skip
+            // Email already exists. Skip it.
         }
     }
     console.log('Created', created.length, 'new customer users (all password: password123)');
@@ -93,11 +98,11 @@ async function main() {
         return;
     }
 
-    // Top up inventory so the demo doesn't run out of seats.
+    // Refill seats so the demo does not run out.
     await Trip.updateMany({}, { spotsLeft: 60 });
     console.log('Reset spotsLeft to 60 on all trips');
 
-    // ── Reservations (spread across last 6 months) ─────────────
+    // Create reservations. Spread them across the last six months.
     const MS_PER_DAY = 24 * 60 * 60 * 1000;
     const NOW = Date.now();
     const RESERVATIONS = 110;
@@ -127,7 +132,7 @@ async function main() {
     const inserted = await Reservation.insertMany(docs);
     console.log('Created', inserted.length, 'reservations spread across the last 180 days');
 
-    // Update spotsLeft to reflect the bookings.
+    // Reduce spotsLeft on each trip to match the new bookings.
     const deltaByCode = {};
     for (const r of inserted) {
         deltaByCode[r.tripCode] = (deltaByCode[r.tripCode] || 0) + r.people;
@@ -136,7 +141,7 @@ async function main() {
         await Trip.updateOne({ code }, { $inc: { spotsLeft: -delta } });
     }
 
-    // ── Reviews (one per unique user+trip pair) ────────────────
+    // Create reviews. One per user and trip pair.
     const TARGET_REVIEWS = 25;
     const used = new Set();
     let reviewsMade = 0;
@@ -160,12 +165,13 @@ async function main() {
             });
             reviewsMade++;
         } catch (e) {
-            // Unique index might skip duplicates we did not pre-filter
+            // The unique index will block any duplicate we missed.
         }
     }
     console.log('Created', reviewsMade, 'reviews');
 
-    // Refresh aggregate rating + count on each trip so the public site is in sync.
+    // Recompute the average rating and review count on each trip so the
+    // public site stays in sync with the seeded reviews.
     for (const trip of trips) {
         const [agg] = await Review.aggregate([
             { $match: { tripCode: trip.code } },

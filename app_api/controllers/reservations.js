@@ -2,7 +2,7 @@ const Reservation = require('../models/reservation');
 const Trip        = require('../../app_server/models/travlr');
 const emailSvc    = require('../services/email');
 
-// GET /api/reservations — return all reservations for the logged-in user
+// GET /api/reservations. List the signed-in user's reservations.
 const getReservations = async (req, res) => {
     try {
         const reservations = await Reservation.find({ userId: req.user._id }).sort({ bookedAt: -1 });
@@ -12,25 +12,30 @@ const getReservations = async (req, res) => {
     }
 };
 
-// POST /api/reservations — book a trip for the logged-in user
+// POST /api/reservations. Book a trip for the signed-in user.
 const createReservation = async (req, res) => {
     let reservedTripCode = null;
     let reservedPeople = 0;
 
     try {
         const { tripCode, people } = req.body;
-        if (!tripCode) {
+        if (typeof tripCode !== 'string' || !tripCode.trim()) {
             return res.status(400).json({ message: 'tripCode is required' });
         }
 
-        const numPeople = parseInt(people, 10) || 1;
-        if (numPeople < 1 || numPeople > 20) {
+        const numPeople = parseInt(people, 10);
+        if (!numPeople || numPeople < 1 || numPeople > 20) {
             return res.status(400).json({ message: 'Number of people must be between 1 and 20' });
         }
 
-        const existingTrip = await Trip.findOne({ code: tripCode }).select('code spotsLeft').exec();
+        const existingTrip = await Trip.findOne({ code: tripCode }).select('code spotsLeft start').exec();
         if (!existingTrip) {
             return res.status(404).json({ message: 'Trip not found' });
+        }
+
+        // Refuse to book a trip whose start date is already in the past.
+        if (existingTrip.start && new Date(existingTrip.start).getTime() < Date.now()) {
+            return res.status(400).json({ message: 'This trip has already departed' });
         }
 
         const trip = await Trip.findOneAndUpdate(
@@ -62,7 +67,7 @@ const createReservation = async (req, res) => {
             totalPrice: totalPrice
         });
 
-        // Send confirmation email (non-blocking — don't fail the request if email fails)
+        // Fire off the confirmation email. Do not wait, and do not fail the request if it errors.
         emailSvc.sendReservationConfirmation(
             req.user.email,
             req.user.name,
@@ -72,10 +77,10 @@ const createReservation = async (req, res) => {
         res.status(201).json(reservation);
     } catch (err) {
         if (reservedTripCode) {
-            // Compensation: roll the seats we held back into inventory. If this
-            // rollback itself fails (DB blip, lost connection, etc) we must NOT
-            // let it bubble or the original 500 response is lost and the
-            // request hangs. Log loudly so an operator can reconcile by hand.
+            // Put the seats we took back. If the rollback itself fails, we
+            // must not let that error bubble up. If it did, we would lose the
+            // original error and the request would hang. Log it loudly so a
+            // person can fix the count by hand.
             try {
                 await Trip.updateOne({ code: reservedTripCode }, { $inc: { spotsLeft: reservedPeople } }).exec();
             } catch (rollbackErr) {
@@ -94,26 +99,45 @@ const createReservation = async (req, res) => {
     }
 };
 
-// DELETE /api/reservations/:id — cancel a reservation for the logged-in user
+// DELETE /api/reservations/:id. Cancel one of the user's reservations.
 const deleteReservation = async (req, res) => {
     try {
         const reservation = await Reservation.findOne({ _id: req.params.id, userId: req.user._id });
         if (!reservation) {
             return res.status(404).json({ message: 'Reservation not found' });
         }
+
+        const { tripCode, people } = reservation;
         await reservation.deleteOne();
-        await Trip.updateOne(
-            { code: reservation.tripCode },
-            { $inc: { spotsLeft: reservation.people } }
-        ).exec();
+
+        try {
+            await Trip.updateOne(
+                { code: tripCode },
+                { $inc: { spotsLeft: people } }
+            ).exec();
+        } catch (restoreErr) {
+            console.error(
+                'CRITICAL: cancellation seat restore failed.',
+                'tripCode=' + tripCode,
+                'people=' + people,
+                'userId=' + (req.user && req.user._id),
+                'error=' + restoreErr.message
+            );
+        }
+
         res.status(200).json({ message: 'Reservation cancelled' });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error('deleteReservation error:', err);
+        res.status(500).json({ message: 'Unable to cancel reservation' });
     }
 };
 
-// PUT /api/reservations/:id — update people count on an existing reservation
+// PUT /api/reservations/:id. Change the traveler count on an existing booking.
 const updateReservation = async (req, res) => {
+    let seatsReserved = 0;
+    let seatsRefunded = 0;
+    let trackedTripCode = null;
+
     try {
         const { people } = req.body;
         const numPeople  = parseInt(people, 10);
@@ -126,7 +150,9 @@ const updateReservation = async (req, res) => {
             return res.status(404).json({ message: 'Reservation not found' });
         }
 
+        trackedTripCode = reservation.tripCode;
         const peopleDelta = numPeople - reservation.people;
+
         if (peopleDelta > 0) {
             const trip = await Trip.findOneAndUpdate(
                 { code: reservation.tripCode, spotsLeft: { $gte: peopleDelta } },
@@ -137,11 +163,13 @@ const updateReservation = async (req, res) => {
             if (!trip) {
                 return res.status(409).json({ message: 'Not enough spots are available for this trip' });
             }
+            seatsReserved = peopleDelta;
         } else if (peopleDelta < 0) {
             await Trip.updateOne(
                 { code: reservation.tripCode },
                 { $inc: { spotsLeft: Math.abs(peopleDelta) } }
             ).exec();
+            seatsRefunded = Math.abs(peopleDelta);
         }
 
         const pricePerPerson = Number(reservation.perPerson) || 0;
@@ -151,7 +179,29 @@ const updateReservation = async (req, res) => {
 
         res.status(200).json(reservation);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        // Compensation rollback. If we took or refunded seats but the
+        // reservation document did not save, put the trip inventory back
+        // where it was so we do not leak or steal seats.
+        if (trackedTripCode && (seatsReserved > 0 || seatsRefunded > 0)) {
+            const delta = seatsReserved - seatsRefunded;
+            try {
+                await Trip.updateOne(
+                    { code: trackedTripCode },
+                    { $inc: { spotsLeft: delta } }
+                ).exec();
+            } catch (rollbackErr) {
+                console.error(
+                    'CRITICAL: updateReservation rollback failed.',
+                    'tripCode=' + trackedTripCode,
+                    'delta=' + delta,
+                    'userId=' + (req.user && req.user._id),
+                    'originalError=' + err.message,
+                    'rollbackError=' + rollbackErr.message
+                );
+            }
+        }
+        console.error('updateReservation error:', err);
+        res.status(500).json({ message: 'Unable to update reservation' });
     }
 };
 

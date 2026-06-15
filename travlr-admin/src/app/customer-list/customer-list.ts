@@ -1,5 +1,7 @@
-import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 interface Customer {
@@ -14,12 +16,14 @@ interface Customer {
   standalone: false,
   templateUrl: './customer-list.html',
 })
-export class CustomerList implements OnInit {
+export class CustomerList implements OnInit, OnDestroy {
   customers: Customer[] = [];
   filtered:  Customer[] = [];
   message:   string = '';
   search:    string = '';
   loading    = true;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private http: HttpClient,
@@ -29,13 +33,18 @@ export class CustomerList implements OnInit {
 
   ngOnInit(): void { this.load(); }
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   load(): void {
     this.loading = true;
     this.message = '';
-    this.http.get<Customer[]>(`${environment.apiUrl}/customers`).subscribe({
+    this.http.get<Customer[]>(`${environment.apiUrl}/customers`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
         this.ngZone.run(() => {
-          // Hide admin accounts so the count reflects real customers.
+          // Hide admin rows. The count should show real customers only.
           const list = (data || []).filter(c => c.role !== 'admin');
           this.customers = list;
           this.filtered = list;

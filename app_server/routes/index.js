@@ -3,7 +3,7 @@ const router = express.Router();
 
 const mainController = require('../controllers/main');
 
-// Public website routes. Each maps to a controller action.
+// Public site routes. Each one calls a controller action.
 router.get('/',                  mainController.index);
 router.get('/travel',            mainController.travel);
 router.get('/trip/:tripCode',    mainController.tripDetail);

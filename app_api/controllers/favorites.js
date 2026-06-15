@@ -1,7 +1,7 @@
 const Favorite = require('../models/favorite');
 const Trip      = require('../../app_server/models/travlr');
 
-// GET /api/favorites — return full trip records for the logged-in user's saved list
+// GET /api/favorites. Return full trip records for the user's saved list.
 const listMine = async (req, res) => {
     try {
         const favs = await Favorite.find({ userId: req.user._id }).sort({ createdAt: -1 }).lean();
@@ -9,7 +9,7 @@ const listMine = async (req, res) => {
         if (!codes.length) return res.status(200).json([]);
 
         const trips = await Trip.find({ code: { $in: codes } }).lean();
-        // Preserve favorite ordering (most-recently-saved first).
+        // Keep the saved order. Newest first.
         const byCode = new Map(trips.map(t => [t.code, t]));
         const ordered = codes.map(c => byCode.get(c)).filter(Boolean);
         res.status(200).json(ordered);
@@ -18,7 +18,7 @@ const listMine = async (req, res) => {
     }
 };
 
-// GET /api/favorites/codes — just the codes (lightweight, used to paint heart icons on cards)
+// GET /api/favorites/codes. Just the codes. Used to color the heart icon on each card.
 const listCodes = async (req, res) => {
     try {
         const favs = await Favorite.find({ userId: req.user._id }).select('tripCode').lean();
@@ -28,7 +28,7 @@ const listCodes = async (req, res) => {
     }
 };
 
-// POST /api/favorites/:tripCode — add (idempotent via upsert)
+// POST /api/favorites/:tripCode. Save a trip. Safe to call twice.
 const add = async (req, res) => {
     try {
         const tripCode = (req.params.tripCode || '').toUpperCase();
@@ -47,7 +47,7 @@ const add = async (req, res) => {
     }
 };
 
-// DELETE /api/favorites/:tripCode — remove
+// DELETE /api/favorites/:tripCode. Remove a saved trip.
 const remove = async (req, res) => {
     try {
         const tripCode = (req.params.tripCode || '').toUpperCase();

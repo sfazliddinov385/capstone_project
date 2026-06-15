@@ -12,27 +12,27 @@ const apiBaseUrl = environment.apiUrl;
 export class TripDataService {
   constructor(private http: HttpClient) {}
 
-  // GET all trips
+  // Get every trip.
   getTrips(): Observable<Trip[]> {
     return this.http.get<Trip[]>(`${apiBaseUrl}/trips`);
   }
 
-  // GET one trip by code
+  // Get one trip by its code.
   getTrip(tripCode: string): Observable<Trip> {
     return this.http.get<Trip>(`${apiBaseUrl}/trips/${tripCode}`);
   }
 
-  // POST — add a new trip
+  // Add a new trip.
   addTrip(formData: Trip): Observable<Trip> {
     return this.http.post<Trip>(`${apiBaseUrl}/trips`, formData);
   }
 
-  // PUT — update an existing trip
+  // Update a trip.
   updateTrip(formData: Trip): Observable<Trip> {
     return this.http.put<Trip>(`${apiBaseUrl}/trips/${formData.code}`, formData);
   }
 
-  // DELETE — remove a trip by code
+  // Delete a trip by code.
   deleteTrip(tripCode: string): Observable<any> {
     return this.http.delete(`${apiBaseUrl}/trips/${tripCode}`);
   }

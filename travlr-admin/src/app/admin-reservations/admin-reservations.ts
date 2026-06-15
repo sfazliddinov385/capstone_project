@@ -1,5 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 interface AdminReservation {
@@ -19,23 +21,30 @@ interface AdminReservation {
   standalone: false,
   templateUrl: './admin-reservations.html'
 })
-export class AdminReservations implements OnInit {
+export class AdminReservations implements OnInit, OnDestroy {
   rows:   AdminReservation[] = [];
   loading = true;
   error   = '';
   search  = '';
   cancelling: Record<string, boolean> = {};
 
+  private destroy$ = new Subject<void>();
+
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void { this.load(); }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   load(): void {
     this.loading = true;
     this.error = '';
     const q = this.search.trim();
     const url = `${environment.apiUrl}/admin/reservations${q ? '?q=' + encodeURIComponent(q) : ''}`;
-    this.http.get<AdminReservation[]>(url).subscribe({
+    this.http.get<AdminReservation[]>(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => { this.rows = data || []; this.loading = false; this.cdr.detectChanges(); },
       error: () =>   { this.error = 'Could not load reservations.'; this.loading = false; this.cdr.detectChanges(); }
     });
@@ -54,7 +63,7 @@ export class AdminReservations implements OnInit {
   cancel(row: AdminReservation): void {
     if (!confirm(`Cancel ${row.customerName}'s booking for "${row.tripName}"?\nSeats will be returned to inventory.`)) return;
     this.cancelling[row._id] = true;
-    this.http.delete(`${environment.apiUrl}/admin/reservations/${row._id}`).subscribe({
+    this.http.delete(`${environment.apiUrl}/admin/reservations/${row._id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.rows = this.rows.filter(r => r._id !== row._id);
         this.cancelling[row._id] = false;

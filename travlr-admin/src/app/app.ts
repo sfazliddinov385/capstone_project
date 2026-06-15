@@ -4,6 +4,8 @@ import {
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { AuthenticationService } from './authentication.service';
 import { environment } from '../environments/environment';
 
@@ -36,17 +38,21 @@ interface RecentReservation {
 export class App implements OnInit, OnDestroy {
   @ViewChild('topbarSearchInput') topbarSearchInput?: ElementRef<HTMLInputElement>;
 
-  // Topbar state
+  // Top bar state.
   topbarSearch = '';
   showHelp = false;
   showNotifications = false;
   notifications: RecentReservation[] = [];
   notificationsLoading = false;
 
-  // Health
+  // API health indicator.
   apiConnected = true;
-  private healthTimer: any = null;
+  private healthTimer: ReturnType<typeof setInterval> | null = null;
   private currentUrl = '/';
+  private destroy$ = new Subject<void>();
+
+  // Public URL exposed to the template so external links work in production builds.
+  readonly publicUrl = environment.publicUrl;
 
   constructor(
     private authService: AuthenticationService,
@@ -54,27 +60,32 @@ export class App implements OnInit, OnDestroy {
     private http: HttpClient,
     private cdr: ChangeDetectorRef
   ) {
-    this.router.events.subscribe(ev => {
+    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(ev => {
       if (ev instanceof NavigationEnd) {
         this.currentUrl = ev.urlAfterRedirects || ev.url || '/';
-        // Close any open overlays on navigation
+        // Close any open overlays when the route changes.
         this.showHelp = false;
         this.showNotifications = false;
       }
     });
   }
 
-  // ── Lifecycle ──────────────────────────────────────────────
+  // Lifecycle hooks.
   ngOnInit(): void {
     this.pingHealth();
     this.healthTimer = setInterval(() => this.pingHealth(), 30000);
   }
 
   ngOnDestroy(): void {
-    if (this.healthTimer) clearInterval(this.healthTimer);
+    if (this.healthTimer) {
+      clearInterval(this.healthTimer);
+      this.healthTimer = null;
+    }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  // ── Auth + display ─────────────────────────────────────────
+  // Sign in state and user display.
   isLoggedIn(): boolean { return this.authService.isLoggedIn(); }
   isAdmin():   boolean { return this.authService.isAdmin();   }
 
@@ -90,7 +101,7 @@ export class App implements OnInit, OnDestroy {
   }
 
   currentPageTitle(): string {
-    // Strip query params for the lookup key
+    // Drop the query string. We only need the path to find the title.
     const path = this.currentUrl.split('?')[0];
     return TITLES[path] || 'Dashboard';
   }
@@ -100,11 +111,11 @@ export class App implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
-  // ── Topbar search ──────────────────────────────────────────
+  // Top bar search.
   runSearch(): void {
     const q = (this.topbarSearch || '').trim();
-    // Navigate to the trip catalog with the query in the URL so the destination
-    // can pick it up via ActivatedRoute. Empty query just clears.
+    // Go to the trip catalog with the query in the URL. The trip catalog
+    // reads it from ActivatedRoute. An empty query clears it.
     this.router.navigate(['/trips'], { queryParams: { q: q || null }, queryParamsHandling: 'merge' });
   }
 
@@ -113,7 +124,7 @@ export class App implements OnInit, OnDestroy {
     this.runSearch();
   }
 
-  // Global Ctrl/Cmd + K focuses the topbar search.
+  // Ctrl+K or Cmd+K focuses the top bar search.
   @HostListener('document:keydown', ['$event'])
   onKeydown(ev: KeyboardEvent): void {
     if ((ev.ctrlKey || ev.metaKey) && ev.key.toLowerCase() === 'k') {
@@ -121,21 +132,21 @@ export class App implements OnInit, OnDestroy {
       this.topbarSearchInput?.nativeElement.focus();
       this.topbarSearchInput?.nativeElement.select();
     }
-    // Escape closes overlays
+    // Escape closes any open overlay.
     if (ev.key === 'Escape') {
       this.showHelp = false;
       this.showNotifications = false;
     }
   }
 
-  // ── Help modal ─────────────────────────────────────────────
+  // Help modal.
   toggleHelp(): void {
     this.showHelp = !this.showHelp;
     this.showNotifications = false;
   }
   closeHelp(): void { this.showHelp = false; }
 
-  // ── Notifications popover ─────────────────────────────────
+  // Notifications popover.
   toggleNotifications(): void {
     this.showNotifications = !this.showNotifications;
     this.showHelp = false;
@@ -146,24 +157,26 @@ export class App implements OnInit, OnDestroy {
   closeNotifications(): void { this.showNotifications = false; }
 
   hasUnread(): boolean {
-    // For this build, "unread" means there are recent reservations to show.
+    // For now, "unread" just means there are recent reservations to show.
     return this.notifications.length > 0;
   }
 
   private loadNotifications(): void {
     this.notificationsLoading = true;
-    this.http.get<any>(`${environment.apiUrl}/admin/stats`).subscribe({
-      next: (data) => {
-        this.notifications = (data?.recentReservations || []).slice(0, 8);
-        this.notificationsLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.notifications = [];
-        this.notificationsLoading = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.http.get<any>(`${environment.apiUrl}/admin/stats`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.notifications = (data?.recentReservations || []).slice(0, 8);
+          this.notificationsLoading = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.notifications = [];
+          this.notificationsLoading = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 
   refreshNotifications(): void {
@@ -195,17 +208,19 @@ export class App implements OnInit, OnDestroy {
     return '$' + (n || 0).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   }
 
-  // ── API health ─────────────────────────────────────────────
+  // API health check.
   private pingHealth(): void {
-    this.http.get<{ status: string }>(`${environment.apiUrl}/health`).subscribe({
-      next: (res) => {
-        this.apiConnected = res?.status === 'ok';
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.apiConnected = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.http.get<{ status: string }>(`${environment.apiUrl}/health`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res) => {
+          this.apiConnected = res?.status === 'ok';
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.apiConnected = false;
+          this.cdr.detectChanges();
+        }
+      });
   }
 }

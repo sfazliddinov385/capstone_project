@@ -253,7 +253,7 @@
         return;
     }
 
-    // Fetch trip details for every cart item in parallel
+    // Load the trip details for every cart item. Run the requests in parallel.
     var resolved = await Promise.all(cart.map(async function(item) {
         try {
             var r = await fetch('/api/trips/' + encodeURIComponent(item.tripCode));
@@ -453,7 +453,7 @@
     document.getElementById('co-card-number').addEventListener('input', function() {
         var v = this.value.replace(/\D/g, '').slice(0, 16);
         this.value = v.match(/.{1,4}/g) ? v.match(/.{1,4}/g).join(' ') : v;
-        // Highlight brand
+        // Light up the matching card brand chip.
         var brands = document.querySelectorAll('.tg-co-brand');
         brands.forEach(function(b) { b.classList.remove('is-active'); });
         if (/^4/.test(v))      document.querySelector('.tg-co-brand-visa').classList.add('is-active');

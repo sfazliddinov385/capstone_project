@@ -2,10 +2,10 @@ const Trip = require('../../app_server/models/travlr');
 const { buildTripListOptions, tripPayloadFromBody } = require('../utils/tripQuery');
 const { rankSimilarTrips } = require('../utils/tripScoring');
 
-// Convert a Mongoose validation error into a client-safe message that lists
-// the invalid field names without leaking stack traces, internal paths, or
-// other engine-shaped details. Anything else gets a generic message; the full
-// error is always logged server-side so the operator can debug.
+// Turn a Mongoose validation error into a short message we can send back.
+// We list which fields were wrong, but we do not leak stack traces or
+// internal paths. Any other error gets a plain fallback message. We always
+// log the full error on the server so we can still debug it.
 const safeError = (err, fallback) => {
     if (err && err.name === 'ValidationError' && err.errors) {
         const fields = Object.keys(err.errors).join(', ');
@@ -17,7 +17,7 @@ const safeError = (err, fallback) => {
     return fallback;
 };
 
-// GET /api/trips  — return all trips as JSON
+// GET /api/trips. Return every trip as JSON.
 const tripsList = async (req, res) => {
     try {
         const { filter, sort, limit } = buildTripListOptions(req.query);
@@ -29,7 +29,7 @@ const tripsList = async (req, res) => {
     }
 };
 
-// GET /api/trips/:tripCode  — return one trip by code
+// GET /api/trips/:tripCode. Return one trip by its code.
 const tripsFindByCode = async (req, res) => {
     try {
         const tripCode = String(req.params.tripCode || '').trim().toUpperCase();
@@ -44,7 +44,7 @@ const tripsFindByCode = async (req, res) => {
     }
 };
 
-// POST /api/trips  — create a new trip
+// POST /api/trips. Create a new trip.
 const tripsAddTrip = async (req, res) => {
     try {
         const trip = await Trip.create(tripPayloadFromBody(req.body));
@@ -55,7 +55,7 @@ const tripsAddTrip = async (req, res) => {
     }
 };
 
-// PUT /api/trips/:tripCode  — update an existing trip
+// PUT /api/trips/:tripCode. Update a trip.
 const tripsUpdateTrip = async (req, res) => {
     try {
         const trip = await Trip.findOneAndUpdate(
@@ -74,7 +74,7 @@ const tripsUpdateTrip = async (req, res) => {
     }
 };
 
-// DELETE /api/trips/:tripCode  — delete a trip
+// DELETE /api/trips/:tripCode. Remove a trip.
 const tripsDeleteTrip = async (req, res) => {
     try {
         const trip = await Trip.findOneAndDelete({
@@ -90,9 +90,9 @@ const tripsDeleteTrip = async (req, res) => {
     }
 };
 
-// GET /api/trips/:tripCode/similar — recommend up to 4 thematically similar
-// trips. The scoring logic lives in utils/tripScoring.js so it can be unit-
-// tested without a database, and so the algorithm can be tuned in one place.
+// GET /api/trips/:tripCode/similar. Suggest up to four trips that feel similar.
+// The scoring lives in utils/tripScoring.js. That way we can unit test it
+// without a database, and tune the formula in one place.
 const tripsSimilar = async (req, res) => {
     try {
         const tripCode = String(req.params.tripCode || '').trim().toUpperCase();

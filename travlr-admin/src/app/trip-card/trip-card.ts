@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Trip } from '../trip';
 import { AuthenticationService } from '../authentication.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-trip-card',
@@ -17,6 +18,12 @@ export class TripCard {
 
   isAdmin(): boolean {
     return this.authService.isAdmin();
+  }
+
+  imageUrl(): string {
+    const img = this.trip?.image || '';
+    if (!img) return 'https://placehold.co/400x200?text=No+Image';
+    return img.startsWith('http') ? img : environment.publicUrl + img;
   }
 
   onEdit(): void {

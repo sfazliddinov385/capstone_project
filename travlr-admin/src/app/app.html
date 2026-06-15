@@ -42,15 +42,15 @@
 
       <div class="admin-nav-section">External</div>
       <nav class="admin-nav">
-        <a href="http://localhost:3000/" target="_blank" rel="noopener">
+        <a [href]="publicUrl" target="_blank" rel="noopener">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
           Public Site
         </a>
-        <a href="http://localhost:3000/travel" target="_blank" rel="noopener">
+        <a [href]="publicUrl + '/travel'" target="_blank" rel="noopener">
           <svg class="icon" viewBox="0 0 24 24"><path d="M21 16l-9 5-9-5V8l9-5 9 5v8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>
           Live Catalog
         </a>
-        <a href="http://localhost:3000/news" target="_blank" rel="noopener">
+        <a [href]="publicUrl + '/news'" target="_blank" rel="noopener">
           <svg class="icon" viewBox="0 0 24 24"><path d="M4 4h12v16H4z"/><path d="M16 8h4v10a2 2 0 01-2 2h-2"/><path d="M7 8h6M7 12h6M7 16h4"/></svg>
           News &amp; Tips
         </a>
@@ -94,7 +94,7 @@
       </div>
 
       <div class="admin-topbar-right">
-        <a class="tb-iconbtn" href="http://localhost:3000/" target="_blank" rel="noopener" title="View site">
+        <a class="tb-iconbtn" [href]="publicUrl" target="_blank" rel="noopener" title="View site">
           <svg class="icon" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><path d="M15 3h6v6M10 14L21 3"/></svg>
         </a>
         <button class="tb-iconbtn" type="button" (click)="toggleHelp()" title="Help (?)" aria-label="Open help">
@@ -180,18 +180,17 @@
           </ul>
         </section>
         <section class="help-section">
-          <h3>Default admin login</h3>
-          <p><strong>admin&#64;travlr.com</strong> / <strong>password123</strong></p>
-          <p class="help-muted">These are seeded by <code>scripts/create-admin.js</code>. Override with the <code>ADMIN_EMAIL</code> and <code>ADMIN_PASSWORD</code> environment variables.</p>
+          <h3>Admin login</h3>
+          <p class="help-muted">The admin user is seeded by <code>scripts/create-admin.js</code>. Set the <code>ADMIN_EMAIL</code> and <code>ADMIN_PASSWORD</code> environment variables before running it. The script logs the email it created so you know which account to sign in with.</p>
         </section>
         <section class="help-section">
           <h3>Need more?</h3>
           <p>
             <a href="https://github.com/sfazliddinov385/capstone_project" target="_blank" rel="noopener">GitHub repo</a>
             &nbsp;&middot;&nbsp;
-            <a href="http://localhost:3000/" target="_blank" rel="noopener">Public site</a>
+            <a [href]="publicUrl" target="_blank" rel="noopener">Public site</a>
             &nbsp;&middot;&nbsp;
-            <a href="http://localhost:3000/api/health" target="_blank" rel="noopener">API health</a>
+            <a [href]="publicUrl + '/api/health'" target="_blank" rel="noopener">API health</a>
           </p>
         </section>
       </div>

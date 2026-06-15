@@ -5,9 +5,8 @@ const hbs = require('hbs');
 const cors = require('cors');
 const helmet = require('helmet');
 
-// --- Startup configuration validation ---------------------------------------
-// Fail closed if the JWT secret is missing or too weak. Hard-stops a misconfigured
-// deploy before it can issue tokens signed with `undefined`.
+// Stop the app if JWT_SECRET is missing or too short.
+// We do not want to sign tokens with a weak or empty key.
 if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
     console.error(
         '\nFATAL: JWT_SECRET must be set and at least 32 characters long.\n' +
@@ -17,10 +16,8 @@ if (!process.env.JWT_SECRET || process.env.JWT_SECRET.length < 32) {
     process.exit(1);
 }
 
-// --- Global error handlers --------------------------------------------------
-// In production, the process is in an unknown state after these, so the
-// safest thing is to log and exit and let the supervisor (pm2, systemd, k8s)
-// restart us clean.
+// If we hit an error nobody caught, log it and exit.
+// The process manager (pm2, systemd, k8s) will start a fresh one.
 process.on('uncaughtException', (err) => {
     console.error('Uncaught exception:', err);
     process.exit(1);
@@ -30,7 +27,7 @@ process.on('unhandledRejection', (reason) => {
     process.exit(1);
 });
 
-// Database connection
+// Connect to MongoDB.
 const db = require('./app_server/models/db');
 db.connect();
 
@@ -41,23 +38,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
 
-// View engine setup — HBS templates live in app_server/views
+// Use Handlebars for the public pages. Templates live in app_server/views.
 app.set('views', path.join(__dirname, 'app_server', 'views'));
 app.set('view engine', 'hbs');
 
-// Register HBS partials from app_server/views/partials
+// Load shared header/footer partials.
 hbs.registerPartials(path.join(__dirname, 'app_server', 'views', 'partials'));
 
-// Handlebars helpers
+// Small helper so templates can write {{#if (lte a b)}}.
 hbs.registerHelper('lte', function(a, b) { return a <= b; });
 
-// --- Security middleware ----------------------------------------------------
-// Helmet sets sensible HTTP response headers. CSP is left off because the
-// legacy HBS + static-HTML pages contain inline styles that a strict policy
-// would break — turn it on once those are migrated. HSTS is disabled outside
-// production because once a browser caches HSTS for `localhost` it will
-// permanently rewrite http://localhost requests to https://, which breaks
-// every fetch against the dev server until the cache is cleared.
+// Helmet adds safe HTTP headers.
+// CSP is off because some pages still use inline styles. Turn it on once those are gone.
+// HSTS is off in dev. If a browser caches HSTS for localhost, every dev request gets
+// forced to https and the dev server stops working until the cache is cleared.
 app.use(helmet({
     contentSecurityPolicy: false,
     strictTransportSecurity: isProduction
@@ -69,11 +63,9 @@ if (isProduction) {
     app.set('trust proxy', 1);
 }
 
-// CORS allowlist. Comma-separated origins via CORS_ORIGIN (default: dev Angular).
-// The server's own origin is always allowed so browser fetches from server-rendered
-// HBS pages (which include an Origin header on POST) are not rejected as cross-origin.
-// Wildcard "*" is explicitly rejected. If we accepted it, any origin could call the
-// API with credentials and we lose the whole point of an allowlist.
+// CORS allowlist. Read from CORS_ORIGIN as a comma list. Default is the dev Angular app.
+// We always allow our own origin so the public HBS pages can fetch the API.
+// We reject "*" on purpose. A wildcard would defeat the allowlist.
 const configuredOrigins = (process.env.CORS_ORIGIN || 'http://localhost:4200')
     .split(',')
     .map(o => o.trim())
@@ -89,7 +81,7 @@ const corsOrigins = Array.from(new Set([...sameOrigins, ...configuredOrigins]));
 
 const corsOptions = {
     origin(origin, cb) {
-        // Allow no-origin (curl, server-to-server) and any allowlisted origin.
+        // Allow requests with no Origin (curl, server to server) and any allowed one.
         if (!origin || corsOrigins.includes(origin)) return cb(null, true);
         return cb(new Error(`Origin ${origin} not allowed by CORS`));
     }
@@ -97,22 +89,21 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// Parse JSON bodies, with a sane size cap to limit abuse.
+// Parse JSON bodies. Cap the size so a huge body cannot tie us up.
 app.use(express.json({ limit: '100kb' }));
 
-// Mount API routes
+// Mount the API.
 app.use('/api', apiRouter);
 
-// Register the travlr routes with the application
+// Mount the public pages.
 app.use('/', indexRouter);
 
-// Serve static assets without allowing public/index.html to override the HBS home route
+// Serve static files. Skip the index lookup so public/index.html cannot hijack /.
 app.use(express.static(path.join(__dirname, 'public'), { index: false }));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// Catch-all 404 handler. Anything that fell through every router and the
-// static folder is genuinely unknown. /api/* gets JSON; everything else
-// gets the friendly HBS 404 page.
+// 404 fallback. If the request fell through everything else, it is not a real route.
+// API paths get JSON. Pages get our friendly 404 view.
 app.use((req, res) => {
     if (req.path.startsWith('/api/')) {
         return res.status(404).json({ message: 'Not found' });
@@ -124,16 +115,15 @@ const server = app.listen(PORT, () => {
     console.log(`Express server running at http://localhost:${PORT}`);
 });
 
-// Graceful shutdown: close the HTTP server before exiting so in-flight
-// requests can finish. The Mongoose connection closes via its own SIGINT
-// handler in app_server/models/db.js.
+// On SIGTERM, let any open requests finish before we exit.
+// Mongoose closes itself on SIGINT inside app_server/models/db.js.
 const shutdown = (signal) => {
     console.log(`\n${signal} received, shutting down HTTP server`);
     server.close(() => {
         console.log('HTTP server closed');
         process.exit(0);
     });
-    // Force exit if shutdown takes longer than 10 seconds.
+    // If we are still running after 10 seconds, give up and exit.
     setTimeout(() => process.exit(1), 10000).unref();
 };
 process.on('SIGTERM', () => shutdown('SIGTERM'));

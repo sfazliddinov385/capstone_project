@@ -49,3 +49,10 @@ coverage/
 
 # Office temp lock files
 ~$*
+
+# Capstone paperwork — kept local only, NOT pushed to this public repo
+Fazliddinov-*.docx
+AUDIT_FINDINGS.md
+build_journal.py
+build_narratives.py
+extract_findings.py

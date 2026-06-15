@@ -1,9 +1,14 @@
-// Run once to create the admin user: node create-admin.js
+// Run once to create the admin user. node scripts/create-admin.js
 require('dotenv').config();
 const mongoose = require('mongoose');
 const User = require('./app_api/models/user');
 
 (async () => {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('FATAL: create-admin must not run in production.');
+    process.exit(1);
+  }
+
   const dbURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/travlr';
   await mongoose.connect(dbURI);
 
@@ -16,6 +21,6 @@ const User = require('./app_api/models/user');
   await user.setPassword(password);
   await user.save();
 
-  console.log(`Admin created - email: ${email}  password: ${password}`);
+  console.log(`Admin created - email: ${email}. Password was set from ADMIN_PASSWORD or the default; check your environment.`);
   await mongoose.disconnect();
 })();

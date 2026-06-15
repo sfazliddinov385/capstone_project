@@ -1,35 +1,32 @@
 /**
- * Login and permission checks for routes.
+ * Sign-in and permission checks for routes.
  *
- * I made two small helpers (authenticate and authorizeAdmin) instead of
- * one big "requireAdmin" helper. This way each route can show clearly what
- * it needs:
+ * There are two small helpers: authenticate and authorizeAdmin.
+ * I kept them separate instead of one big "requireAdmin" helper.
+ * That way each route shows clearly what it needs:
  *
- *     router.get('/me',         authenticate,             handler);
- *     router.post('/trips',     authenticate, authorizeAdmin, handler);
+ *     router.get('/me',     authenticate, handler);
+ *     router.post('/trips', authenticate, authorizeAdmin, handler);
  *
- * The admin check always runs after the token check, so authorizeAdmin
- * can safely use req.user.
+ * authorizeAdmin always runs after authenticate, so it can trust req.user.
  */
 const jwt = require('jsonwebtoken');
 
 /**
- * Check the user's token and save the user info on req.user.
- * If anything looks wrong, we block the request. We never let a bad or
- * fake token through by mistake.
+ * Read the token and put the user info on req.user.
+ * If anything looks off, block the request. We never let a bad token through.
  *
- * ─── How it works ───────────────────────────────────────────────────────
- *   if the server has no secret key -> 500 (setup problem)
- *   if there is no "Bearer <token>" header -> 401
- *   try to read the token with the secret key
- *       if it works: save the user info and move on
- *       if it fails: 401 (bad or old token)
- * ────────────────────────────────────────────────────────────────────────
+ * How it works:
+ *   No secret key on the server    -> 500. Setup problem.
+ *   No "Bearer <token>" header     -> 401.
+ *   Try to verify the token.
+ *     Works -> save the user info and move on.
+ *     Fails -> 401. The token is bad or expired.
  */
 const authenticate = (req, res, next) => {
-  // Stop here if someone forgot to set the secret key on the server.
-  // Without this check, the app might accept fake tokens signed with
-  // the word "undefined".
+  // Stop now if the secret key is missing.
+  // Without this check, the app could accept tokens signed with the
+  // literal string "undefined".
   if (!process.env.JWT_SECRET) {
     return res.status(500).json({ message: 'Server authentication configuration is missing' });
   }
@@ -42,18 +39,18 @@ const authenticate = (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    // jwt.verify will throw an error if the token is fake, old, or broken.
+    // verify throws if the token is bad, old, or tampered with.
     req.user = jwt.verify(token, process.env.JWT_SECRET);
     next();
   } catch (err) {
-    // We don't say if the token was fake or just old, to keep things safe.
+    // We do not say which problem it was. That keeps attackers guessing.
     return res.status(401).json({ message: 'Unauthorized: invalid or expired token' });
   }
 };
 
 /**
- * Only let users in if their token says they are an admin.
- * This must run AFTER `authenticate` so req.user is ready.
+ * Only allow the request if the token says the user is an admin.
+ * Must run after authenticate so req.user is set.
  */
 const authorizeAdmin = (req, res, next) => {
   if (!req.user || req.user.role !== 'admin') {

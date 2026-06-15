@@ -52,7 +52,7 @@ export class AddTrip implements OnInit {
     if (this.addForm.invalid) { return; }
 
     const raw = this.addForm.value;
-    // Convert includes from comma-separated string to array
+    // Turn the includes string into an array. Split on commas.
     const includesRaw: string = raw.includes || '';
     const trip = {
       ...raw,

@@ -1,24 +1,16 @@
 /**
- * Pure validation helpers for customer-submitted reviews.
+ * Validation helpers for customer reviews.
  *
- * ─── Pseudocode ─────────────────────────────────────────────────────────────
- *   validateReviewInput(raw):
- *       rating  = parseInteger(raw.rating)
- *       comment = trim(raw.comment ?? '')
+ * The shape of the check:
+ *   Parse the rating as a number. Trim the comment.
+ *   If the rating is not a whole number between 1 and 5, fail.
+ *   If the comment is too short, fail.
+ *   If the comment is too long, fail.
+ *   Otherwise pass.
  *
- *       if rating is not integer OR rating < MIN_RATING OR rating > MAX_RATING:
- *           return { ok: false, status: 400, message: 'Rating must be 1..5' }
- *       if length(comment) < MIN_LEN:
- *           return { ok: false, status: 400, message: 'Comment too short' }
- *       if length(comment) > MAX_LEN:
- *           return { ok: false, status: 400, message: 'Comment too long' }
- *
- *       return { ok: true, rating, comment }
- * ────────────────────────────────────────────────────────────────────────────
- *
- * Centralising these rules in one pure function keeps the HTTP controller
- * thin, makes the rules unit-testable, and prevents the SPA and HBS views
- * from drifting from the API's expectations.
+ * I keep these rules in one small function. That way the HTTP controller
+ * stays simple, the rules are easy to unit test, and the admin SPA and
+ * public pages cannot drift from what the API expects.
  */
 
 const MIN_RATING  = 1;
@@ -27,14 +19,14 @@ const MIN_COMMENT = 4;
 const MAX_COMMENT = 1200;
 
 /**
- * Validate review input and return a structured result.
- * @param {Object} raw  Untrusted request body (rating, comment).
+ * Check the review input. Return a small object with the result.
+ * @param {Object} raw  The request body. Has rating and comment.
  * @returns {{ ok: true, rating: number, comment: string }
  *          | { ok: false, status: number, message: string }}
  */
 function validateReviewInput(raw = {}) {
-    // Use Number(), not parseInt() — parseInt silently truncates `4.5` to `4`,
-    // which would let half-star ratings slip through as integers.
+    // Use Number, not parseInt. parseInt turns 4.5 into 4 without saying so.
+    // That would let half-star ratings through as if they were whole numbers.
     const ratingNum = Number(raw.rating);
     const rating    = ratingNum;
     const comment   = String(raw.comment == null ? '' : raw.comment).trim();
@@ -53,8 +45,9 @@ function validateReviewInput(raw = {}) {
 }
 
 /**
- * Compute the rounded average rating from a list of review documents.
- * Returns 0 when no reviews exist so callers can use a single code path.
+ * Get the average rating from a list of reviews, rounded to one decimal.
+ * Returns 0 if there are no reviews. The caller can use the same code path
+ * either way.
  *
  * @param {{rating: number}[]} reviews
  * @returns {{ avg: number, count: number }}

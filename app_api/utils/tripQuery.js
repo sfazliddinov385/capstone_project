@@ -1,42 +1,41 @@
-// This file helps build filters, sorting, and data for trips.
+// Helpers that build filters, sort order, and limits for the trip list.
 
 const SORTS = {
-  // Default sorting: best rated trips first.
+  // Default. Best rated trips first.
   featured: { rating: -1, reviewCount: -1, name: 1 },
 
-  // Sort by lowest price first.
+  // Cheapest first.
   'price-asc': { perPerson: 1, name: 1 },
 
-  // Sort by highest price first.
+  // Most expensive first.
   'price-desc': { perPerson: -1, name: 1 },
 
-  // Sort by rating.
+  // Highest rated first.
   rating: { rating: -1, reviewCount: -1 },
 
-  // Sort by most reviews.
+  // Most reviewed first.
   reviews: { reviewCount: -1, rating: -1 },
 
-  // Sort by spots left.
+  // Fewest seats left first.
   spots: { spotsLeft: 1, name: 1 },
 
-  // Sort by start date.
+  // Earliest start date first.
   start: { start: 1, name: 1 }
 };
 
-// These fields need an exact match when filtering.
+// These fields use an exact match when filtering.
 const exactMatchFields = ['category', 'difficulty', 'departureCity'];
 
-// This makes user search text safe before using it in a regular expression.
+// Escape regex specials in user search text so it cannot break the engine.
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-// This turns a value into a number only if it is valid and not negative.
+// Turn a value into a number. Reject anything that is not a real positive number.
 const parsePositiveNumber = (value) => {
   const parsed = Number(value);
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 };
 
-// This limits how many trips can be returned.
-// It prevents users from requesting too many results at once.
+// Cap how many trips we return so nobody can ask for thousands at once.
 const clampLimit = (value, fallback = 100, max = 100) => {
   const parsed = parseInt(value, 10);
   if (!Number.isInteger(parsed) || parsed <= 0) {
@@ -45,11 +44,11 @@ const clampLimit = (value, fallback = 100, max = 100) => {
   return Math.min(parsed, max);
 };
 
-// This builds the filter, sort, and limit options for the trip list.
+// Build the filter, sort, and limit for the trip list query.
 const buildTripListOptions = (query = {}) => {
   const filter = {};
 
-  // If the user searches with q, search in code, name, resort, and description.
+  // If the user passed q, search in code, name, resort, and description.
   const q = typeof query.q === 'string' ? query.q.trim() : '';
   if (q) {
     const safe = new RegExp(escapeRegExp(q), 'i');
@@ -61,7 +60,7 @@ const buildTripListOptions = (query = {}) => {
     ];
   }
 
-  // Add filters like category, difficulty, and departure city.
+  // Add exact-match filters like category, difficulty, and departure city.
   exactMatchFields.forEach((field) => {
     const value = typeof query[field] === 'string' ? query[field].trim() : '';
     if (value && value.toLowerCase() !== 'all') {
@@ -69,7 +68,7 @@ const buildTripListOptions = (query = {}) => {
     }
   });
 
-  // Add minimum and maximum price filters if they are provided.
+  // Add min and max price if either is set.
   const minPrice = parsePositiveNumber(query.minPrice);
   const maxPrice = parsePositiveNumber(query.maxPrice);
   if (minPrice !== null || maxPrice !== null) {
@@ -78,23 +77,22 @@ const buildTripListOptions = (query = {}) => {
     if (maxPrice !== null) filter.perPerson.$lte = maxPrice;
   }
 
-  // Add a minimum spots-left filter if it is provided.
+  // Add a "at least N seats left" filter if set.
   const minSpots = parsePositiveNumber(query.minSpots);
   if (minSpots !== null) {
     filter.spotsLeft = { $gte: minSpots };
   }
 
-  // Use the selected sort option, or use featured as the default.
+  // Pick the sort key. Default to featured.
   const sort = SORTS[query.sort] || SORTS.featured;
 
-  // Limit how many trips are returned.
+  // Cap how many results we send back.
   const limit = clampLimit(query.limit);
 
   return { filter, sort, limit };
 };
 
-// This turns includes into an array.
-// It supports both arrays and comma-separated strings.
+// Turn includes into an array. Accept either an array or a comma list string.
 const toIncludesArray = (includes) => {
   if (Array.isArray(includes)) {
     return includes.map((item) => String(item).trim()).filter(Boolean);
@@ -105,7 +103,7 @@ const toIncludesArray = (includes) => {
   return [];
 };
 
-// This prepares trip data from the request body before saving it.
+// Build a clean trip object from the request body before we save it.
 const tripPayloadFromBody = (body = {}) => ({
   code: String(body.code || '').trim().toUpperCase(),
   name: String(body.name || '').trim(),
@@ -124,7 +122,7 @@ const tripPayloadFromBody = (body = {}) => ({
   includes: toIncludesArray(body.includes)
 });
 
-// Export the helper functions so other files can use them.
+// Make the helpers available to other files.
 module.exports = {
   buildTripListOptions,
   tripPayloadFromBody,

@@ -14,6 +14,9 @@ const routes: Routes = [
   { path: '',             component: Dashboard,         canActivate: [AuthGuard] },
   { path: 'trips',        component: TripListing,       canActivate: [AuthGuard] },
   { path: 'add-trip',     component: AddTrip,           canActivate: [AuthGuard] },
+  { path: 'edit-trip/:code', component: EditTrip,       canActivate: [AuthGuard] },
+  // Legacy path. Old code put the trip code in localStorage and navigated here.
+  // The component still falls back to that, so this keeps existing links working.
   { path: 'edit-trip',    component: EditTrip,          canActivate: [AuthGuard] },
   { path: 'customers',    component: CustomerList,      canActivate: [AuthGuard] },
   { path: 'reservations', component: AdminReservations, canActivate: [AuthGuard] },

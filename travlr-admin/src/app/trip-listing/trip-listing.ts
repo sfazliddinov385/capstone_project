@@ -1,5 +1,7 @@
-import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { TripDataService } from '../trip-data';
 import { Trip } from '../trip';
 import { AuthenticationService } from '../authentication.service';
@@ -13,7 +15,7 @@ type SortKey = 'name' | 'code' | 'start' | 'perPerson' | 'spotsLeft' | 'category
   templateUrl: './trip-listing.html',
   styleUrl: './trip-listing.css',
 })
-export class TripListing implements OnInit {
+export class TripListing implements OnInit, OnDestroy {
   trips: Trip[] = [];
   view:  Trip[] = [];
   message = '';
@@ -26,6 +28,8 @@ export class TripListing implements OnInit {
 
   readonly categoryOptions = ['All', 'Beach', 'Adventure', 'Cultural', 'Luxury', 'Cruise', 'Diving'];
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private tripDataService: TripDataService,
     private router: Router,
@@ -36,8 +40,8 @@ export class TripListing implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Pick up the topbar's ?q= so a search from any page lands here pre-filled.
-    this.route.queryParamMap.subscribe(params => {
+    // Read the ?q= from the top bar so a search from any page lands here pre-filled.
+    this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
       const q = params.get('q') || '';
       if (q !== this.search) {
         this.search = q;
@@ -46,6 +50,11 @@ export class TripListing implements OnInit {
       }
     });
     this.getTrips();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   isLoggedIn(): boolean { return this.authService.isLoggedIn(); }
@@ -179,7 +188,7 @@ export class TripListing implements OnInit {
 
   private getTrips(): void {
     this.loading = true;
-    this.tripDataService.getTrips().subscribe({
+    this.tripDataService.getTrips().pipe(takeUntil(this.destroy$)).subscribe({
       next: (trips: Trip[]) => {
         this.ngZone.run(() => {
           this.trips = trips || [];
@@ -199,8 +208,11 @@ export class TripListing implements OnInit {
   }
 
   editTrip(trip: Trip): void {
+    // Pass the trip code as a route param so deep links work and parallel
+    // tabs cannot collide. Keep the localStorage write for backwards
+    // compatibility with any other caller that still expects it.
     localStorage.setItem('tripCode', trip.code);
-    this.router.navigateByUrl('/edit-trip');
+    this.router.navigate(['/edit-trip', trip.code]);
   }
 
   deleteTrip(trip: Trip): void {
