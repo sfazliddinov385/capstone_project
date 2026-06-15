@@ -7284,6 +7284,43 @@ a.tg-news-featured-img:hover img, a.tg-news-card-img:hover img { transform: scal
     transform: translateY(-1px);
 }
 
+/* Admin / staff link below the customer login */
+.tg-auth-admin-link {
+    margin-top: 14px;
+    text-align: center;
+}
+.tg-auth-admin-link p {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+}
+.tg-auth-admin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 11px 14px;
+    background: linear-gradient(135deg, #0f2a44 0%, #1a4a72 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 11px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
+    box-shadow: 0 4px 14px rgba(15, 42, 68, 0.18);
+}
+.tg-auth-admin-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.tg-auth-admin-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 22px rgba(15, 42, 68, 0.28);
+    opacity: 0.95;
+}
+
 /* Security pill list */
 .tg-auth-secure-list {
     list-style: none;
