@@ -608,20 +608,19 @@
             var receiptNumber = '';
             var emailedTo = '';
 
-            // Ask the API to send the consolidated receipt. Only the brand
-            // and last four digits of the card number are sent. The full
-            // PAN and CVV never leave the browser.
+            // Ask the API to send the consolidated receipt. We only tell
+            // the server which trip codes to include and whether
+            // protection was selected. The server pulls the prices from
+            // the actual reservations it just stored, so the user cannot
+            // manipulate the totals. The card number and CVV never leave
+            // the browser; we only send the brand and last four digits.
             try {
                 var rcptRes = await fetch('/api/payments/receipt', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
                     body: JSON.stringify({
-                        items: bookedItems,
-                        subtotal: subtotal,
-                        taxes: taxes,
-                        serviceFee: serviceFee,
-                        protection: protection,
-                        grandTotal: grandTotal,
+                        items: bookedItems.map(function(it) { return { tripCode: it.tripCode }; }),
+                        wantsProtection: !!wantsProtection,
                         cardBrand: detectBrand(cardNumber),
                         cardLast4: cardNumber.slice(-4)
                     })

@@ -54,17 +54,31 @@ const listAllReservations = async (req, res) => {
 };
 
 // DELETE /api/admin/reservations/:id. Admin override for canceling.
-// Puts the seats back in one atomic step. Logs who did it so we can trace it later.
+// Puts the seats back in one atomic step. Logs who did it so we can trace
+// it later.
+//
+// findOneAndDelete returns the deleted document atomically, so two admin
+// tabs hitting cancel on the same reservation cannot both succeed and
+// double-restore the seats. The second call returns null and we 404.
 const adminCancelReservation = async (req, res) => {
     try {
-        const reservation = await Reservation.findOne({ _id: req.params.id });
+        const reservation = await Reservation.findOneAndDelete({ _id: req.params.id });
         if (!reservation) return res.status(404).json({ message: 'Reservation not found' });
 
-        await reservation.deleteOne();
-        await Trip.updateOne(
-            { code: reservation.tripCode },
-            { $inc: { spotsLeft: reservation.people } }
-        ).exec();
+        try {
+            await Trip.updateOne(
+                { code: reservation.tripCode },
+                { $inc: { spotsLeft: reservation.people } }
+            ).exec();
+        } catch (restoreErr) {
+            console.error(
+                'CRITICAL: admin cancel seat restore failed.',
+                'admin=' + (req.user && req.user._id),
+                'tripCode=' + reservation.tripCode,
+                'people=' + reservation.people,
+                'error=' + restoreErr.message
+            );
+        }
 
         console.log('admin.cancelReservation',
             'admin=' + req.user._id,

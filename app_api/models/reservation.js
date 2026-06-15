@@ -16,5 +16,8 @@ const reservationSchema = new mongoose.Schema({
 
 reservationSchema.index({ userId: 1, bookedAt: -1 });
 reservationSchema.index({ tripCode: 1, bookedAt: -1 });
+// Text index so admin search on the reservations table does not need a
+// full collection scan and a regex per row.
+reservationSchema.index({ tripName: 'text', resort: 'text' });
 
 module.exports = mongoose.model('Reservation', reservationSchema);

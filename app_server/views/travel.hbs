@@ -326,6 +326,14 @@ var visibleEl  = document.getElementById('results-visible');
 var chipsEl    = document.getElementById('active-chips');
 var totalTrips = cards.length;
 
+// Escape every value before it goes into innerHTML. Without this, a search
+// query like <img onerror=...> would execute when the chip is rendered.
+function escHtml(s) {
+    return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 function renderActiveChips(text, maxPx) {
     if (!chipsEl) return;
     var chips = [];
@@ -334,7 +342,9 @@ function renderActiveChips(text, maxPx) {
     if (!isNaN(maxPx))                     chips.push({ k: 'price', label: 'Under $' + maxPx });
     if (sortSelect.value && sortSelect.value !== 'default') chips.push({ k: 'sort', label: sortSelect.options[sortSelect.selectedIndex].text });
     chipsEl.innerHTML = chips.map(function(c) {
-        return '<span class="tg-active-chip" data-k="' + c.k + '">' + c.label + ' <button type="button" aria-label="Remove ' + c.label + '">&times;</button></span>';
+        var label = escHtml(c.label);
+        var k     = escHtml(c.k);
+        return '<span class="tg-active-chip" data-k="' + k + '">' + label + ' <button type="button" aria-label="Remove ' + label + '">&times;</button></span>';
     }).join('');
 }
 

@@ -20,4 +20,8 @@ const reviewSchema = new mongoose.Schema({
 // This unique index makes it true at the database level.
 reviewSchema.index({ userId: 1, tripCode: 1 }, { unique: true });
 
+// Text index so admin search on the reviews table does not need a full
+// collection scan and a regex per row.
+reviewSchema.index({ tripName: 'text', comment: 'text', userName: 'text' });
+
 module.exports = mongoose.model('Review', reviewSchema);

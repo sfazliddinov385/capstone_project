@@ -104,6 +104,10 @@ const toIncludesArray = (includes) => {
 };
 
 // Build a clean trip object from the request body before we save it.
+// Rating and reviewCount are deliberately NOT taken from the body. They
+// are computed by refreshTripRating from the real reviews. Accepting them
+// here would let an admin (or a forged admin request) set any number they
+// want, which would corrupt the recommendation and sort logic.
 const tripPayloadFromBody = (body = {}) => ({
   code: String(body.code || '').trim().toUpperCase(),
   name: String(body.name || '').trim(),
@@ -115,8 +119,6 @@ const tripPayloadFromBody = (body = {}) => ({
   description: String(body.description || '').trim(),
   category: String(body.category || 'Beach').trim(),
   difficulty: String(body.difficulty || 'Easy').trim(),
-  rating: Number(body.rating ?? 4.5),
-  reviewCount: Number(body.reviewCount ?? 0),
   departureCity: String(body.departureCity || 'New York (JFK)').trim(),
   spotsLeft: Number(body.spotsLeft ?? 20),
   includes: toIncludesArray(body.includes)
