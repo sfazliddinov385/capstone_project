@@ -11,6 +11,7 @@ import { AuthenticationService } from '../authentication.service';
 export class Login {
   loginForm: FormGroup;
   errorMessage = '';
+  signingIn   = false;
 
   constructor(
     private fb: FormBuilder,
@@ -24,11 +25,14 @@ export class Login {
   }
 
   onSubmit(): void {
-    if (this.loginForm.invalid) return;
+    if (this.loginForm.invalid || this.signingIn) return;
     const { email, password } = this.loginForm.value;
+    this.signingIn = true;
+    this.errorMessage = '';
     this.authService.login(email, password).subscribe({
-      next: () => this.router.navigate(['/']),
+      next: () => { this.signingIn = false; this.router.navigate(['/']); },
       error: err => {
+        this.signingIn = false;
         this.errorMessage = err.error?.message || 'Login failed. Please try again.';
       }
     });

@@ -1,5 +1,7 @@
 <ng-container *ngIf="isLoggedIn(); else loggedOutShell">
 
+  <a class="admin-skip-link" href="#admin-main">Skip to main content</a>
+
   <div class="admin-shell">
 
     <!-- ============ SIDEBAR ============ -->
@@ -66,10 +68,12 @@
     <!-- ============ TOPBAR ============ -->
     <header class="admin-topbar">
       <div class="admin-topbar-left">
-        <nav class="admin-breadcrumb">
-          <span class="crumb">Admin</span>
-          <span class="sep">/</span>
-          <span class="current">{{ currentPageTitle() }}</span>
+        <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            <li class="crumb">Admin</li>
+            <li class="sep" aria-hidden="true">/</li>
+            <li class="current" aria-current="page">{{ currentPageTitle() }}</li>
+          </ol>
         </nav>
         <div class="admin-topbar-search">
           <svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg>
@@ -146,7 +150,7 @@
     </header>
 
     <!-- ============ MAIN CONTENT ============ -->
-    <main class="admin-main">
+    <main class="admin-main" id="admin-main" tabindex="-1">
       <router-outlet></router-outlet>
     </main>
 

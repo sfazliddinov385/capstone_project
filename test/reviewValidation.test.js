@@ -40,7 +40,7 @@ test('validateReviewInput rejects empty comments', () => {
 test('validateReviewInput rejects comments above the max length', () => {
     const r = validateReviewInput({ rating: 5, comment: 'A'.repeat(MAX_COMMENT + 1) });
     assert.equal(r.ok, false);
-    assert.match(r.message, /1200/);
+    assert.match(r.message, new RegExp(String(MAX_COMMENT)));
 });
 
 test('validateReviewInput trims whitespace from comments', () => {

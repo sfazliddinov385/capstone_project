@@ -50,6 +50,7 @@
           <label for="email">Email</label>
           <input id="email" type="email" formControlName="email"
                  placeholder="admin@travlr.com"
+                 autocomplete="email" inputmode="email"
                  [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
           <span class="err" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
             A valid email is required.
@@ -60,6 +61,7 @@
           <label for="password">Password</label>
           <input id="password" type="password" formControlName="password"
                  placeholder="Your password"
+                 autocomplete="current-password"
                  [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
           <span class="err" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
             Password is required.
@@ -68,8 +70,8 @@
 
         <button type="submit" class="btn-admin btn-admin-primary"
                 style="width:100%; justify-content:center; padding: 10px 14px;"
-                [disabled]="loginForm.invalid">
-          Sign in
+                [disabled]="loginForm.invalid || signingIn">
+          {{ signingIn ? 'Signing in…' : 'Sign in' }}
           <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </button>
       </form>

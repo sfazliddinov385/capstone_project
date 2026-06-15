@@ -7,9 +7,7 @@ const Review      = require('../models/review');
 const Trip        = require('../../app_server/models/travlr');
 const User        = require('../models/user');
 const { refreshTripRating } = require('./reviews');
-
-// Strip regex special characters so a bad ?q= cannot crash the engine.
-const escapeRegExp = (v) => String(v || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const { escapeRegExp }      = require('../utils/sanitize');
 
 // GET /api/admin/reservations. Every reservation in the system.
 // You can pass ?q= to match trip name, trip code, or resort.

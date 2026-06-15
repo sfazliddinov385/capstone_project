@@ -13,10 +13,13 @@ import { Trip } from '../trip';
 export class EditTrip implements OnInit {
   editForm!: FormGroup;
   submitted = false;
+  saving    = false;
   message: string = '';
 
   categories   = ['Beach', 'Diving', 'Adventure', 'Luxury', 'Cultural', 'Cruise'];
   difficulties = ['Easy', 'Moderate', 'Challenging'];
+
+  readonly today = new Date().toISOString().substring(0, 10);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -72,7 +75,7 @@ export class EditTrip implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-    if (this.editForm.invalid) { return; }
+    if (this.editForm.invalid || this.saving) { return; }
 
     const raw = { ...this.editForm.getRawValue() };
     // Turn the includes string back into an array. Split on commas.
@@ -82,9 +85,15 @@ export class EditTrip implements OnInit {
       includes: includesRaw.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0)
     } as Trip;
 
+    this.saving = true;
+    this.message = '';
     this.tripDataService.updateTrip(trip).subscribe({
-      next: () => this.router.navigateByUrl('/'),
-      error: (err) => { this.message = 'Error updating trip: ' + err.message; }
+      next:  () => { this.saving = false; this.router.navigateByUrl('/'); },
+      error: (err) => {
+        this.saving = false;
+        const detail = err?.error?.message || err?.statusText || err?.message || 'Unknown error';
+        this.message = 'Error updating trip: ' + detail;
+      }
     });
   }
 }

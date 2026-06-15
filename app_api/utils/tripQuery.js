@@ -26,8 +26,7 @@ const SORTS = {
 // These fields use an exact match when filtering.
 const exactMatchFields = ['category', 'difficulty', 'departureCity'];
 
-// Escape regex specials in user search text so it cannot break the engine.
-const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const { escapeRegExp } = require('./sanitize');
 
 // Turn a value into a number. Reject anything that is not a real positive number.
 const parsePositiveNumber = (value) => {

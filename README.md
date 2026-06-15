@@ -7,16 +7,16 @@ The polished capstone narratives and professional self-assessment live in [`/doc
 ## Screenshots
 
 ### Homepage
-![Travlr Getaways homepage hero](Screenshots/Screenshot%202026-05-22%20150842.png)
+![Travlr Getaways homepage hero](screenshots/Screenshot%202026-05-22%20150842.png)
 
 ### Meals
-![Snapshots from partner kitchens](Screenshots/Screenshot%202026-05-22%20150910.png)
+![Snapshots from partner kitchens](screenshots/Screenshot%202026-05-22%20150910.png)
 
 ### My Reservations
-![Customer reservations dashboard](Screenshots/Screenshot%202026-05-22%20150926.png)
+![Customer reservations dashboard](screenshots/Screenshot%202026-05-22%20150926.png)
 
 ### Travel News & Tips
-![Travel news and articles page](Screenshots/Screenshot%202026-05-22%20150955.png)
+![Travel news and articles page](screenshots/Screenshot%202026-05-22%20150955.png)
 
 ## What's in here
 
@@ -24,7 +24,7 @@ The polished capstone narratives and professional self-assessment live in [`/doc
 |---|---|
 | [`app.js`](app.js) | Express bootstrap (security middleware, CORS, routes, shutdown). |
 | [`app_server/`](app_server) | Customer-facing site (HBS views, controllers, Mongoose model). |
-| [`app_api/`](app_api) | REST API (auth, trips, reservations, reviews, favorites, stats). |
+| [`app_api/`](app_api) | REST API (auth, trips, reservations, reviews, favorites, payments, stats). |
 | [`travlr-admin/`](travlr-admin) | Angular 21 admin SPA. |
 | [`scripts/`](scripts) | One-shot operational scripts (admin user seeding, etc). |
 | [`test/`](test) | Unit tests (Node's built-in test runner). |
@@ -40,6 +40,15 @@ The polished capstone narratives and professional self-assessment live in [`/doc
 | 3 | Databases | Schema validation, text + compound indexes, and **atomic** reservation flow that cannot oversell. |
 
 See the [ePortfolio](./docs/index.md) for the full capstone submission, including the professional self-assessment and the three enhancement narratives.
+
+## Requirements
+
+| Tool | Minimum version | Notes |
+|---|---|---|
+| Node.js | 18.0.0 | Built-in test runner used for `npm test`. |
+| npm | 9.0.0 | `travlr-admin` pins npm 11.9.0 in its own package.json. |
+| MongoDB | 6.0 | Local install on `27017`, or any cloud MongoDB via `MONGODB_URI`. |
+| Angular CLI | 21.x | Only needed if you rebuild the `travlr-admin` SPA. |
 
 ## Quickstart
 
@@ -84,15 +93,17 @@ All variables live in `.env` (which is git-ignored). See [`.env.example`](.env.e
 | `PORT` | no | API + customer site port. Defaults to `3000`. |
 | `CORS_ORIGIN` | no | Comma-separated allowlist of API origins. Defaults to `http://localhost:4200`. Set to `*` to disable (not recommended in production). |
 | `BCRYPT_ROUNDS` | no | bcrypt work factor. Defaults to `12`. |
-| `EMAIL_USER` / `EMAIL_PASS` | no | Gmail App Password for reservation confirmation email. If unset, sending is silently skipped (no PII logged). |
+| `EMAIL_USER` / `EMAIL_PASS` | no | Gmail App Password for reservation confirmation + payment receipt email. If unset, sending is silently skipped (no PII logged). |
 | `PUBLIC_URL` | no | Public origin of the customer site, used inside outbound email links. Defaults to `http://localhost:PORT`. |
-| `NODE_ENV` | no | Set to `production` to enable trust-proxy and stricter helmet defaults. |
+| `NODE_ENV` | no | Set to `production` to enable trust-proxy and stricter helmet defaults. Destructive scripts refuse to run when this is `production`. |
+| `ADMIN_EMAIL` / `ADMIN_PASSWORD` / `ADMIN_NAME` | no | Used by `scripts/create-admin.js` to seed the administrator account. Defaults to `admin@travlr.com` / `password123` / `Admin`. |
+| `PRESERVE_EMAILS` | no | Comma-separated allowlist for `scripts/reset-customers.js`. Accounts with these emails are kept when test customers are wiped. |
 
 ## Security posture
 
 - Passwords are hashed with **bcrypt** (work factor 12 by default). Legacy PBKDF2 records from earlier seeds are still accepted at login and are transparently upgraded to bcrypt on first successful login.
 - JWTs are signed with `JWT_SECRET` and carry a `role` claim. `authenticate` verifies the token; `authorizeAdmin` checks the claim. Admin-only routes require both.
-- `helmet` sets defensive HTTP headers. CSP is left off until the legacy inline styles in `public/*.html` are migrated. HSTS is enabled only in production.
+- `helmet` sets defensive HTTP headers. CSP is left off until the inline styles in the HBS views are externalised. HSTS is enabled only in production.
 - CORS is allowlisted via `CORS_ORIGIN` rather than wide-open. The server's own origin is always allowed.
 - `/api/login` and `/api/register` are rate-limited to 10 requests per 15 minutes per IP.
 - Authenticated write endpoints (reservation, review, favorite mutations) are rate-limited to 60 requests per 15 minutes per IP.

@@ -190,7 +190,6 @@
     var pre     = document.getElementById('tg-contact-pre');
     var success = document.getElementById('tg-contact-success');
     var again   = document.getElementById('tg-send-another');
-    var emailEl = document.getElementById('tg-success-email');
     var refEl   = document.getElementById('tg-success-ref');
     var subjEl  = document.getElementById('tg-success-subject');
     if (!form || !pre || !success) return;
@@ -210,11 +209,9 @@
         if (!form.checkValidity()) { form.reportValidity(); return; }
 
         // Capture for the success state
-        var email   = (document.getElementById('cf-email').value   || '').trim();
         var subject = (document.getElementById('cf-subject').value || '').trim();
-        emailEl.textContent = email   || 'your inbox';
-        refEl.textContent   = makeRef();
-        subjEl.textContent  = subject || 'Your message';
+        refEl.textContent  = makeRef();
+        subjEl.textContent = subject || 'Your message';
 
         pre.hidden = true;
         success.hidden = false;

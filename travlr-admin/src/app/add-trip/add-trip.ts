@@ -13,10 +13,14 @@ import { Trip } from '../trip';
 export class AddTrip implements OnInit {
   addForm!: FormGroup;
   submitted = false;
+  saving    = false;
   message: string = '';
 
   categories  = ['Beach', 'Diving', 'Adventure', 'Luxury', 'Cultural', 'Cruise'];
   difficulties = ['Easy', 'Moderate', 'Challenging'];
+
+  // Used as the min on the start-date input so admins cannot pick a past date.
+  readonly today = new Date().toISOString().substring(0, 10);
 
   constructor(
     private formBuilder: FormBuilder,
@@ -49,7 +53,7 @@ export class AddTrip implements OnInit {
 
   onSubmit(): void {
     this.submitted = true;
-    if (this.addForm.invalid) { return; }
+    if (this.addForm.invalid || this.saving) { return; }
 
     const raw = this.addForm.value;
     // Turn the includes string into an array. Split on commas.
@@ -59,9 +63,15 @@ export class AddTrip implements OnInit {
       includes: includesRaw.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0)
     } as Trip;
 
+    this.saving = true;
+    this.message = '';
     this.tripDataService.addTrip(trip).subscribe({
-      next: () => this.router.navigateByUrl('/'),
-      error: (err) => { this.message = 'Error adding trip: ' + err.message; }
+      next:  () => { this.saving = false; this.router.navigateByUrl('/'); },
+      error: (err) => {
+        this.saving = false;
+        const detail = err?.error?.message || err?.statusText || err?.message || 'Unknown error';
+        this.message = 'Error adding trip: ' + detail;
+      }
     });
   }
 }

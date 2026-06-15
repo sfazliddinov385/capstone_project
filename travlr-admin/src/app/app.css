@@ -1,5 +1,55 @@
 /* ─── App shell additions: modal, popover, search-clear, API-down state ──── */
 
+/* Skip link. Hidden until a keyboard user tabs to it. Lets them jump past
+   the sidebar straight to the page content. */
+.admin-skip-link {
+    position: absolute;
+    left: 0;
+    top: -40px;
+    background: #0f2a44;
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 0 0 8px 0;
+    font-weight: 600;
+    text-decoration: none;
+    z-index: 9999;
+    transition: top 0.15s;
+}
+.admin-skip-link:focus,
+.admin-skip-link:focus-visible {
+    top: 0;
+    outline: 2px solid #d99a2b;
+    outline-offset: 2px;
+}
+
+/* Visible focus rings on every keyboard-reachable element. The admin
+   theme suppressed these in places; this brings them back without
+   touching mouse-only :focus. */
+.admin-shell a:focus-visible,
+.admin-shell button:focus-visible,
+.admin-shell input:focus-visible,
+.admin-shell select:focus-visible,
+.admin-shell textarea:focus-visible,
+.admin-shell [tabindex]:focus-visible {
+    outline: 2px solid #d99a2b;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Breadcrumb. New semantic ol/li structure. Keep the visual it had
+   before: inline crumbs separated by a slash. */
+.admin-breadcrumb ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.admin-breadcrumb li { display: inline-flex; align-items: center; }
+
+
+
 /* Topbar search: enable the disabled look + clear button */
 .admin-topbar-search input { color: inherit; cursor: text; }
 .admin-topbar-search input::placeholder { color: rgba(100, 116, 139, 0.7); }

@@ -48,7 +48,7 @@
 
         <div class="admin-field">
           <label>Start Date</label>
-          <input type="date" formControlName="start"
+          <input type="date" formControlName="start" [min]="today"
                  [class.is-invalid]="submitted && f['start'].errors">
           <span class="err" *ngIf="submitted && f['start'].errors">Start date is required.</span>
         </div>
@@ -81,12 +81,13 @@
 
         <div class="admin-field">
           <label>Spots Available</label>
-          <input type="number" formControlName="spotsLeft" min="0">
+          <input type="number" formControlName="spotsLeft" min="0" inputmode="numeric">
         </div>
 
         <div class="admin-field">
           <label>Per Person ($)</label>
-          <input type="text" formControlName="perPerson"
+          <input type="number" formControlName="perPerson"
+                 min="0" step="0.01" inputmode="decimal"
                  [class.is-invalid]="submitted && f['perPerson'].errors">
           <span class="err" *ngIf="submitted && f['perPerson'].errors">Price is required.</span>
         </div>
@@ -124,9 +125,9 @@
 
       <div class="admin-form-actions">
         <a routerLink="/" class="btn-admin btn-admin-secondary">Cancel</a>
-        <button type="submit" class="btn-admin btn-admin-success">
+        <button type="submit" class="btn-admin btn-admin-success" [disabled]="saving">
           <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
-          Update Trip
+          {{ saving ? 'Saving…' : 'Update Trip' }}
         </button>
       </div>
 
