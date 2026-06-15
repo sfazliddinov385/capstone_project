@@ -284,6 +284,31 @@
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
+    // Luhn check. Catches the most common typos in a card number. This is
+    // a UX guard only. Real payment systems verify on the issuer side.
+    function luhnValid(num) {
+        var s = String(num || '').replace(/\D/g, '');
+        if (s.length < 13 || s.length > 19) return false;
+        var sum = 0, alt = false;
+        for (var i = s.length - 1; i >= 0; i--) {
+            var n = parseInt(s.charAt(i), 10);
+            if (alt) { n *= 2; if (n > 9) n -= 9; }
+            sum += n;
+            alt = !alt;
+        }
+        return sum % 10 === 0;
+    }
+
+    // Map the first digits of the card number to a brand label.
+    function detectBrand(num) {
+        var s = String(num || '').replace(/\D/g, '');
+        if (/^4/.test(s)) return 'Visa';
+        if (/^5[1-5]/.test(s) || /^2[2-7]/.test(s)) return 'Mastercard';
+        if (/^3[47]/.test(s)) return 'Amex';
+        if (/^6(?:011|5)/.test(s)) return 'Discover';
+        return 'Card';
+    }
+
     function updateGrandTotal() {
         var subtotal    = 0;
         var totalPeople = 0;
@@ -503,8 +528,12 @@
         var cvv        = document.getElementById('co-cvv').value.trim();
 
         if (!cardName) { showError('Please enter the name on your card.'); return; }
-        if (cardNumber.length < 13 || cardNumber.length > 16 || !/^\d+$/.test(cardNumber)) {
-            showError('Please enter a valid card number (13 to 16 digits).'); return;
+        if (cardNumber.length < 13 || cardNumber.length > 19 || !/^\d+$/.test(cardNumber)) {
+            showError('Please enter a valid card number (13 to 19 digits).'); return;
+        }
+        if (!luhnValid(cardNumber)) {
+            showError('That card number does not look right. Double-check the digits.');
+            return;
         }
         if (!/^\d{2}\/\d{2}$/.test(expiry)) {
             showError('Please enter a valid expiry date (MM / YY).'); return;
@@ -534,7 +563,13 @@
             });
         });
 
+        // Track per-line trip details so we can build the receipt without
+        // re-fetching the trips after booking.
+        var resolvedByCode = {};
+        resolved.forEach(function(r) { resolvedByCode[r.tripCode] = r.trip; });
+
         var failed = [];
+        var bookedItems = [];
         for (var i = 0; i < currentCart.length; i++) {
             try {
                 var res  = await fetch('/api/reservations', {
@@ -543,19 +578,76 @@
                     body: JSON.stringify({ tripCode: currentCart[i].tripCode, people: currentCart[i].people })
                 });
                 var data = await res.json();
-                if (!res.ok) failed.push(data.message || currentCart[i].tripCode);
+                if (!res.ok) {
+                    failed.push(data.message || currentCart[i].tripCode);
+                } else {
+                    var trip = resolvedByCode[currentCart[i].tripCode] || {};
+                    bookedItems.push({
+                        tripCode:  currentCart[i].tripCode,
+                        tripName:  trip.name || currentCart[i].tripCode,
+                        people:    currentCart[i].people,
+                        perPerson: Number(trip.perPerson) || 0
+                    });
+                }
             } catch(err) {
                 failed.push(currentCart[i].tripCode);
             }
         }
 
         if (failed.length === 0) {
+            // Compute the same totals the summary shows so the receipt
+            // email matches what the customer saw on screen.
+            var subtotal    = bookedItems.reduce(function(s, it) { return s + it.perPerson * it.people; }, 0);
+            var totalPeople = bookedItems.reduce(function(s, it) { return s + it.people; }, 0);
+            var taxes       = subtotal * TAX_RATE;
+            var serviceFee  = subtotal * SERVICE_RATE;
+            var wantsProtection = document.getElementById('opt-protection') && document.getElementById('opt-protection').checked;
+            var protection  = wantsProtection ? PROTECTION_PP * totalPeople : 0;
+            var grandTotal  = subtotal + taxes + serviceFee + protection;
+
+            var receiptNumber = '';
+            var emailedTo = '';
+
+            // Ask the API to send the consolidated receipt. Only the brand
+            // and last four digits of the card number are sent. The full
+            // PAN and CVV never leave the browser.
+            try {
+                var rcptRes = await fetch('/api/payments/receipt', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify({
+                        items: bookedItems,
+                        subtotal: subtotal,
+                        taxes: taxes,
+                        serviceFee: serviceFee,
+                        protection: protection,
+                        grandTotal: grandTotal,
+                        cardBrand: detectBrand(cardNumber),
+                        cardLast4: cardNumber.slice(-4)
+                    })
+                });
+                if (rcptRes.ok) {
+                    var rcpt = await rcptRes.json();
+                    receiptNumber = rcpt.receiptNumber || '';
+                    emailedTo = rcpt.emailedTo || '';
+                }
+            } catch(err) {
+                // Receipt is best effort. Booking already succeeded.
+            }
+
             localStorage.removeItem('travlr-cart');
             if (window.refreshCartBadge) window.refreshCartBadge();
-            successDiv.innerHTML = '<strong>✓ All reservations confirmed!</strong> Redirecting to your reservations…';
+
+            var receiptLine = receiptNumber
+                ? '<div style="margin-top:6px; font-size:0.9rem;">Receipt <strong>' + escapeHtml(receiptNumber) + '</strong>' +
+                  (emailedTo ? ' emailed to <strong>' + escapeHtml(emailedTo) + '</strong>' : '') + '.</div>'
+                : '';
+            successDiv.innerHTML =
+                '<strong>&check; Payment confirmed.</strong> Redirecting to your reservations…' +
+                receiptLine;
             successDiv.style.display = 'block';
-            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Confirmed';
-            setTimeout(function() { window.location.href = '/reservations'; }, 2200);
+            btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg> Paid';
+            setTimeout(function() { window.location.href = '/reservations'; }, 3200);
         } else {
             showError('Some bookings failed: ' + failed.join(', ') + '. Please try again.');
             btn.disabled = false;

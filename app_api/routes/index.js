@@ -9,6 +9,7 @@ const reviewsController      = require('../controllers/reviews');
 const favoritesController    = require('../controllers/favorites');
 const statsController        = require('../controllers/stats');
 const adminController        = require('../controllers/admin');
+const paymentsController     = require('../controllers/payments');
 const { authenticate, authorizeAdmin } = require('../middleware/auth');
 
 // Slow down login and signup so attackers cannot try thousands of passwords or sign up bots.
@@ -60,6 +61,11 @@ router.get('/reservations',        authenticate, reservationsController.getReser
 router.post('/reservations',       authenticate, writeLimiter, reservationsController.createReservation);
 router.put('/reservations/:id',    authenticate, writeLimiter, reservationsController.updateReservation);
 router.delete('/reservations/:id', authenticate, writeLimiter, reservationsController.deleteReservation);
+
+// Payments. Issues a single email receipt summarising a checkout.
+// The full card number never leaves the browser. We only accept the brand
+// label and last four digits over the wire.
+router.post('/payments/receipt',   authenticate, writeLimiter, paymentsController.sendReceipt);
 
 // Reviews. Reading is public. Creating and deleting need sign in and are rate limited.
 router.get('/trips/:tripCode/reviews',  reviewsController.listForTrip);
