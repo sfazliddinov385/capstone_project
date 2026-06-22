@@ -1,0 +1,32 @@
+title: Sarvarbek Fazliddinov — Computer Science ePortfolio
+description: >-
+  CS 499 Capstone ePortfolio for Sarvarbek Fazliddinov.
+  Three enhancements to the Travlr Getaways MEAN stack application,
+  a professional self-assessment, and a code review video — submitted
+  for the Bachelor of Science in Computer Science at SNHU.
+author: Sarvarbek Fazliddinov
+
+theme: jekyll-theme-cayman
+
+show_downloads: false
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+permalink: pretty
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+include:
+  - enhancement-1-software-design.md
+  - enhancement-2-algorithms.md
+  - enhancement-3-databases.md
+  - self-assessment.md
+  - index.md

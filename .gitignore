@@ -33,12 +33,9 @@ desktop.ini
 *.swp
 *.swo
 
-# ePortfolio docs — kept local only, NOT pushed to this public repo
-# Exception: the three capstone enhancement narratives are published.
-docs/*
-!docs/enhancement-1-software-design.md
-!docs/enhancement-2-algorithms.md
-!docs/enhancement-3-databases.md
+# ePortfolio (docs/) IS published — it is the GitHub Pages site for the
+# CS 499 capstone: landing page, professional self-assessment, the three
+# enhancement narratives, and the Jekyll config.
 
 # Angular caches
 .angular/
