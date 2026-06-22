@@ -22,7 +22,7 @@ I picked this artifact for the algorithms and data structures category because t
 
 The pieces of this enhancement that show my skills are:
 
-- Pulling all filter, sort, and limit logic into a pure module ([`app_api/utils/tripQuery.js`](https://github.com/)) that can be tested by itself.
+- Pulling all filter, sort, and limit logic into a pure module ([`app_api/utils/tripQuery.js`](https://github.com/sfazliddinov385/capstone_project/blob/main/app_api/utils/tripQuery.js)) that can be tested by itself.
 - Using a small **strategy table** (`SORTS`) keyed by short, URL friendly strings (`featured`, `price-asc`, `price-desc`, `rating`, `reviews`, `spots`, `start`) that map to Mongo sort documents. This is the strategy pattern, kept small because the problem is small.
 - A `clampLimit` helper that turns any input into a bounded positive integer. It defaults to 100 and caps at 100, so the endpoint cannot be tricked into returning a giant result.
 - A regex escape helper applied to user supplied search text before it is put into a case insensitive `$or` match across four indexed fields. This protects against regex injection and ReDoS.
@@ -38,7 +38,7 @@ After: every concern is moved to the server and written in code I can verify on 
 - `Trip.find(filter).sort(sort).limit(limit).exec()` runs a single bounded indexed query.
 - The MongoDB query planner can use the `(category, perPerson)` and `(rating, reviewCount)` compound indexes added in [Enhancement 3](enhancement-3-databases.html) to handle the common filter then sort path without a collection scan.
 
-Here is the helper in compressed form (see [`app_api/utils/tripQuery.js`](https://github.com/) for the full module):
+Here is the helper in compressed form (see [`app_api/utils/tripQuery.js`](https://github.com/sfazliddinov385/capstone_project/blob/main/app_api/utils/tripQuery.js) for the full module):
 
 ```js
 const SORTS = {

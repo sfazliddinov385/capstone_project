@@ -20,7 +20,7 @@ All three enhancements are made to the same application — **Travlr Getaways**,
 - **Source code:** [github.com/sfazliddinov385/capstone_project](https://github.com/sfazliddinov385/capstone_project)
 - **Stack:** Node.js · Express · Handlebars · MongoDB · Mongoose · Angular 21 · TypeScript
 
-![Travlr Getaways homepage](../screenshots/Screenshot%202026-05-22%20150842.png)
+![Travlr Getaways homepage](assets/homepage.png)
 
 ---
 

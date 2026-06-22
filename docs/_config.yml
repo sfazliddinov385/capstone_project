@@ -16,7 +16,9 @@ kramdown:
   hard_wrap: false
   syntax_highlighter: rouge
 
-permalink: pretty
+# No permalink override: each .md renders to the matching .html (e.g.
+# self-assessment.md -> self-assessment.html) so the relative links
+# between pages resolve correctly on GitHub Pages.
 
 defaults:
   - scope:

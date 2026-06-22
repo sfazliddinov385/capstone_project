@@ -39,7 +39,7 @@ Before:
 - The booking flow could oversell.
 - Reservations referenced trips only by `tripCode` (a string), so joins required a second query.
 
-After (the main pieces of [`app_server/models/travlr.js`](https://github.com/)):
+After (the main pieces of [`app_server/models/travlr.js`](https://github.com/sfazliddinov385/capstone_project/blob/main/app_server/models/travlr.js)):
 
 ```js
 const tripSchema = new mongoose.Schema({
@@ -59,7 +59,7 @@ tripSchema.index({ category: 1, perPerson: 1 });
 tripSchema.index({ rating: -1, reviewCount: -1 });
 ```
 
-And the headline of [`app_api/controllers/reservations.js`](https://github.com/), the booking call:
+And the headline of [`app_api/controllers/reservations.js`](https://github.com/sfazliddinov385/capstone_project/blob/main/app_api/controllers/reservations.js), the booking call:
 
 ```js
 const trip = await Trip.findOneAndUpdate(
