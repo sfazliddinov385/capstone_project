@@ -1,0 +1,56 @@
+name: Deploy ePortfolio to GitHub Pages
+
+# Builds the Jekyll site in /docs and publishes it to GitHub Pages.
+# Runs on every push to main and can be triggered by hand from the
+# Actions tab. The build source is ./docs, where the CS 499 capstone
+# ePortfolio lives (landing page, self-assessment, enhancement narratives).
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Least-privilege token scoped to what Pages deployment needs.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two deploys at once; let an in-flight deploy finish.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # enablement: true turns Pages on (in "GitHub Actions" mode) the first
+      # time this runs, so no manual toggle in repo settings is required.
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Build Jekyll site from /docs
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: ./docs
+          destination: ./_site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
