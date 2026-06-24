@@ -60,7 +60,7 @@ In Module 2 I recorded an informal code review of the original Travlr Getaways a
 
 <a id="code-review"></a>
 
-> **Watch the code review:** _[Paste your video link here once uploaded — e.g. an unlisted YouTube URL or Loom share]_
+> **▶ Watch the code review:** [Open the recording on SNHU D2L](https://learn.snhu.edu/d2l/wcs/mp/mediaplayer.d2l?ou=2260734&entryId=ef42047a-d4b9-45a4-a050-3d90bc69e8ce%2flatest&type=video) _(opens in the SNHU D2L media player; requires an SNHU login)_
 
 The plan I outlined in that video held up across all three enhancements. The narratives below explain how each one actually landed.
 
